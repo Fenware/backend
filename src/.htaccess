@@ -1,5 +1,10 @@
 RewriteEngine On
 
+#Si no ponemos esto php se niega a aceptar el token por seguridad
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+
 #Quita la necesidad de tener el .php en la url
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
