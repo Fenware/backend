@@ -1,7 +1,7 @@
 <?php
 
-include_once 'core/model.php';
-include_once 'core/response.php';
+require_once 'core/model.php';
+require_once 'core/response.php';
 
 class UserModel extends Model{
 
@@ -27,6 +27,19 @@ class UserModel extends Model{
         $data = parent::query($stm,[$user,$user]);
         return $data;
     }
+
+    public function getUserType($id,$type){
+        $stm = 'SELECT * FROM '.$type.' WHERE id = ?';
+        $data = parent::query($stm,[$id]);
+        return $data;
+    }
+
+    public function getAllUsers(){
+        $stm = 'SELECT * FROM user';
+        $data = parent::query($stm);
+        return $data;
+    }
+
 
 
 
