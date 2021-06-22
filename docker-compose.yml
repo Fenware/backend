@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+    php-apache:
+      container_name: php_chathink
+      build: .
+      depends_on:
+        - mariadb
+      ports:
+        - 8080:80
+      volumes:
+        - ./src:/var/www/html
+      networks:
+        - network
+
+    mariadb:
+      container_name: mariadb_chathink
+      image: mariadb:10.6
+      ports:
+        - 3306:3306
+      volumes:
+        - mariadb_chathink:/var/lib/mysql
+      environment:
+        MYSQL_DATABASE: database
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: admin
+        MYSQL_ROOT_PASSWORD: root
+      networks:
+        - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  mariadb_chathink:
