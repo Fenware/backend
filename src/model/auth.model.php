@@ -55,7 +55,14 @@ class AuthModel extends Model{
                         if(password_verify($this->user->getPassword(),$data[0]['password'])){
                             $userType = $this->user->getUserType($data[0]['id'],$type);
                             if($userType){
-                                return $this->generateToken($data[0]['id'],$type);
+                                $token = $this->generateToken($data[0]['id'],$type);
+                                if($token){
+                                    $result = $res->response;
+                                    $result['result'] = array(
+                                        'token' => $token
+                                    );
+                                    return $result;
+                                }
                             }else{
                                 return $res->error('El usuario no es '.$type);
                             }
