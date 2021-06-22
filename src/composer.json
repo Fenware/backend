@@ -1,0 +1,17 @@
+{
+    "name": "felip/chathink",
+    "description": "institutional aplication",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MateConAzucar",
+            "email": "fds.workmail@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "^5.2",
+        "laminas/laminas-config": "^3.5.0"
+    }
+}
