@@ -42,9 +42,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         exit;
     }else{
         $datosArray = $users->getAllUsers();
-        echo "<h1>".$token->user_id."</h1>";
-        echo "<h1>".$token->user_type."</h1>";
-        print_r(json_encode($datosArray));
+        echo json_encode($datosArray);
     }
     
     
