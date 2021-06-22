@@ -2,7 +2,7 @@
 
 class Response{
 
-    private $response = [
+    public $response = [
         'status' => 'ok',
         'result' => array()
     ];
