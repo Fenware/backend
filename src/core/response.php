@@ -39,14 +39,14 @@ class Response{
     public function OOPSIE(){
         $this->response['status'] = 'error';
         $this->response['result'] = array(
-            'error_id' => 'OwO',
+            'error_id' => 010,
             'error_msg' => 'OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!'
         );
         return $this->response;
     }
 
 
-    public function error($error_msg,$error_num = 200){
+    public function error($error_msg,$error_num = 666){
         $this->response['status'] = 'error';
         $this->response['result'] = array(
             'error_id' => $error_num,
