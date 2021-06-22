@@ -9,7 +9,7 @@ $auth = new AuthModel();
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $postBody = file_get_contents('php://input');
     $datosArray = $auth->login($postBody);
-    header('Content-Type: applicaton/json');
+    header("Access-Control-Allow-Origin: *");
     if(isset($datosArray['result']['error_id'])){
         $response_code = $datosArray['result']['error_id'];
         http_response_code($response_code);
