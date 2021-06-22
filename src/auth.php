@@ -9,7 +9,16 @@ $auth = new AuthModel();
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $postBody = file_get_contents('php://input');
     $datosArray = $auth->login($postBody);
-    print_r(json_encode($datosArray));
+    header('Content-Type: applicaton/json');
+    if(isset($datosArray['result']['error_id'])){
+        $response_code = $datosArray['result']['error_id'];
+        http_response_code($response_code);
+    }else{
+        http_response_code(200);
+    }
+    echo json_encode($datosArray);
 }else{
-    echo 'no';
+    header('Content-Type: applicaton/json');
+    $datosArray = $res->error_405();
+    echo json_encode($datosArray);
 }
