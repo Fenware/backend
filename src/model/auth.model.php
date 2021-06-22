@@ -19,8 +19,8 @@ class AuthModel extends Model{
     public function login($json){
         $res = new Response();
         $datos = json_decode($json,true);
-        if(!isset($datos['user']) || !isset($datos['password'])){
-            //Faltan datos
+        if(!isset($datos['user']) || !isset($datos['password']) || !isset($datos['type'])){
+            //Faltan datoss
             return $res->error_400();
         }else{
             //Datos completos
@@ -28,23 +28,49 @@ class AuthModel extends Model{
             $this->user = new UserModel();
             $this->user->setPassword($datos['password']);
             $data = $this->user->getUser($userLogin);
-
-            if($datos){
+            
+            switch($datos['type']){
+                case 'admin':
+                    $type = 'administrador';
+                    break;
+                case 'alumno':
+                    $type = 'alumno';
+                    break;
+                case 'docente':
+                    $type = 'docente';
+                    break;
+                default:
+                    $type = 'error';
+                    break;
+            }
+            if($type == 'error'){
+                echo $type;
+                return $res->OOPSIE();
+            }else{
                 
-                //Chequeo si el usuario esta activo {0:inactivo;1:activo;2:pendiente}
-                if($data[0]['estado_cuenta'] == 1){
-                    //Si la contraseña del usuario en la base de datos es igual a la que me mando el usuario
-                    if(password_verify($this->user->getPassword(),$data[0]['password'])){
-                        return $this->generateToken($data[0]['ci']);
+                if($datos){
+                    //Chequeo si el usuario esta activo {0:inactivo;1:activo;2:pendiente}
+                    if($data[0]['estado_cuenta'] == 1){
+                        //Si la contraseña del usuario en la base de datos es igual a la que me mando el usuario
+                        if(password_verify($this->user->getPassword(),$data[0]['password'])){
+                            $userType = $this->user->getUserType($data[0]['id'],$type);
+                            if($userType){
+                                return $this->generateToken($data[0]['id'],$type);
+                            }else{
+                                return $res->error('El usuario no es '.$type);
+                            }
+                            
+                        }else{
+                            return $res->error('Contrasenna Incorrecta');
+                        }
                     }else{
-                        return $res->error('Contrasenna Incorrecta');
+                        return $res->error('El usuario no existe');
                     }
                 }else{
                     return $res->error('El usuario no existe');
                 }
-            }else{
-                return $res->error('El usuario no existe');
             }
+            
         }
     }
 
@@ -52,20 +78,21 @@ class AuthModel extends Model{
 
     }
 
-    function generateToken($user){
+    function generateToken($user,$type){
         $res = new Response();
         $secret_key = SECRET_KEY;
         $issuedAt   = new DateTimeImmutable();
         $expire     = $issuedAt->modify('+8 hour')->getTimestamp();
         $serverName = URL;
-        $username   = $user;      
+        $user_id  = $user;  
 
         $data = [
             'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
             'iss'  => $serverName,                       // Issuer
             'nbf'  => $issuedAt->getTimestamp(),         // Not before
             'exp'  => $expire,                           // Expire
-            'userName' => $username,                     // User name
+            'user_id' => $user_id, 
+            'user_type' => $type                    // User name
         ];
 
         try {
@@ -76,6 +103,7 @@ class AuthModel extends Model{
             );
         } catch (\Throwable $th) {
             $jwt = $res->OOPSIE();
+            print_r($res->OOPSIE());
         }
         return $jwt;
 
