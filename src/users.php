@@ -1,4 +1,3 @@
-USERS
 <pre>
 <?php
 //chdir(dirname(__DIR__));
@@ -47,7 +46,9 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     
     
 }else{
-    echo 'no';
+    header('Content-Type: applicaton/json');
+    $datosArray = $res->error_405();
+    echo json_encode($datosArray);
 }
 ?>
 </pre>
