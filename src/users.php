@@ -1,18 +1,18 @@
-<pre>
 <?php
 //chdir(dirname(__DIR__));
 use Firebase\JWT\JWT;
 include_once 'vendor/autoload.php';
 include_once 'model/user.model.php';
 include_once 'core/response.php';
-
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
 $res = new Response();
 $users = new UserModel();
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $postBody = file_get_contents('php://input');
     if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
         header('HTTP/1.0 400 Bad Request');
-        return $res->error('CAPO TE FALTA EL TOKEN');
+        echo  'CAPO TE FALTA EL TOKEN';
         exit;
     }
     $jwt = $matches[1];
