@@ -48,7 +48,7 @@ class MateriaAPI extends API implements iAPI{
                         http_response_code(200);
                         
                     }else{
-                        http_response_code(500);
+                        //http_response_code(500);
                     }
                     $datosArray = $rows;
                 }else{
@@ -142,7 +142,7 @@ class MateriaAPI extends API implements iAPI{
                         http_response_code(200);
                         
                     }else{
-                        http_response_code(500);
+                       // http_response_code(500);
                     }
                     $datosArray = $rows;
                 }else{
