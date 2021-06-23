@@ -1,3 +1,4 @@
+/*ENTIDADES:*/
 CREATE TABLE user(
 	id 					INT PRIMARY KEY AUTO_INCREMENT,
     ci					VARCHAR(8) 	 UNIQUE NOT NULL ,
@@ -28,5 +29,15 @@ CREATE TABLE administrador(
     FOREIGN KEY(id) REFERENCES user(id)
 );
 
+create table materia(
+	id 					INT PRIMARY KEY,
+	nombre 				VARCHAR(50) NOT NULL /*ADA Web tiene mas de 40 chars*/
+);
+
+
+
 INSERT INTO user(ci,nombre,apellido,email,avatar,nickname,password,estado_cuenta) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO administrador(id) value(1);
+
+INSERT INTO user(ci,nombre,apellido,email,avatar,nickname,password,estado_cuenta) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO alumno(id) value(1);
