@@ -30,11 +30,13 @@ CREATE TABLE administrador(
 );
 
 create table materia(
-	id 					INT PRIMARY KEY,
-	nombre 				VARCHAR(50) NOT NULL /*ADA Web tiene mas de 40 chars*/
+	id 					INT PRIMARY KEY AUTO_INCREMENT,
+	nombre 				VARCHAR(50) NOT NULL /*ADA Web tiene mas de 40 chars*/,
+    estado				TINYINT(1) NOT NULL DEFAULT 1/* 0 inactivo ,1 activo*/
 );
-
-
+ALTER TABLE materia
+ALTER estado SET DEFAULT 1;
+select * from materia;
 
 INSERT INTO user(ci,nombre,apellido,email,avatar,nickname,password,estado_cuenta) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO administrador(id) value(1);
