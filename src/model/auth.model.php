@@ -81,10 +81,6 @@ class AuthModel extends Model{
         }
     }
 
-    public function register($json){
-
-    }
-
     function generateToken($user,$type){
         $res = new Response();
         $secret_key = SECRET_KEY;
