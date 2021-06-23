@@ -25,12 +25,8 @@ class Model{
     public function nonQuery($stm, $datos = []){
         $data = $this->conn->prepare($stm);
         $data->execute($datos);
-        $rows = $this->conn->affected_rows;
-        if($rows >= 1){
-            return $rows;
-        }else{
-            return 0;
-        }
+        $rows = $data->rowCount();
+        return $rows;
     }
 
     // function query($stm, $datos = []){
