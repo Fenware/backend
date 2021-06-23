@@ -19,6 +19,7 @@ services:
         - 3306:3306
       volumes:
         - mariadb_chathink:/var/lib/mysql
+        - ./users.sql:/docker-entrypoint-initdb.d/users.sql # Archivo para inicializar la creacion de las tablas y base de datos
       environment:
         MYSQL_DATABASE: database
         MYSQL_USER: admin
