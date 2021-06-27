@@ -5,7 +5,7 @@ include_once 'core/iAPI.php';
 include_once 'model/user.model.php';
 include_once 'core/response.php';
 
-class UserAPI extends API implements iAPI{
+class UserAPI extends API{
     
     private $user;
     private $res;
@@ -13,19 +13,7 @@ class UserAPI extends API implements iAPI{
     {
         $this->res = new Response();
         $this->user = new UserModel();
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $this->POST();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-            $this->GET();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
-            $this->PUT();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
-            $this->DELETE();
-        }else{
-            header('Content-Type: applicaton/json');
-            $datosArray = $this->res->error_405();
-            echo json_encode($datosArray);
-        }
+        parent::__construct($this->res);
     }
 
     public function POST(){

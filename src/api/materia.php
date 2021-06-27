@@ -13,19 +13,7 @@ class MateriaAPI extends API implements iAPI{
     {
         $this->res = new Response();
         $this->materia = new MateriaModel();
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $this->POST();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-            $this->GET();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
-            $this->PUT();
-        }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
-            $this->DELETE();
-        }else{
-            header('Content-Type: applicaton/json');
-            $datosArray = $this->res->error_405();
-            echo json_encode($datosArray);
-        }
+        parent::__construct($this->res);
     }
 
     public function POST(){
@@ -37,13 +25,13 @@ class MateriaAPI extends API implements iAPI{
             exit;
         }else{
             //Todo correcto/Haga el trabajo
-            if($token->user_type == 'administrador'){
+            if($token->user_type == 'administrator'){
                 //$datosArray = $this->user->getAllUsers();
                 $postBody = file_get_contents('php://input');
                 $data = json_decode($postBody,true);
-                if(isset($data['nombre'])){
-                    $nombre = $data['nombre'];
-                    $rows = $this->materia->postMateria($nombre);
+                if(isset($data['name'])){
+                    $name = $data['name'];
+                    $rows = $this->materia->postMateria($name);
                     if($rows>=1){
                         http_response_code(200);
                         
@@ -72,16 +60,16 @@ class MateriaAPI extends API implements iAPI{
         }else{
             //Todo correcto/Haga el trabajo
             //TODO
-            if($token->user_type == 'administrador'){
+            if($token->user_type == 'administrator'){
                 //$datosArray = $this->user->getAllUsers();
                 $postBody = file_get_contents('php://input');
                 $data = json_decode($postBody,true);
                 if(isset($data['id'])){
                     $id = $data['id'];
                     $datosArray = $this->materia->getMateriaId($id);
-                }elseif(isset($data['nombre'])){
-                    $nombre = $data['nombre'];
-                    $datosArray = $this->materia->getMateriasNombre($nombre);
+                }elseif(isset($data['name'])){
+                    $name = $data['name'];
+                    $datosArray = $this->materia->getMateriasNombre($name);
                 }else{
                     $datosArray = $this->materia->getMaterias();
                 }
@@ -102,14 +90,14 @@ class MateriaAPI extends API implements iAPI{
             exit;
         }else{
             //Token valido/ Haga el trabajo
-            if($token->user_type == 'administrador'){
+            if($token->user_type == 'administrator'){
                 //$datosArray = $this->user->getAllUsers();
                 $postBody = file_get_contents('php://input');
                 $data = json_decode($postBody,true);
-                if(isset($data['id']) && isset($data['nombre'])){
+                if(isset($data['id']) && isset($data['name'])){
                     $id = $data['id'];
-                    $nombre = $data['nombre'];
-                    $rows = $this->materia->putMateria($id,$nombre);
+                    $name = $data['name'];
+                    $rows = $this->materia->putMateria($id,$name);
                     $datosArray = $rows;
                 }else{
                     $datosArray = $this->res->error_400();
@@ -131,7 +119,7 @@ class MateriaAPI extends API implements iAPI{
             exit;
         }else{
             //Todo correcto/Haga el trabajo
-            if($token->user_type == 'administrador'){
+            if($token->user_type == 'administrator'){
                 //$datosArray = $this->user->getAllUsers();
                 $postBody = file_get_contents('php://input');
                 $data = json_decode($postBody,true);

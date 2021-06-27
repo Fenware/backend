@@ -12,12 +12,7 @@ class AuthAPI extends API implements iAPI{
     {
         $this->res = new Response();
         $this->auth = new AuthModel();
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $this->POST();
-        }else{
-            $datosArray = $this->res->error_405();
-            echo json_encode($datosArray);
-        }
+        parent::__construct($this->res);
     }
 
     public function POST(){

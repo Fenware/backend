@@ -7,10 +7,27 @@ header("Access-Control-Allow-Headers: *");
 
 abstract class API{
     //Chequeo que me llegue el token
-    function __construct()
+    function __construct($res)
     {
-        
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $this->POST();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
+            $this->GET();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
+            $this->PUT();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+            $this->DELETE();
+        }else{
+            header('Content-Type: applicaton/json');
+            $datosArray = $res->error_405();
+            echo json_encode($datosArray);
+        }
     }
+
+    abstract protected function POST();
+    abstract protected function GET();
+    abstract protected function PUT();
+    abstract protected function DELETE();
 
     public function checkToken($res){
         if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
