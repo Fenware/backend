@@ -1,6 +1,6 @@
-CREATE SCHEMA proyecto;
-USE proyecto;
-ALTER DATABASE proyecto CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+-- CREATE SCHEMA proyecto;
+-- USE proyecto;
+ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 /* Entities */
 CREATE TABLE `user`(  
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,  
@@ -62,6 +62,43 @@ CREATE TABLE consult_schedule(
     FOREIGN KEY(id_teacher) REFERENCES teacher(id)
 );
 
+
+/* Relations */
+
+CREATE TABLE subject_orientation(
+	id_subject 			INT NOT NULL,
+    id_orientation 		INT NOT NULL,
+	PRIMARY KEY(id_subject, id_orientation),
+    FOREIGN KEY(id_subject) REFERENCES `subject`(id),
+	FOREIGN KEY(id_orientation) REFERENCES orientation(id)
+);
+
+CREATE TABLE teacher_group(
+	id_teacher 			INT NOT NULL,
+    id_group 			INT NOT NULL,
+	PRIMARY KEY(id_teacher, id_group),
+    FOREIGN KEY(id_teacher) REFERENCES teacher(id),
+	FOREIGN KEY(id_group) REFERENCES `group`(id)
+);
+
+
+CREATE TABLE teacher_group_subject(
+	id_teacher 			INT NOT NULL,
+    id_group 			INT NOT NULL,
+    id_subject			INT NOT NULL,
+	PRIMARY KEY(id_teacher, id_group,id_subject),
+    FOREIGN KEY(id_teacher,id_group) REFERENCES teacher_group(id_teacher, id_group)
+);
+
+CREATE TABLE student_group(
+	id_student			INT NOT NULL,
+    id_group 			INT NOT NULL,
+	PRIMARY KEY(id_student, id_group),
+    FOREIGN KEY(id_student) REFERENCES student(id),
+	FOREIGN KEY(id_group) REFERENCES `group`(id)
+);
+
+/* Query */
 CREATE TABLE `query`(
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_student 			INT NOT NULL,
@@ -97,42 +134,6 @@ CREATE TABLE message(
     FOREIGN KEY(id_user) REFERENCES user(id),
     FOREIGN KEY(id_query) REFERENCES `query`(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-/* Relations */
-
-CREATE TABLE subject_orientation(
-	id_subject 			INT NOT NULL,
-    id_orientation 		INT NOT NULL,
-	PRIMARY KEY(id_subject, id_orientation),
-    FOREIGN KEY(id_subject) REFERENCES `subject`(id),
-	FOREIGN KEY(id_orientation) REFERENCES orientation(id)
-);
-
-CREATE TABLE teacher_group(
-	id_teacher 			INT NOT NULL,
-    id_group 			INT NOT NULL,
-	PRIMARY KEY(id_teacher, id_group),
-    FOREIGN KEY(id_teacher) REFERENCES teacher(id),
-	FOREIGN KEY(id_group) REFERENCES `group`(id)
-);
-
-
-CREATE TABLE teacher_group_subject(
-	id_teacher 			INT NOT NULL,
-    id_group 			INT NOT NULL,
-    id_subject			INT NOT NULL,
-	PRIMARY KEY(id_teacher, id_group,id_subject),
-    FOREIGN KEY(id_teacher,id_group) REFERENCES teacher_group(id_teacher, id_group)
-);
-
-CREATE TABLE student_group(
-	id_student			INT NOT NULL,
-    id_group 			INT NOT NULL,
-	PRIMARY KEY(id_students, id_group),
-    FOREIGN KEY(id_student) REFERENCES student(id),
-	FOREIGN KEY(id_group) REFERENCES `group`(id)
-);
-
 
 
 INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
