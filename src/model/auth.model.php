@@ -31,13 +31,13 @@ class AuthModel extends Model{
             
             switch($datos['type']){
                 case 'admin':
-                    $type = 'administrador';
+                    $type = 'administrator';
                     break;
                 case 'alumno':
-                    $type = 'alumno';
+                    $type = 'student';
                     break;
                 case 'docente':
-                    $type = 'docente';
+                    $type = 'teacher';
                     break;
                 default:
                     $type = 'error';
