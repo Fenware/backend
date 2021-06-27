@@ -135,8 +135,8 @@ CREATE TABLE student_group(
 
 
 
-INSERT INTO user(ci,nombre,apellido,email,avatar,nickname,password,estado_cuenta) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
-INSERT INTO administrador(id) value(1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO administrator(id) value(1);
 
-INSERT INTO user(ci,nombre,apellido,email,avatar,nickname,password,estado_cuenta) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
-INSERT INTO alumno(id) value(1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO student(id) value(2);
