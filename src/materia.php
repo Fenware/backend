@@ -1,5 +1,5 @@
 <?php
 
-include_once 'api/materia.php';
+include_once 'api/subject.php';
 
-$user = new MateriaAPI();
+$user = new SubjectAPI();
