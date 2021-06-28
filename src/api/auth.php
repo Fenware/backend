@@ -3,6 +3,9 @@
 include_once 'model/auth.model.php';
 include_once 'core/response.php';
 
+header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
+header("Access-Control-Allow-Headers: *");
+
 class AuthAPI{
     private $auth;
     private $res;
@@ -39,7 +42,7 @@ class AuthAPI{
     }
 
     public function GET(){
-
+        
     }
 
     public function PUT(){
