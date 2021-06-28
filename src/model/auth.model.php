@@ -33,10 +33,10 @@ class AuthModel extends Model{
                 case 'admin':
                     $type = 'administrator';
                     break;
-                case 'alumno':
+                case 'student':
                     $type = 'student';
                     break;
-                case 'docente':
+                case 'teacher':
                     $type = 'teacher';
                     break;
                 default:
