@@ -7,16 +7,17 @@ header("Access-Control-Allow-Headers: *");
 
 abstract class API{
     //Chequeo que me llegue el token
+    
     function __construct($res)
     {
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $this->POST();
+            $this->operate('POST',$res);
         }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-            $this->GET();
+            $this->operate('GET',$res);
         }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
-            $this->PUT();
+            $this->operate('PUT',$res);
         }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
-            $this->DELETE();
+            $this->operate('DELETE',$res);
         }else{
             header('Content-Type: applicaton/json');
             $datosArray = $res->error_405();
@@ -24,12 +25,12 @@ abstract class API{
         }
     }
 
-    abstract protected function POST();
-    abstract protected function GET();
-    abstract protected function PUT();
-    abstract protected function DELETE();
+    abstract protected function POST($token,$data);
+    abstract protected function GET($token,$data);
+    abstract protected function PUT($token,$data);
+    abstract protected function DELETE($token,$data);
 
-    public function checkToken($res){
+    private function checkToken($res){
         if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
         
             header('HTTP/1.0 400 Bad Request');
@@ -59,7 +60,7 @@ abstract class API{
         return $token;
     }
     
-    public function validToken($token){
+    private function validToken($token){
         $now = new DateTimeImmutable();
         $serverName = URL;
         if ($token->iss !== $serverName || $token->nbf > $now->getTimestamp() || $token->exp < $now->getTimestamp()){
@@ -69,5 +70,32 @@ abstract class API{
         }
     }
 
+    private function HasVolidToken($res){
+        $token = $this->checkToken($res);
+        $foo  = $this->validToken($token);
+        if($foo == true){
+            return $token;
+        }else{
+            return false;
+        }
+    }
+
+    private function getJson(){
+        $postBody = file_get_contents('php://input');
+        $data = json_decode($postBody,true);
+        return $data;
+    }
+
+    public function operate($function,$res){
+        $token = $this->HasVolidToken($res);
+        
+        if($token == false){
+            header('HTTP/1.1 401 Unauthorized');
+            echo json_encode($res->error('Not a valid token'));
+        }else{
+            $data = $this->getJson();
+            $this->$function($token,$data);
+        }
+    }
    
 }
