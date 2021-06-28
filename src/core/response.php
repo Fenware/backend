@@ -16,6 +16,14 @@ class Response{
         return $this->response;
     }
 
+    public function error_403(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 403,
+            'error_msg' => 'No tienes los permisos para acceder a este recurso'
+        );
+        return $this->response;
+    }
     public function error_404(){
         $this->response['status'] = 'error';
         $this->response['result'] = array(
