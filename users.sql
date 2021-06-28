@@ -41,7 +41,8 @@ CREATE TABLE orientation(
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     `name` 				VARCHAR(50) NOT NULL,
     `year`				INT NOT NULL,
-    state 				TINYINT(1) NOT NULL DEFAULT 1
+    state 				TINYINT(1) NOT NULL DEFAULT 1,
+    UNIQUE KEY(`name`,`year`)
 );
 
 CREATE TABLE `group`(
@@ -68,10 +69,13 @@ CREATE TABLE consult_schedule(
 CREATE TABLE subject_orientation(
 	id_subject 			INT NOT NULL,
     id_orientation 		INT NOT NULL,
+    state 				TINYINT(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY(id_subject, id_orientation),
     FOREIGN KEY(id_subject) REFERENCES `subject`(id),
 	FOREIGN KEY(id_orientation) REFERENCES orientation(id)
 );
+
+alter table subject_orientation add state 				TINYINT(1) NOT NULL DEFAULT 1;
 
 CREATE TABLE teacher_group(
 	id_teacher 			INT NOT NULL,
@@ -141,3 +145,15 @@ INSERT INTO administrator(id) value(1);
 
 INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO student(id) value(2);
+
+select * from user;
+select * from `subject`;
+select * from orientation;
+select * from subject_orientation where id_orientation = 1;
+
+SELECT s.id,s.`name`,s.state
+FROM `subject` s,orientation o,subject_orientation so
+WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
+
+UPDATE orientation SET `name` = 'ROBOTICA' ,`year` = 2 WHERE id = 2;
+
