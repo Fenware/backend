@@ -1,20 +1,31 @@
 <?php
 
-include_once 'core/api.php';
-include_once 'core/iAPI.php';
 include_once 'model/auth.model.php';
 include_once 'core/response.php';
 
-class AuthAPI extends API implements iAPI{
+class AuthAPI{
     private $auth;
     private $res;
     function __construct()
     {
         $this->res = new Response();
         $this->auth = new AuthModel();
-        parent::__construct($this->res);
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $this->POST();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
+            $this->GET();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
+            $this->PUT();
+        }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+            $this->DELETE();
+        }else{
+            header('Content-Type: applicaton/json');
+            $datosArray = $this->res->error_405();
+            echo json_encode($datosArray);
+        }
     }
 
+    //LOGIN - IN POST FOR SECURITY
     public function POST(){
         $postBody = file_get_contents('php://input');
         $datosArray = $this->auth->login($postBody);
