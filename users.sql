@@ -75,11 +75,11 @@ CREATE TABLE subject_orientation(
 	FOREIGN KEY(id_orientation) REFERENCES orientation(id)
 );
 
-alter table subject_orientation add state 				TINYINT(1) NOT NULL DEFAULT 1;
 
 CREATE TABLE teacher_group(
 	id_teacher 			INT NOT NULL,
     id_group 			INT NOT NULL,
+    state 				TINYINT(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY(id_teacher, id_group),
     FOREIGN KEY(id_teacher) REFERENCES teacher(id),
 	FOREIGN KEY(id_group) REFERENCES `group`(id)
@@ -90,6 +90,7 @@ CREATE TABLE teacher_group_subject(
 	id_teacher 			INT NOT NULL,
     id_group 			INT NOT NULL,
     id_subject			INT NOT NULL,
+    state 				TINYINT(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY(id_teacher, id_group,id_subject),
     FOREIGN KEY(id_teacher,id_group) REFERENCES teacher_group(id_teacher, id_group)
 );
@@ -97,6 +98,7 @@ CREATE TABLE teacher_group_subject(
 CREATE TABLE student_group(
 	id_student			INT NOT NULL,
     id_group 			INT NOT NULL,
+    state 				TINYINT(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY(id_student, id_group),
     FOREIGN KEY(id_student) REFERENCES student(id),
 	FOREIGN KEY(id_group) REFERENCES `group`(id)
