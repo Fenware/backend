@@ -46,5 +46,8 @@ class Model{
         return $array;
     }
 
+    public function lastInsertId(){
+        return $this->conn->lastInsertId();
+    }
 }
 
