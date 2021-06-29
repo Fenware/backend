@@ -1,5 +1,4 @@
 <?php
-
-include_once 'api/orientation.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/apis/orientation.php';
 
 $orientacion = new OrientacionAPI();
