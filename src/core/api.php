@@ -1,8 +1,9 @@
 <?php
 use Firebase\JWT\JWT;
-include_once 'vendor/autoload.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
+header('Content-type: application/json');
 
 
 abstract class API{
@@ -42,7 +43,7 @@ abstract class API{
         if (! $jwt) {
             // Token no extraible
             header('HTTP/1.0 400 Bad Request');
-            echo json_encode($res->error('No pudimos estraer tu token pa'));
+            echo json_encode($res->error('No pudimos extraer tu token pa'));
             exit;
         }
         $secret_key  = SECRET_KEY;
@@ -70,7 +71,7 @@ abstract class API{
         }
     }
 
-    private function HasVolidToken($res){
+    private function HasValidToken($res){
         $token = $this->checkToken($res);
         $foo  = $this->validToken($token);
         if($foo == true){
@@ -87,7 +88,7 @@ abstract class API{
     }
 
     public function operate($function,$res){
-        $token = $this->HasVolidToken($res);
+        $token = $this->HasValidToken($res);
         
         if($token == false){
             header('HTTP/1.1 401 Unauthorized');

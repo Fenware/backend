@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 use Firebase\JWT\JWT;
-require_once 'vendor/autoload.php';
-include_once 'core/model.php';
-include_once 'model/user.model.php';
-include_once 'core/response.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 
 class AuthModel extends Model{

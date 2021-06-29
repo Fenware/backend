@@ -1,7 +1,7 @@
 <?php
 
-require_once 'core/model.php';
-require_once 'core/response.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 class UserModel extends Model{
 

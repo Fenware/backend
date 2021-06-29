@@ -1,7 +1,7 @@
 <?php
 
-require_once 'core/model.php';
-require_once 'core/response.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 class OrientationModel extends Model{
     private $id;
@@ -15,25 +15,54 @@ class OrientationModel extends Model{
         parent::__construct();
     }
 
-    public function postOrientation($name,$year,$subjects,$count){
+    public function postOrientation($name,$year,$subjects){
         $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
         $rows = parent::nonQuery($stm,[$name,$year]);
-        $error = false;
+
         if($rows > 0){
             $this->id = parent::lastInsertId();
-            for($i = 0 ;$i < $count ;$i++){
-                $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
-                $rows = parent::nonQuery($stm,[$subjects[$i],$this->id]);
-                if($rows == 0){
-                    $error = true;
-                }
-            }
+            $error = $this->postSubjectsInOrientation($this->id,$subjects);
         }
         if($error == true){
             $rows = 0;
         }
         return $rows;
     }
+
+    public function postSubjectsInOrientation($id,$subjects){
+        $error = false;
+        $count = count($subjects);
+        for($i = 0 ;$i < $count ;$i++){
+            $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
+            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
+            if($rows == 0){
+                $error = true;
+            }
+        }
+        if($error){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+
+    public function deleteSubjectsInOrientation($id,$subjects){
+        $error = false;
+        $count = count($subjects);
+        for($i = 0 ;$i < $count ;$i++){
+            $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
+            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
+            if($rows == 0){
+                $error = true;
+            }
+        }
+        if($error){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+
     public function getOrientations(){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE `state` = 1';
         return parent::query($stm);
@@ -58,6 +87,61 @@ class OrientationModel extends Model{
         $rows = parent::nonQuery($stm,[$name,$year,$id]);
         return $rows;
     }
+
+    public function putOrientationSubjects($id,$s_add,$s_remove){
+        //First we add  the new subjects
+        $error = false;
+        $count = count($s_add);
+        if($count > 0){
+            $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
+            for($i = 0;$i < $count;$i++){
+                $rows = parent::nonQuery($stm,[$s_add[$i],$id]);
+                if($rows == 0){
+                    $error = true;
+                }
+            }
+        }
+        
+        $count = count($s_remove);
+        if($count > 0){
+            $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
+            for($i = 0;$i < $count;$i++){
+                $rows = parent::nonQuery($stm,[$s_remove[$i],$id]);
+                if($rows == 0){
+                    $error = true;
+                }
+            }
+        }
+        if($error){
+            return 0;
+        }else{
+            return 1;
+        }
+        
+    }
+
+    public function deleteOrientation($id){
+        $error = false;
+        $stm = 'UPDATE orientation SET `state` = 0 WHERE id = ?';
+        $rows = parent::nonQuery($stm,[$id]);
+        if($rows > 0 ){
+            $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_orientation  = ?';
+            $rows = parent::nonQuery($stm,[$id]);
+            if($rows == 0){
+                $error = true;
+            }
+        }else{
+            $error = true;
+        }
+        if($error){
+            return 0;
+        }else{
+            return 1;
+        }
+
+    }
+
+
 
     
 

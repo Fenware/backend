@@ -1,6 +1,6 @@
 <?php
 
-include_once 'core/conexion.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/conexion.php';
 class Model{
 
     private $conn;
