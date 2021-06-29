@@ -1,6 +1,7 @@
 <?php
 use Firebase\JWT\JWT;
 include_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/config/config.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
 header('Content-type: application/json');
