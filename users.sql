@@ -33,7 +33,7 @@ CREATE TABLE student(
 
 CREATE TABLE `subject`(
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    `name` 				VARCHAR(50) NOT NULL,
+    `name` 				VARCHAR(50) UNIQUE NOT NULL,
     state 				TINYINT(1) NOT NULL DEFAULT 1
 );
 
@@ -151,11 +151,12 @@ INSERT INTO student(id) value(2);
 select * from user;
 select * from `subject`;
 select * from orientation;
-select * from subject_orientation where id_orientation = 1;
+select * from subject_orientation;
 
-SELECT s.id,s.`name`,s.state
+SELECT s.id,s.`name`,s.state,o.id,so.state
 FROM `subject` s,orientation o,subject_orientation so
 WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
 
-UPDATE orientation SET `name` = 'ROBOTICA' ,`year` = 2 WHERE id = 2;
+UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
 
+UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
