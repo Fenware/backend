@@ -1,5 +1,5 @@
 <?php
 
-include_once 'api/user.php';
+include_once 'apis/user.php';
 
 $user = new UserAPI();

@@ -1,5 +1,5 @@
 <?php
 
-include_once 'api/subject.php';
+include_once 'apis/subject.php';
 
 $user = new SubjectAPI();
