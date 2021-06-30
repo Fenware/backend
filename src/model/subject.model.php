@@ -16,7 +16,11 @@ class SubjectModel extends Model{
     public function postSubject($nombre){
         $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
         $rows = parent::nonQuery($stm,[$nombre]);
-        return $rows;
+        if($rows > 0){
+            return parent::lastInsertId();
+        }else{
+            return 'error';
+        }
     }
 
     public function deleteSubject($id){
