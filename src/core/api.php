@@ -34,7 +34,6 @@ abstract class API{
 
     private function checkToken($res){
         if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-        
             header('HTTP/1.0 400 Bad Request');
             echo json_encode($res->error('Capo te falta el token'));
             exit;
