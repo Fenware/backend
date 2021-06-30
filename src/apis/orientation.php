@@ -39,11 +39,10 @@ class OrientacionAPI extends API{
                         $datosArray = $this->res->error_400();
                     }else{
                         //Datos validos
-                        
-                        $rows = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
+                        $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
                         //If rows > 0 it means that everything went right
-                        if($rows > 0){
-                            $datosArray = $rows;
+                        if($id !== 'error'){
+                            $datosArray = $id;
                         }else{
                             //Something wrong happend during postOrientation()
                             $datosArray = $this->res->error('Something went wrong in the server');
