@@ -2,4 +2,4 @@
 
 include_once 'apis/subject.php';
 
-$user = new SubjectAPI();
+$subject = new SubjectAPI();
