@@ -35,7 +35,7 @@ abstract class API{
 
     private function checkToken($res){
         if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-            header('HTTP/1.0 400 Bad Request');
+            // header('HTTP/1.0 400 Bad Request');
             echo json_encode($res->error('Capo te falta el token'));
             exit;
         }
@@ -43,7 +43,7 @@ abstract class API{
         //Veo si el token es extraible
         if (! $jwt) {
             // Token no extraible
-            header('HTTP/1.0 400 Bad Request');
+            // header('HTTP/1.0 400 Bad Request');
             echo json_encode($res->error('No pudimos extraer tu token pa'));
             exit;
         }
