@@ -2,4 +2,4 @@
 
 include_once 'apis/group.php';
 
-$user = new GroupAPI();
+$group = new GroupAPI();
