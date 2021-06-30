@@ -18,15 +18,15 @@ class OrientationModel extends Model{
     public function postOrientation($name,$year,$subjects){
         $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
         $rows = parent::nonQuery($stm,[$name,$year]);
-
         if($rows > 0){
             $this->id = parent::lastInsertId();
             $error = $this->postSubjectsInOrientation($this->id,$subjects);
         }
-        if($error == true){
-            $rows = 0;
+        if($error == 0){
+            return 'error';
+        }else{
+            return $this->id;
         }
-        return $rows;
     }
 
     public function postSubjectsInOrientation($id,$subjects){
