@@ -54,7 +54,10 @@ class OrientacionSubjectAPI extends API{
                 $datosArray = $this->orientation->getOrientationSubjects($data['id']);
                 echo json_encode($datosArray);
             }
+        }else{
+            echo json_encode($this->res->error_403());
         }
+        
     }
 
     public function PUT($token,$data){
@@ -90,6 +93,8 @@ class OrientacionSubjectAPI extends API{
                 }
             }
             echo json_encode($datosArray);
+        }else{
+            echo json_encode($this->res->error_403());
         }
     }
 
