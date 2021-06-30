@@ -21,7 +21,6 @@ class Conexion{
             return $conn;
         } catch (PDOException $error) {
             echo 'no db conexion';
-            echo $this->host.':'.$this->database.':'.$this->user.':'.$this->password;
             return false;
         }
     }
