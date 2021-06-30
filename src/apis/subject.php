@@ -19,13 +19,8 @@ class SubjectAPI extends API{
         if($token->user_type == 'administrator'){
             if(isset($data['name'])){
                 $name = $data['name'];
-                $rows = $this->materia->postSubject($name);
-                if($rows>=1){
-                    http_response_code(200);   
-                }else{
-                    //http_response_code(500);
-                }
-                $datosArray = $rows;
+                $id = $this->materia->postSubject($name);
+                $datosArray = $id;
             }else{
                 $datosArray = $this->res->error_400();
             }
