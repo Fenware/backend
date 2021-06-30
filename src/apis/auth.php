@@ -15,7 +15,6 @@ class AuthAPI{
         $this->res = new Response();
         $this->auth = new AuthModel();
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            echo 'post';
             $this->POST();
         }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
             $this->GET();
