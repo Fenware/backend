@@ -152,6 +152,7 @@ select * from user;
 select * from `subject`;
 select * from orientation;
 select * from subject_orientation;
+select * from `group`;
 
 SELECT s.id,s.`name`,s.state,o.id,so.state
 FROM `subject` s,orientation o,subject_orientation so
@@ -160,3 +161,4 @@ WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1
 UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
 
 UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
+UPDATE `group` SET `state` = 1 WHERE id = 1;
