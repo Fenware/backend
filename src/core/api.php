@@ -4,6 +4,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/config/config.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Methods: *");
 header('Content-type: application/json');
 
 
