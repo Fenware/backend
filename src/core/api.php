@@ -34,7 +34,7 @@ abstract class API{
     abstract protected function DELETE($token,$data);
 
     private function checkToken($res){
-        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+        if (!preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             // header('HTTP/1.0 400 Bad Request');
             echo json_encode($res->error('Capo te falta el token'));
             exit;
@@ -90,7 +90,6 @@ abstract class API{
 
     public function operate($function,$res){
         $token = $this->HasValidToken($res);
-        
         if($token == false){
             header('HTTP/1.1 401 Unauthorized');
             echo json_encode($res->error('Not a valid token'));
