@@ -9,9 +9,9 @@ CREATE TABLE `user`(
     middle_name 		VARCHAR(16),
     surname 			VARCHAR(16) NOT NULL,
     second_surname 		VARCHAR(16),
-    email 				VARCHAR(100) NOT NULL,
-    avatar 				VARCHAR(50),
-    nickname 			VARCHAR(32),  
+    email 				VARCHAR(100) UNIQUE NOT NULL,
+    avatar 				VARCHAR(50),  -- Agregar default avatar
+    nickname 			VARCHAR(32) UNIQUE NOT NULL,  
     state_account 		TINYINT(1) NOT NULL DEFAULT 2, -- 0 inactiv 1 activ 2 pendent 
     `password` 			VARCHAR(128) NOT NULL -- hashed pasword
 ); 
@@ -149,6 +149,8 @@ INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_accoun
 INSERT INTO student(id) value(2);
 
 select * from user;
+select * from student;
+select * from teacher;
 select * from `subject`;
 select * from orientation;
 select * from subject_orientation;
@@ -162,3 +164,5 @@ UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
 
 UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
 UPDATE `group` SET `state` = 1 WHERE id = 1;
+
+DELETE FROM `subject`;
