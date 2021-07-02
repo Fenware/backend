@@ -82,12 +82,15 @@ abstract class API{
         }
     }
 
+    //Gets the body of the request and converts it from json to array
     private function getJson(){
         $postBody = file_get_contents('php://input');
         $data = json_decode($postBody,true);
         return $data;
     }
 
+
+    //Validates token and  if so runs the function $function
     public function operate($function,$res){
         $token = $this->HasValidToken($res);
         if($token == false){
@@ -97,6 +100,32 @@ abstract class API{
             $data = $this->getJson();
             $this->$function($token,$data);
         }
+    }
+
+    //$data is  the array of data,$vars is writen like so ['id' => 'is_int','name' => 'is_string']
+    //Checks if all the data requested is setted ,the correct variable type and if it is not empty
+    public function isTheDataCorrect($data,$vars){
+        $correct = true;
+        foreach($vars as $key => $value){
+            if(    !isset($data[$key])
+                || !$value($data[$key])
+                || empty($data[$key])){
+                $correct = false;
+            }
+        }
+        return $correct;
+    }
+
+    //Checks if the data inside and array is the correct type
+    //Ej : $type = 'is_int'
+    public function isArrayDataCorrect($array,$type){
+        $correct = true;
+        foreach($array as $value){
+            if(!$type($value)){
+                $correct = false;
+            }
+        }
+        return $correct;
     }
    
 }
