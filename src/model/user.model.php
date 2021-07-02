@@ -61,7 +61,9 @@ class UserModel extends Model{
     }
 
     public function getPendentUsers(){
-        $stm = 'SELECT * FROM user WHERE `state` = 2';
+        $stm = 'SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        FROM user 
+        WHERE state_account = 2';
         $data = parent::query($stm);
         return $data;
     }
@@ -77,9 +79,12 @@ class UserModel extends Model{
         $data = parent::query($stm,[$id]);
         return $data;
     }
-
+    
+    //No muestra administradores por seguridad
     public function getAllUsers(){
-        $stm = 'SELECT * FROM user';
+        $stm = 'SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        FROM user u,administrator a
+        WHERE administrator.id != u.id';
         $data = parent::query($stm);
         return $data;
     }
