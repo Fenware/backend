@@ -21,10 +21,54 @@ class UserModel extends Model{
         parent::__construct();
     }
 
+    public function postUser($data){
+        $stm = 'INSERT INTO `user`(ci,`name`,surname,email,nickname,`password`)
+        VALUES(:ci,:name,:surname,:email,:nickname,:password)';
+        $foo = [
+            'ci' => $data['ci'],
+            'name' => $data['name'],
+            'surname' => $data['surname'],
+            'email' => $data['email'],
+            'nickname' => $data['nickname'],
+            'password' => password_hash($data['password'],PASSWORD_DEFAULT)//Hash password
+        ];
+        $rows = parent::nonQuery($stm,$foo);
+        if($rows > 0){
+            return parent::lastInsertId();
+        }else{
+            return 'error';
+        } 
+    }
 
+    public function patchUser($id,$column,$value){
+        $stm = 'UPDATE `user` SET '.$column.' = :value WHERE id = :id';
+        $foo = [
+            'value' => $value,
+            'id' => $id
+        ];
+        return parent::nonQuery($stm,$foo);
+    }
+
+    public function setUserType($id,$type){
+        $stm = 'INSERT INTO '.$type.'(id) VALUES(:id)';
+        $foo = ['id' => $id];
+        return parent::nonQuery($stm,$foo);
+    }
     public function getUser($user){
         $stm = 'SELECT * FROM user WHERE email = ? OR nickname = ?';
         $data = parent::query($stm,[$user,$user]);
+        return $data;
+    }
+
+    public function getPendentUsers(){
+        $stm = 'SELECT * FROM user WHERE `state` = 2';
+        $data = parent::query($stm);
+        return $data;
+    }
+
+    public function getUserByCi($ci){
+        $stm = 'SELECT * FROM user WHERE ci = ?';
+        $data = parent::query($stm,[$ci]);
         return $data;
     }
 
@@ -39,8 +83,6 @@ class UserModel extends Model{
         $data = parent::query($stm);
         return $data;
     }
-
-
 
 
     public function hash($password){
