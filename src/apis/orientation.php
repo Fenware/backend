@@ -16,39 +16,24 @@ class OrientacionAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            if(!isset($data['name']) || !isset($data['year']) || !isset($data['subjects'])){
+            if(!$this->isPostDataCorrect($data)){
                 $datosArray = $this->res->error_400();
             }else{
-                //Check data state 
-                if(!is_string($data['name']) || !is_int($data['year']) || !is_array($data['subjects'])){
-                    //Data  is not correct
+                    //check if all values in subjects are numbers
+                $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
+                if(!$valid){
+                    //Datos invalidos
                     $datosArray = $this->res->error_400();
                 }else{
-                    //check if all values in subjects are numbers
-                    $count = count($data['subjects']);
-                    $valid = true;
-                    //Loop the array searching for items that are not numbers
-                    for($i = 0;$i < $count; $i++){
-                        if(!is_int($data['subjects'][$i])){
-                           //The item was not a number
-                           $valid = false;
-                        }
-                    }
-                    if(!$valid){
-                        //Datos invalidos
-                        $datosArray = $this->res->error_400();
+                    //Datos validos
+                    $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
+                    //If rows > 0 it means that everything went right
+                    if($id !== 'error'){
+                        $datosArray = $id;
                     }else{
-                        //Datos validos
-                        $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
-                        //If rows > 0 it means that everything went right
-                        if($id !== 'error'){
-                            $datosArray = $id;
-                        }else{
-                            //Something wrong happend during postOrientation()
-                            $datosArray = $this->res->error('Something went wrong in the server');
-                        }
+                        //Something wrong happend during postOrientation()
+                        $datosArray = $this->res->error('Something went wrong in the server');
                     }
-                    
                 }
             }
             echo json_encode($datosArray);
@@ -56,6 +41,13 @@ class OrientacionAPI extends API{
             echo json_encode($this->res->error_403());
         }
 
+    }
+
+
+    private function isPostDataCorrect($data){
+        return parent::isTheDataCorrect($data,['name' => 'is_string',
+                                               'year' => 'is_int',
+                                               'subjects' => 'is_array']);
     }
 
     public function GET($token,$data){
