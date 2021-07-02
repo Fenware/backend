@@ -17,7 +17,7 @@ class SubjectAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            if(isset($data['name'])){
+            if($this->isPostDataCorrect($data)){
                 $name = $data['name'];
                 $id = $this->materia->postSubject($name);
                 $datosArray = $id;
@@ -30,12 +30,16 @@ class SubjectAPI extends API{
         }
     }
 
+    private function isPostDataCorrect($data){
+        return parent::isTheDataCorrect($data,['name' => 'is_string']);
+    }
+
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            if(isset($data['id'])){
+            if($this->isGetDataCorrectId($data)){
                 $id = $data['id'];
                 $datosArray = $this->materia->getSubjectById($id);
-            }elseif(isset($data['name'])){
+            }elseif($this->isGetDataCorrectName($data)){
                 $name = $data['name'];
                 $datosArray = $this->materia->getSubjectByName($name);
             }else{
@@ -47,10 +51,18 @@ class SubjectAPI extends API{
         }
     }
 
+    private function isGetDataCorrectId($data){
+        return parent::isTheDataCorrect($data,['id' => 'is_int']);
+    }
+
+    private function isGetDataCorrectName($data){
+        return parent::isTheDataCorrect($data,['name' => 'is_string']);
+    }
+
     public function PUT($token,$data){
         if($token->user_type == 'administrator'){
             //$datosArray = $this->user->getAllUsers();
-            if(isset($data['id']) && isset($data['name'])){
+            if($this->isPutDataCorrect($data)){
                 $id = $data['id'];
                 $name = $data['name'];
                 $rows = $this->materia->putSubject($id,$name);
@@ -64,10 +76,15 @@ class SubjectAPI extends API{
         }
     }
 
+    private function isPutDataCorrect($data){
+        return parent::isTheDataCorrect($data,
+        ['id' => 'is_int',
+         'name' => 'is_string']);
+    }
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
             //$datosArray = $this->user->getAllUsers();s
-            if(isset($data['id'])){
+            if($this->isDeleteDataCorrectId($data)){
                 $id = $data['id'];
                 $rows = $this->materia->deleteSubject($id);
                 if($rows>=1){
@@ -83,6 +100,10 @@ class SubjectAPI extends API{
         }else{
             echo json_encode($this->res->error('No tienes los permisos para acceder a este recurso'));
         }
+    }
+
+    private function isDeleteDataCorrectId($data){
+        return parent::isTheDataCorrect($data,['id' => 'is_int']);
     }
 
 }
