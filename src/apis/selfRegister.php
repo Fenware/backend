@@ -111,11 +111,17 @@ class SelfRegisterAPI{
     private function isObligatoryDataCorrect($data){
         if(    !isset($data['ci'])
             || strlen($data['ci']) != 8
+            || empty($data['ci'])
             || !isset($data['name']) 
+            || empty($data['name'])
             || !isset($data['surname']) 
+            || empty($data['surname'])
             || !isset($data['email']) 
+            || empty($data['email'])
             || !isset($data['nickname'])
+            || empty($data['nickname'])
             || !isset($data['password'])
+            || empty($data['password'])
             || !isset($data['type'])){
             //No existen
             return false;
