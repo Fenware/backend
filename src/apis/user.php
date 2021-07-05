@@ -171,20 +171,47 @@ class UserAPI extends API{
     }
 
     public function GET($token,$data){
-        if($token->user_type == 'administrador'){
+        if($token->user_type == 'administrator'){
             $datosArray = $this->user->getAllUsers();
             echo json_encode($datosArray);
         }else{
-            echo json_encode($this->res->error_403());
+            $datosArray = $this->user->getUserByIdSafe($token->user_id);
+            echo json_encode($datosArray);
+            //echo json_encode($this->res->error_403());
         }
     }
 
     public function PUT($token,$data){
-
+        if($token->user_type == 'administrator'){
+            //TODO
+        }else{
+            // me aseguro que que quiere modificarse a si mismo
+            if($token->user_id == $data['id']){
+                //me aseguro de que el id esta bien
+                if(parent::isTheDataCorrect($data,['id' => 'is_int'])){
+                    if(parent::isTheDataCorrect($data,['id'=> 'is_int','avatar'=>'is_string','nickname'=>'is_string'])){
+                        $this->user->patchUser($data['id'],'avatar',$data['avatar']);
+                        $this->user->patchUser($data['id'],'nickname',$data['nickname']);
+                    }
+                    
+                }else{
+                    $datosArray = $this->res->error_400();
+                }
+            }else{
+                $datosArray = $this->res->error_403();
+            }
+        }
     }
 
     public function DELETE($token,$data){
-
+        if($token->user_type == 'administrator'){
+            //TODO
+        }else{
+            // me aseguro que que quiere modificarse a si mismo
+            //me aseguro de que el id esta bien
+            $datosArray = $this->user->patchUser($token->user_id,'state_account',0);
+            echo json_encode($datosArray);
+        }
     }
 
 }
