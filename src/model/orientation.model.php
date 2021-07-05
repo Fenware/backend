@@ -79,7 +79,7 @@ class OrientationModel extends Model{
     }
 
     public function getOrientationSubjects($id){
-        $stm = 'SELECT o.id,s.id FROM orientation o,`subject` s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
+        $stm = 'SELECT so.id_orientation,so.id_subject FROM orientation o,`subject` s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
         return parent::query($stm,[$id]);
     }
     public function putOrientation($id,$name,$year){
