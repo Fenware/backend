@@ -25,15 +25,7 @@ class OrientacionSubjectAPI extends API{
                     echo json_encode($this->res->error_400());
                 }else{
                     //id is a  number and subjects an  array
-                    $count = count($data['subjects']);
-                    $valid = true;
-                    //Loop the array searching for items that are not numbers
-                    for($i = 0;$i < $count; $i++){
-                        if(!is_int($data['subjects'][$i])){
-                           //The item was not a number
-                           $valid = false;
-                        }
-                    }
+                    $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
                     if(!$valid){
                         //Datos invalidos
                         $datosArray = $this->res->error_400();
@@ -48,7 +40,7 @@ class OrientacionSubjectAPI extends API{
 
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
+            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
                 $datosArray = $this->orientation->getOrientationSubjects($data['id']);
             }else{
                 $datosArray = $this->res->error_400();
@@ -75,15 +67,7 @@ class OrientacionSubjectAPI extends API{
                     echo json_encode($this->res->error_400());
                 }else{
                     //id is a  number and subjects an  array
-                    $count = count($data['subjects']);
-                    $valid = true;
-                    //Loop the array searching for items that are not numbers
-                    for($i = 0;$i < $count; $i++){
-                        if(!is_int($data['subjects'][$i])){
-                           //The item was not a number
-                           $valid = false;
-                        }
-                    }
+                    $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
                     if(!$valid){
                         //Datos invalidos
                         $datosArray = $this->res->error_400();
