@@ -48,12 +48,12 @@ class OrientacionSubjectAPI extends API{
 
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            if(!isset($data['id'])){
-                echo json_encode($this->res->error_400());
-            }else{
+            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
                 $datosArray = $this->orientation->getOrientationSubjects($data['id']);
-                echo json_encode($datosArray);
+            }else{
+                $datosArray = $this->res->error_400();
             }
+            echo json_encode($datosArray);
         }else{
             echo json_encode($this->res->error_403());
         }
