@@ -69,7 +69,7 @@ class SelfRegisterAPI{
             if(count($array) > 0){
                 return $this->res->error('Este nickname ya esta tomado');
             }else{
-                $array = $this->user->getUserByCi($data['ci']);
+                $array = $this->user->getUserByCiSafe($data['ci']);
                 if(count($array) > 0){
                     return $this->res->error('Esta cedula ya esta tomada');
                 }else{
