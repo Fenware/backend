@@ -15,9 +15,11 @@ class UserModel extends Model{
     private $avatar;
     private $nickname;
     private $password;
+    private $res;
 
     function __construct() 
     {
+        $this->res = new Response();
         parent::__construct();
     }
 
@@ -60,17 +62,26 @@ class UserModel extends Model{
         return $data;
     }
 
+
     public function getPendentUsers(){
-        $stm = 'SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
         FROM user 
         WHERE state_account = 2';
         $data = parent::query($stm);
         return $data;
     }
 
-    public function getUserByCi($ci){
-        $stm = 'SELECT * FROM user WHERE ci = ?';
+    public function getUserByCiSafe($ci){
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        FROM user WHERE ci = ?';
         $data = parent::query($stm,[$ci]);
+        return $data;
+    }
+
+    public function getUserByIdSafe($id){
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        FROM user WHERE id = ?';
+        $data = parent::query($stm,[$id]);
         return $data;
     }
 
@@ -82,9 +93,9 @@ class UserModel extends Model{
     
     //No muestra administradores por seguridad
     public function getAllUsers(){
-        $stm = 'SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
         FROM user u,administrator a
-        WHERE administrator.id != u.id';
+        WHERE a.id != u.id';
         $data = parent::query($stm);
         return $data;
     }
@@ -95,6 +106,41 @@ class UserModel extends Model{
         return $hashed_pwd;
     }
 
+    public function giveUserGroup($id,$code,$type){
+        $stm = 'SELECT * FROM `group` WHERE `code` = ?';
+        $group = parent::query($stm,[$code]);
+        if($group){
+            $stm = 'INSERT INTO '.$type.'_group(id_'.$type.',id_group) VALUES(?,?)';
+            $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+            return $rows;
+        }else{
+            return $this->res->error('El grupo no existe');
+        }
+    }
+
+    public function deleteUserGroup($id,$group = 0,$type){
+        switch($type){
+            case 'teacher':
+                $stm =  'UPDATE teacher_group SET `state` = 0 WHERE id_teacher = ? AND id_group = ?';
+                $rows = parent::nonQuery($stm,[$id,$group]);
+                break;
+            case 'student' : 
+                $stm =  'UPDATE student_group SET `state` = 0 WHERE id_student = ?';
+                $rows = parent::nonQuery($stm,[$id]);
+                break;
+        }
+        return $rows;
+    }
+
+    public function userHasGroup($id){
+        $stm = 'SELECT * FROM student_group WHERE id_student = ?';
+        $rows = parent::nonQuery($stm,[$id]);
+        if($rows > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * Get the value of id
