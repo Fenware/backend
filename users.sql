@@ -96,10 +96,9 @@ CREATE TABLE teacher_group_subject(
 );
 
 CREATE TABLE student_group(
-	id_student			INT NOT NULL,
+	id_student			INT NOT NULL PRIMARY KEY,
     id_group 			INT NOT NULL,
     state 				TINYINT(1) NOT NULL DEFAULT 1,
-	PRIMARY KEY(id_student, id_group),
     FOREIGN KEY(id_student) REFERENCES student(id),
 	FOREIGN KEY(id_group) REFERENCES `group`(id)
 );
@@ -148,13 +147,18 @@ INSERT INTO administrator(id) value(1);
 INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO student(id) value(2);
 
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('22222222','Elcome','Piedras Volador','teacher@edu.com','/assets/teacher.png','ElProfeSAPEEEEE','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO teacher(id) value(3);
+
+
 select * from user;
 select * from student;
 select * from teacher;
 select * from `subject`;
 select * from orientation;
-select * from subject_orientation;
+select * from subject_orientation ;
 select * from `group`;
+select * from  teacher_group;
 
 SELECT s.id,s.`name`,s.state,o.id,so.state
 FROM `subject` s,orientation o,subject_orientation so
@@ -166,3 +170,7 @@ UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
 UPDATE `group` SET `state` = 1 WHERE id = 1;
 
 DELETE FROM `subject`;
+
+SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+FROM user u,administrator a
+WHERE a.id != u.id;
