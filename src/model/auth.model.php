@@ -53,7 +53,7 @@ class AuthModel extends Model{
                     if($data[0]['state_account'] == 1){
                         //Si la contraseña del usuario en la base de datos es igual a la que me mando el usuario
                         if(password_verify($this->user->getPassword(),$data[0]['password'])){
-                            $userType = $this->user->getUserType($data[0]['id'],$type);
+                            $userType = $this->user->checkUserType($data[0]['id'],$type);
                             if($userType){
                                 $token = $this->generateToken($data[0]['id'],$type);
                                 if($token){
