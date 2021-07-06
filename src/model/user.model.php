@@ -63,6 +63,7 @@ class UserModel extends Model{
     }
 
 
+
     public function getPendentUsers(){
         $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
         FROM user 
@@ -85,10 +86,22 @@ class UserModel extends Model{
         return $data;
     }
 
-    public function getUserType($id,$type){
+    public function checkUserType($id,$type){
         $stm = 'SELECT * FROM '.$type.' WHERE id = ?';
         $data = parent::query($stm,[$id]);
         return $data;
+    }
+
+    public function getUserType($id){
+        if($this->checkUserType($id,'teacher')){
+            return 'teacher';
+        }elseif($this->checkUserType($id,'student')){
+            return 'student';
+        }elseif($this->checkUserType($id,'administrator')){
+            return 'administrator';
+        }else{
+            return 'No type';
+        }
     }
     
     //No muestra administradores por seguridad
