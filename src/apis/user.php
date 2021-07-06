@@ -175,6 +175,7 @@ class UserAPI extends API{
             $datosArray = $this->user->getAllUsers();
             echo json_encode($datosArray);
         }else{
+            //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
             $datosArray = $this->user->getUserByIdSafe($token->user_id);
             echo json_encode($datosArray);
             //echo json_encode($this->res->error_403());

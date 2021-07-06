@@ -52,9 +52,10 @@ class OrientacionAPI extends API{
 
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            if(isset($data['id'])){
+            //El id solo nos llega por string
+            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
                 $datosArray = $this->orientation->getOrientationById($data['id']);
-            }elseif(isset($data['name'])){
+            }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
                 $datosArray = $this->orientation->getOrientationByName($data['name']);
             }else{
                 $datosArray = $this->orientation->getOrientations();

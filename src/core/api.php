@@ -97,7 +97,11 @@ abstract class API{
             header('HTTP/1.1 401 Unauthorized');
             echo json_encode($res->error('Not a valid token'));
         }else{
-            $data = $this->getJson();
+            if($function == 'GET'){
+                $data = $_GET;
+            }else{
+                $data = $this->getJson();
+            }
             $this->$function($token,$data);
         }
     }

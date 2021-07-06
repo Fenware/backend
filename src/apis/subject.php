@@ -52,7 +52,8 @@ class SubjectAPI extends API{
     }
 
     private function isGetDataCorrectId($data){
-        return parent::isTheDataCorrect($data,['id' => 'is_int']);
+        //id llega  como string si es por url
+        return parent::isTheDataCorrect($data,['id' => 'is_string']);
     }
 
     private function isGetDataCorrectName($data){

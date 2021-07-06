@@ -40,7 +40,7 @@ class OrientacionSubjectAPI extends API{
 
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
+            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
                 $datosArray = $this->orientation->getOrientationSubjects($data['id']);
             }else{
                 $datosArray = $this->res->error_400();
