@@ -28,6 +28,10 @@ class PendentUserAPI extends API{
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
             $datosArray = $this->user->getPendentUsers();
+            foreach($datosArray as $user=>$value){
+                $type = $this->user->getUserType($datosArray[$user]['id']);
+                $datosArray[$user]['type'] = $type;
+            }
             echo json_encode($datosArray);
         }else{
             echo json_encode($this->res->error_403());
@@ -42,6 +46,7 @@ class PendentUserAPI extends API{
         if($token->user_type == 'administrator'){
             if(isset($data['id']) && is_int($data['id'])){
                 $datosArray = $this->user->patchUser($data['id'],'state_account',0);
+                
             }
             echo json_encode($datosArray);
         }else{
