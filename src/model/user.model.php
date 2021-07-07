@@ -16,7 +16,7 @@ class UserModel extends Model{
     private $nickname;
     private $password;
     private $res;
-
+    private $grupo;
     function __construct() 
     {
         $this->res = new Response();
@@ -143,6 +143,22 @@ class UserModel extends Model{
                 break;
         }
         return $rows;
+    }
+
+    public function IsUserInGroup($user,$group,$type){
+        $stm = 'SELECT * FROM '.$type.'_group WHERE id_'.$type.' = ? AND id_group = ?';
+        $data =  parent::query($stm,[$user,$group]);
+        if($data){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getUserGroups($user,$type){
+        $stm = 'SELECT * FROM '.$type.'_group WHERE id_'.$type.' = ?';
+        $data = parent::query($stm,[$user]);
+        return $data;
     }
 
     public function userHasGroup($id){
