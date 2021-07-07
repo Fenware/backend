@@ -51,6 +51,28 @@ class SubjectModel extends Model{
         return $rows;
     }
 
+    public function GiveSubjectInGroupToTeacher($teacher,$group,$subject){
+        $stm = 'INSERT INTO teacher_group_subject(id_teacher,id_group,id_subject) VALUES(?,?,?)';
+        $rows = parent::nonQuery($stm,[$teacher,$group,$subject]);
+        return $rows;
+    }
+
+    public function removeTeacherFromSubjectInGroup($teacher,$group,$subject){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_teacher = ? AND id_group = ? AND id_subject = ?';
+        $rows = parent::nonQuery($stm,[$teacher,$group,$subject]);
+        return $rows;
+    }
+    //To check if a  subject in a  group is already talken
+    public function IsSubjectInGroupTaken($group,$subject){
+        $stm = 'SELECT * FROM teacher_group_subject t,`user` u 
+        WHERE t.id_teacher = i.id AND t.id_group = ? AND t.id_subject = ? AND u.state_account = 1';
+        $data = parent::query($stm,[$group,$subject]);
+        if($data){
+            return true;
+        }else{
+            return false;
+        }
+    }
     
     public function getId()
     {
