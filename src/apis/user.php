@@ -186,21 +186,15 @@ class UserAPI extends API{
         if($token->user_type == 'administrator'){
             //TODO
         }else{
-            // me aseguro que que quiere modificarse a si mismo
-            if($token->user_id == $data['id']){
-                //me aseguro de que el id esta bien
-                if(parent::isTheDataCorrect($data,['id' => 'is_int'])){
-                    if(parent::isTheDataCorrect($data,['id'=> 'is_int','avatar'=>'is_string','nickname'=>'is_string'])){
-                        $this->user->patchUser($data['id'],'avatar',$data['avatar']);
-                        $this->user->patchUser($data['id'],'nickname',$data['nickname']);
-                    }
-                    
-                }else{
-                    $datosArray = $this->res->error_400();
-                }
+            //me aseguro de que el id esta bien
+            if(parent::isTheDataCorrect($data,['avatar'=>'is_string','nickname'=>'is_string'])){
+                $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
+                $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
+                $datosArray = 1;
             }else{
-                $datosArray = $this->res->error_403();
+                $datosArray = $this->res->error_400();
             }
+            echo json_encode($datosArray);
         }
     }
 
