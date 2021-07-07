@@ -63,6 +63,29 @@ class GroupModel extends Model{
         return $code;
     }
 
+
+    
+
+    public function getGroupOrientation($group){
+        $stm = 'SELECT * FROM `group` WHERE id = ?';
+        $data = parent::query($stm,[$group]);
+        $orientation = $data[0]['id_orientation'];
+        return $orientation;
+    }
+
+    
+    public function IsSubjectInGroup($group,$subject){
+        $orientation = $this->getGroupOrientation($group);
+        $stm = 'SELECT * FROM subject_orientation WHERE id_orientation = ? AND id_subject =?';
+        $subject = parent::query($stm,[$orientation,$subject]);
+        if($subject){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     private function randomString($length){
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
