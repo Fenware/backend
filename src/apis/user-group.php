@@ -38,6 +38,12 @@ class UserGroupAPI extends API{
     }
 
     public function GET($token,$data){
+        if($token->user_type == 'administrator'){
+            //TODO
+        }else{
+            $grupos = $this->user->getUserGroups($token->user_id,$token->user_type);
+            echo json_encode($grupos);
+        }
         
     }
 
