@@ -10,7 +10,7 @@ CREATE TABLE `user`(
     surname 			VARCHAR(16) NOT NULL,
     second_surname 		VARCHAR(16),
     email 				VARCHAR(100) UNIQUE NOT NULL,
-    avatar 				VARCHAR(50),  -- Agregar default avatar
+    avatar 				VARCHAR(50) DEFAULT '01-man.svg',  -- Agregar default avatar
     nickname 			VARCHAR(32) UNIQUE NOT NULL,  
     state_account 		TINYINT(1) NOT NULL DEFAULT 2, -- 0 inactiv 1 activ 2 pendent 
     `password` 			VARCHAR(128) NOT NULL -- hashed pasword
@@ -141,13 +141,13 @@ CREATE TABLE message(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','01-man.svg','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO administrator(id) value(1);
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','02-boy.svg','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO student(id) value(2);
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('22222222','Elcome','Piedras Volador','teacher@edu.com','/assets/teacher.png','ElProfeSAPEEEEE','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('22222222','Elcome','Piedras Volador','teacher@edu.com','07-boy-2.svg','ElProfeSAPEEEEE','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO teacher(id) value(3);
 
 
