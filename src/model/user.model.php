@@ -171,6 +171,16 @@ class UserModel extends Model{
         }
     }
 
+    public function UserHasAccesToConsulta($user,$consulta){
+        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
+        $querys = parent::query($stm,[$user,$user,$consulta]);
+        if(empty($querys)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     /**
      * Get the value of id
      */ 
