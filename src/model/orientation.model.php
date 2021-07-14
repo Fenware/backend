@@ -35,6 +35,9 @@ class OrientationModel extends Model{
         for($i = 0 ;$i < $count ;$i++){
             $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
             $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
+            //Cambiando el state a mano en vez de simplemente dejarse al default me permite agregar materias ya borradas ,ya que al ser unicas no puedo agregar una misma materia 2 veces pero puedo simplemente devolver la materia a la vida poniendo el state a 1
+            $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_subject = ? AND id_orientation = ?';
+            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
             if($rows == 0){
                 $error = true;
             }
@@ -140,8 +143,6 @@ class OrientationModel extends Model{
         }
 
     }
-
-
 
     
 
