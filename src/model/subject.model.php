@@ -17,7 +17,10 @@ class SubjectModel extends Model{
         $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
         $rows = parent::nonQuery($stm,[$nombre]);
         if($rows > 0){
-            return parent::lastInsertId();
+            $id = parent::lastInsertId();
+            $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
+            $rows = parent::nonQuery($stm,[$id]);
+            return $id;
         }else{
             return 'error';
         }
@@ -48,7 +51,6 @@ class SubjectModel extends Model{
     public function putSubject($id,$nombre){
         $stm = 'UPDATE `subject` SET `name` = ? WHERE id = ?';
         $rows = parent::nonQuery($stm,[$nombre,$id]);
-        return $rows;
     }
 
     public function GiveSubjectInGroupToTeacher($teacher,$group,$subject){

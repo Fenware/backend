@@ -17,7 +17,10 @@ class GroupModel extends Model{
         $code = $this->generateCode();
         $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
         $rows = parent::nonQuery($stm,[$orientation,$name,$code]);
-        return $rows;
+        $id = parent::lastInsertId();
+        $stm = 'UPDATE `group` SET `state` = 1 WHERE id = ?';
+        $rows = parent::nonQuery($stm,[$id]);
+        return $id;
     }
 
     public function getGroups(){
