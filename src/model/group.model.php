@@ -18,8 +18,8 @@ class GroupModel extends Model{
         $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
         $rows = parent::nonQuery($stm,[$orientation,$name,$code]);
         $id = parent::lastInsertId();
-        $stm = 'UPDATE `group` SET `state` = 1 WHERE id = ?';
-        $rows = parent::nonQuery($stm,[$id]);
+        $stm = 'UPDATE `group` SET `state` = 1 WHERE code = ?';
+        $rows = parent::nonQuery($stm,[$code]);
         return $id;
     }
 
