@@ -20,9 +20,9 @@ class OrientationModel extends Model{
         $rows = parent::nonQuery($stm,[$name,$year]);
         if($rows > 0){
             $this->id = parent::lastInsertId();
-            $error = $this->postSubjectsInOrientation($this->id,$subjects);
+            $rows = $this->postSubjectsInOrientation($this->id,$subjects);
         }
-        if($error == 0){
+        if($rows== 0){
             return 'error';
         }else{
             return $this->id;
