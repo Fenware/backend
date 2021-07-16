@@ -18,11 +18,19 @@ class SubjectModel extends Model{
         $rows = parent::nonQuery($stm,[$nombre]);
         if($rows > 0){
             $id = parent::lastInsertId();
-            $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
-            $rows = parent::nonQuery($stm,[$id]);
             return $id;
         }else{
-            return 'error';
+            $stm = 'SELECT state FROM `subject` WHERE name = ?';
+            $data = parent::query($stm,[$nombre]);
+            if($data[0]['state'] == 1){
+                return 'error';
+            }else{
+                $stm = 'UPDATE `subject` SET state = 1 WHERE name = ?';
+                $rows = parent::nonQuery($stm,[$nombre]);
+                $stm = 'SELECT id FROM `subject` WHERE name = ?';
+                $data = parent::query($stm,[$nombre]);
+                return $data[0]['id'];
+            }
         }
     }
 
