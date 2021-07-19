@@ -51,19 +51,15 @@ class OrientacionAPI extends API{
     }
 
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
-            //El id solo nos llega por string
-            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
-                $datosArray = $this->orientation->getOrientationById($data['id']);
-            }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
-                $datosArray = $this->orientation->getOrientationByName($data['name']);
-            }else{
-                $datosArray = $this->orientation->getOrientations();
-            }
-            echo json_encode($datosArray);
+        //El id solo nos llega por string
+        if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
+            $datosArray = $this->orientation->getOrientationById($data['id']);
+        }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+            $datosArray = $this->orientation->getOrientationByName($data['name']);
         }else{
-            echo json_encode($this->res->error_403());
+            $datosArray = $this->orientation->getOrientations();
         }
+        echo json_encode($datosArray);
 
     }
 
