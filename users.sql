@@ -114,7 +114,7 @@ CREATE TABLE `query`(
     creation_date		DATETIME NOT NULL,
     finish_date 		DATETIME,
     `resume`			TEXT,
-    state 				TINYINT(1) NOT NULL DEFAULT 1, /*1 realizada por el alumno 2 contestada por el  3 recibida*/
+    state 				TINYINT(1) NOT NULL DEFAULT 1, /*1 recibida ,2 contestada ,0 cerrada*/
     FOREIGN KEY(id_student) REFERENCES student(id),
     FOREIGN KEY(id_teacher, id_group, id_subject) REFERENCES teacher_group_subject(id_teacher, id_group, id_subject)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
