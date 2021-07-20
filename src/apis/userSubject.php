@@ -45,7 +45,8 @@ class UserSubjectAPI extends API{
     }
     public function GET($token,$data){
         if($token->user_type == 'teacher'){
-            
+            $datosArray = $this->materia->getTeacherSubjects($token->user_id);
+            echo json_encode($datosArray);
         }
     }
     public function PUT($token,$data){

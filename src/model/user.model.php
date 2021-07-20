@@ -213,6 +213,7 @@ class UserModel extends Model{
         }
     }
 
+    
     /**
      * Get the value of id
      */ 
