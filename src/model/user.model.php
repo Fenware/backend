@@ -128,16 +128,26 @@ class UserModel extends Model{
                     $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
                     $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
                     $stm = 'UPDATE teacher_group SET `state` = 1 WHERE id_teacher = ? AND id_group = ?';
-                    parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
                     break;
                 case 'student':
                     $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
                     $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
                     $stm = 'UPDATE student_group SET `state` = 1 WHERE id_student = ? AND id_group = ?';
-                    parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    break;
+                default:
+                    $rows = 'error';
                     break;
             }
-            return $rows;
+            if($rows > 0){
+                return 1;
+            }elseif($rows_state > 0){
+                return 1;
+            }else{
+                return 0;
+            }
+            
         }else{
             return $this->res->error('El grupo no existe');
         }
