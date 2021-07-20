@@ -20,14 +20,15 @@ class UserGroupAPI extends API{
     public function POST($token,$data){
         if($token->user_type == 'teacher'){
             if(parent::isTheDataCorrect($data,['code'=>'is_string'])){
-                $query = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
-                echo json_encode($query);
+                $datosArray = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
+            }else{
+                $datosArray = $this->res->error_400();
             }
+            echo json_encode($datosArray);
         }
         if($token->user_type == 'student'){
             if(parent::isTheDataCorrect($data,['code'=>'is_string'])){
                 if($this->user->userHasGroup($token->user_id)){
-                    
                     $datosArray =  $this->res->error('Un estudiante solo puede estar en un grupo a la vez');
                 }else{
                     $datosArray = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
@@ -36,9 +37,9 @@ class UserGroupAPI extends API{
             }else{
                 $datosArray = $this->res->error_400();
             }
-
+            echo json_encode($datosArray);
         }
-        echo json_encode($datosArray);
+        
     }
 
     public function GET($token,$data){
