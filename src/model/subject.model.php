@@ -64,7 +64,19 @@ class SubjectModel extends Model{
     public function GiveSubjectInGroupToTeacher($teacher,$group,$subject){
         $stm = 'INSERT INTO teacher_group_subject(id_teacher,id_group,id_subject) VALUES(?,?,?)';
         $rows = parent::nonQuery($stm,[$teacher,$group,$subject]);
-        return $rows;
+        $stm = 'UPDATE teacher_group_subject SET `state` = 1 WHERE id_teacher = ? AND id_group = ? AND id_subject = ?';
+        $rows_state = parent::nonQuery($stm,[$teacher,$group,$subject]);
+        
+        if($rows > 0){
+            //se pudo agregar al 
+            return 1;
+        }elseif($rows_state > 0){
+            //se pudo  devolver la materia al profesor
+            return 1;
+        }else{
+            //no se pudo tomar la materia
+            return 0;
+        }
     }
 
     public function removeTeacherFromSubjectInGroup($teacher,$group,$subject){
