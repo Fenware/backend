@@ -193,6 +193,16 @@ class UserModel extends Model{
         }
     }
 
+    public function StudentIsAutorOfConsulta($student,$consulta){
+        $stm = 'SELECT * FROM `query` WHERE id_student = ? AND id_query = ?';
+        $rows = parent::query($stm,[$student,$consulta]);
+        if($rows > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Get the value of id
      */ 

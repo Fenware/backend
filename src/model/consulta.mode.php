@@ -21,7 +21,7 @@ class ConsultaModel extends Model{
     }
 
     public function getConsultasFromUser($id){
-        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ?';
+        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND `state` != 0';
         $querys = parent::query($stm,[$id,$id]);
         return $querys;
     }
@@ -39,4 +39,9 @@ class ConsultaModel extends Model{
         return $messages;
     }
 
+    public function closeConsulta($consulta){
+        $stm = 'UPDATE `query` SET `state` = 0 WHERE id = ?';
+        $rows = parent::nonQuery($stm,[$consulta]);
+        return $rows;
+    }
 }

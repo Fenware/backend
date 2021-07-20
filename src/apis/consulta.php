@@ -9,6 +9,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 class ConsultaAPI extends API{
     private $res;
     private $consulta;
+    private $user;
     private $group;
     function __construct()
     {
@@ -44,7 +45,20 @@ class ConsultaAPI extends API{
     }
 
     public function DELETE($token,$data){
-        
+        if($token->user_type == 'student'){
+            if(parent::isTheDataCorrect($data,['consulta'])){
+                if($this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta'])){
+                    $this->consulta->closeConsulta($data['consulta']);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+            }else{
+                $datosArray = $this->res->error_400();
+            }
+        }else{
+            $datosArray = $this->res->error_403();
+        }
+        echo json_encode($datosArray);
     }
 
 }
