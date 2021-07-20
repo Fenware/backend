@@ -32,7 +32,7 @@ class GroupAPI extends API{
     }
     
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
+        if($token->user_type == 'administrator' || $token->user_type == 'teacher'){
             if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
                 $datosArray = $this->group->getGroupById($data['id']);
             }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
