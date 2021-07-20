@@ -32,9 +32,13 @@ class UserGroupAPI extends API{
                 }else{
                     $datosArray = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
                 }
-                echo json_encode($datosArray);
+                
+            }else{
+                $datosArray = $this->res->error_400();
             }
+
         }
+        echo json_encode($datosArray);
     }
 
     public function GET($token,$data){
