@@ -19,10 +19,19 @@ class OrientationModel extends Model{
         $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
         $rows = parent::nonQuery($stm,[$name,$year]);
         if($rows > 0){
-            $this->id = parent::lastInsertId();
-            $rows = $this->postSubjectsInOrientation($this->id,$subjects);
+            $id = parent::lastInsertId();
+            $rows = $this->postSubjectsInOrientation($id,$subjects);
+        }else{
+            $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
+            $orientation = parent::query($stm,[$name,$year]);
+            if($orientation){
+                $id = $orientation[0]['id'];
+                $rows = $this->postSubjectsInOrientation($id,$subjects);
+            }else{
+                $rows = 0;
+            }
         }
-        if($rows== 0){
+        if($rows == 0){
             return 'error';
         }else{
             return $this->id;
