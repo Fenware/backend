@@ -120,11 +120,23 @@ class UserModel extends Model{
     }
 
     public function giveUserGroup($id,$code,$type){
-        $stm = 'SELECT * FROM `group` WHERE `code` = ?';
+        $stm = 'SELECT * FROM `group` WHERE `code` = ? AND `state` = 1';
         $group = parent::query($stm,[$code]);
         if($group){
-            $stm = 'INSERT INTO '.$type.'_group(id_'.$type.',id_group) VALUES(?,?)';
-            $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+            switch($type){
+                case 'teacher':
+                    $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
+                    $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    $stm = 'UPDATE teacher_group SET `state` = 1 WHERE id_teacher = ? AND id_group = ?';
+                    parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    break;
+                case 'student':
+                    $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
+                    $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    $stm = 'UPDATE student_group SET `state` = 1 WHERE id_student = ? AND id_group = ?';
+                    parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    break;
+            }
             return $rows;
         }else{
             return $this->res->error('El grupo no existe');
@@ -162,7 +174,7 @@ class UserModel extends Model{
     }
 
     public function userHasGroup($id){
-        $stm = 'SELECT * FROM student_group WHERE id_student = ?';
+        $stm = 'SELECT * FROM student_group WHERE id_student = ? AND `state` = 1';
         $rows = parent::nonQuery($stm,[$id]);
         if($rows > 0){
             return true;
