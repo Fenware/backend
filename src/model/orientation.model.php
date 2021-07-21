@@ -34,7 +34,7 @@ class OrientationModel extends Model{
         if($rows == 0){
             return 'error';
         }else{
-            return $this->id;
+            return $id;
         }
     }
 
