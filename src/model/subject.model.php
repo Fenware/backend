@@ -98,7 +98,7 @@ class SubjectModel extends Model{
     
     public function getTeacherSubjects($teacher){
         $stm = 'SELECT tgs.id_group,tgs.id_orientation,tgs.id_subject ,s.name
-        FROM s `subject` , tgs teacher_group_subject
+        FROM `subject` s ,teacher_group_subject tgs 
         WHERE tgs.id_teacher = ? AND s.id = tgs.id_subject AND tgs.state = 1 AND s.state = 1';
         $data = parent::query($stm,[$teacher]);
         //le agrego selected pa ayudar a los de frontend
