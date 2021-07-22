@@ -14,13 +14,20 @@ class GroupModel extends Model{
     }
 
     public function postGroup($name,$orientation){
-        $code = $this->generateCode();
-        $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
-        $rows = parent::nonQuery($stm,[$orientation,$name,$code]);
-        $id = parent::lastInsertId();
-        $stm = 'UPDATE `group` SET `state` = 1 WHERE code = ?';
-        $rows = parent::nonQuery($stm,[$code]);
-        return $id;
+        $stm = 'SELECT * FROM orientation WHERE `state` = 1';
+        $query_orientation = parent::query($stm,[$orientation]);
+        if($query_orientation){
+            $code = $this->generateCode();
+            $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
+            $rows = parent::nonQuery($stm,[$orientation,$name,$code]);
+            $id = parent::lastInsertId();
+            $stm = 'UPDATE `group` SET `state` = 1 WHERE code = ?';
+            $rows = parent::nonQuery($stm,[$code]);
+            return $id;
+        }else{
+            return ['error'=>'la orientacion no existe o fue borrada'];
+        }
+        
     }
 
     public function getGroups(){
