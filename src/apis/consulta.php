@@ -25,11 +25,11 @@ class ConsultaAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'student'){
-            if(parent::isTheDataCorrect($data,['id_subject'=>'is_int','theme'=>'is_string'])){
+            if(parent::isTheDataCorrect($data,['materia'=>'is_int','asunto'=>'is_string'])){
                 $student_group = $this->user->getUserGroups($token->user_id,'student');
                 $grupo = $student_group[0]['id_group'];
-                $teacher = $this->subject->getTeacherFromSubjectInGroup($data['id_subject'],$grupo);
-                $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['id_subject'],$data['theme']);
+                $teacher = $this->subject->getTeacherFromSubjectInGroup($data['materia'],$grupo);
+                $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['materia'],$data['asunto']);
             }else{
                 $datosArray = $this->res->error_400();
             }
