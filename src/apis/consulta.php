@@ -4,6 +4,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/consulta.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/model/subject.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 class ConsultaAPI extends API{
@@ -11,9 +12,11 @@ class ConsultaAPI extends API{
     private $consulta;
     private $user;
     private $group;
+    private $subject;
     function __construct()
     {
         $this->group = new GroupModel();
+        $this->subject = new SubjectModel();
         $this->res = new Response();
         $this->user = new UserModel();
         $this->consulta = new ConsultaModel();
@@ -22,10 +25,11 @@ class ConsultaAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'student'){
-            if(parent::isTheDataCorrect($data,['id_teacher'=>'is_int','id_subject'=>'is_int','theme'=>'is_string'])){
+            if(parent::isTheDataCorrect($data,['id_subject'=>'is_int','theme'=>'is_string'])){
                 $student_group = $this->user->getUserGroups($token->user_id,'student');
                 $grupo = $student_group[0]['id_group'];
-                $datosArray = $this->consulta->createConsulta($token->user_id,$data['id_teacher'],$grupo,$data['id_subject'],$data['theme']);
+                $teacher = $this->subject->getTeacherFromSubjectInGroup($data['id_subject'],$grupo);
+                $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['id_subject'],$data['theme']);
             }else{
                 $datosArray = $this->res->error_400();
             }

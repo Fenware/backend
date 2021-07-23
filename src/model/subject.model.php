@@ -109,6 +109,14 @@ class SubjectModel extends Model{
         return $data;
     }
 
+    public function getTeacherFromSubjectInGroup($subject,$group){
+        $stm = 'SELECT tgs.id_teacher
+        FROM teacher_group_subject tgs
+        WHERE tgs.id_subject = ? AND tgs.id_group = ? AND `state`= 1 ';
+        $data = parent::query($stm,[$subject,$group]);
+        return $data;
+    }
+
     public function getId()
     {
         return $this->id;
