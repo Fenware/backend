@@ -17,7 +17,7 @@ class ConsultaModel extends Model{
         $id = parent::lastInsertId();
         $stm = 'INSERT INTO individual(id) VALUES(?)';
         $rows = parent::nonQuery($stm,[$id]);
-        return $rows;
+        return $id;
     }
 
     public function getConsultasFromUser($id){
