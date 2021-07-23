@@ -23,14 +23,14 @@ class ConsultaModel extends Model{
         $consulta =  parent::query($stm,[$id]);
         //busco al estudiante que la creó
         $stm_autor = 'SELECT u.name FROM `user` WHERE id = ?';
-        $autor = parent::query($stm_autor,[$consulta[0]['id_student']]);
+        $autor = parent::query($stm_autor,[$consulta['id_student']]);
         //agrego el campo student_name
-        $query[0]['student_name'] = $autor[0]['name'];
+        $query[0]['student_name'] = $autor['name'];
         //busco al docente al que va dirigido  
         $stm_teacher = 'SELECT u.name FROM `user` WHERE id = ?';
-        $teacher = parent::query($stm_teacher,[$consulta[0]['id_teacher']]);
+        $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
         //agrego el campo teacher_name
-        $consulta[0]['teacher_name'] = $teacher[0]['name'];
+        $consulta['teacher_name'] = $teacher['name'];
         return $consulta;
     }
 
@@ -42,12 +42,12 @@ class ConsultaModel extends Model{
             $stm_autor = 'SELECT u.name FROM `user` WHERE id = ?';
             $autor = parent::query($stm_autor,[$consulta['id_student']]);
             //agrego el campo student_name
-            $consulta['student_name'] = $autor[0]['name'];
+            $consulta['student_name'] = $autor['name'];
             //busco al docente al que va dirigido 
             $stm_teacher = 'SELECT u.name FROM `user` WHERE id = ?';
             $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
             //agrego el campo teacher_name
-            $consulta['teacher_name'] = $teacher[0]['name'];
+            $consulta['teacher_name'] = $teacher['name'];
         }
         return $consultas;
     }
