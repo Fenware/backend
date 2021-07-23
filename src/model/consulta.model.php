@@ -12,45 +12,44 @@ class ConsultaModel extends Model{
 
     public function createConsulta($id_student,$id_teacher,$id_group,$id_subject,$theme){
         $stm = 'INSERT INTO `query`(id_student,id_teacher,id_group,id_subject,theme,creation_date) VALUES(?,?,?,?,?,?)';
-        $date = date('m/d/Y h:i:s a', time());
-        parent::nonQuery($stm,[$id_student,$id_teacher,$id_group,$id_subject,$theme,$date]);
+        $date = date('Y-m-d H:i:s', time());
+        $row = parent::nonQuery($stm,[$id_student,$id_teacher,$id_group,$id_subject,$theme,$date]);
         $id = parent::lastInsertId();
         $stm = 'INSERT INTO individual(id) VALUES(?)';
         parent::nonQuery($stm,[$id]);
-
         //devuelvo la consulta con datos extra
         $stm = 'SELECT * FROM `query` WHERE id = ?';
         $consulta =  parent::query($stm,[$id]);
         //busco al estudiante que la creó
-        $stm_autor = 'SELECT u.name FROM `user` WHERE id = ?';
-        $autor = parent::query($stm_autor,[$consulta['id_student']]);
+        $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
+        $autor = parent::query($stm_autor,[$consulta[0]['id_student']]);
         //agrego el campo student_name
-        $query[0]['student_name'] = $autor['name'];
+        $consulta[0]['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
         //busco al docente al que va dirigido  
-        $stm_teacher = 'SELECT u.name FROM `user` WHERE id = ?';
-        $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
+        $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
+        $teacher = parent::query($stm_teacher,[$consulta[0]['id_teacher']]);
         //agrego el campo teacher_name
-        $consulta['teacher_name'] = $teacher['name'];
+        $consulta[0]['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
         return $consulta;
     }
 
     public function getConsultasFromUser($id){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND `state` != 0';
         $consultas = parent::query($stm,[$id,$id]);
-        foreach($consultas as $consulta){
+        foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
-            $stm_autor = 'SELECT u.name FROM `user` WHERE id = ?';
+            $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
             $autor = parent::query($stm_autor,[$consulta['id_student']]);
             //agrego el campo student_name
-            $consulta['student_name'] = $autor['name'];
-            //busco al docente al que va dirigido 
-            $stm_teacher = 'SELECT u.name FROM `user` WHERE id = ?';
+            $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
+             //busco al docente al que va dirigido  
+            $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
             $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
             //agrego el campo teacher_name
-            $consulta['teacher_name'] = $teacher['name'];
+            $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
         }
         return $consultas;
-    }
+    }   
 
     public function postMessagge($user,$consulta,$content){
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
