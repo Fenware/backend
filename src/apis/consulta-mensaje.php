@@ -21,7 +21,7 @@ class ConsultaMessageAPI extends API{
     }
 
     public function POST($token,$data){
-        if(parent::isTheDataCorrect($data,['consulta'=>'is_int','msg'=>'is_strng'])){
+        if(parent::isTheDataCorrect($data,['consulta'=>'is_int','msg'=>'is_string'])){
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
                 $datosArray = $this->consulta->postMessagge($token->user_id,$data['consulta'],$data['msg']);
             }else{
@@ -34,7 +34,7 @@ class ConsultaMessageAPI extends API{
     }
     
     public function GET($token,$data){
-        if(parent::isTheDataCorrect($data,['consulta'=>'is_int'])){
+        if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
                 $datosArray = $this->consulta->getMessageFromConsulta($data['consulta']);
             }else{

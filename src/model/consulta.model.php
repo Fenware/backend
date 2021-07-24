@@ -53,7 +53,7 @@ class ConsultaModel extends Model{
 
     public function postMessagge($user,$consulta,$content){
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
-        $date = date('m/d/Y h:i:s a', time());
+        $date = date('Y-m-d H:i:s', time());
         $rows = parent::nonQuery($stm,[$user,$consulta,$content,$date]);
         return $rows;
     }
