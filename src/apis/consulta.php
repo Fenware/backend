@@ -29,7 +29,13 @@ class ConsultaAPI extends API{
                 $student_group = $this->user->getUserGroups($token->user_id,'student');
                 $grupo = $student_group[0]['id_group'];
                 $teacher = $this->subject->getTeacherFromSubjectInGroup($data['materia'],$grupo);
-                $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['materia'],$data['asunto']);
+                if(is_int($teacher)){
+                    $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['materia'],$data['asunto']);
+                }else{
+                    //si no es un  numero entonces capte un error 
+                    $datosArray = $this->res->error($teacher);
+                }
+                
             }else{
                 $datosArray = $this->res->error_400();
             }
