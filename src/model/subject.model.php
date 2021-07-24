@@ -115,8 +115,8 @@ class SubjectModel extends Model{
         WHERE tgs.id_subject = ? AND tgs.id_group = ? AND `state`= 1 ';
         $data = parent::query($stm,[$subject,$group]);
         try{
-            $id_teacher = (int)$data[0]['id_teacher'];
-            return $id_teacher;
+            $id_teacher = $data[0]['id_teacher'];
+            return (int)$id_teacher;
         }catch(Exception $e){
             return 'Ningun profesor tiene esta materia';
         }
