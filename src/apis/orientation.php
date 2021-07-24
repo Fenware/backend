@@ -28,11 +28,11 @@ class OrientacionAPI extends API{
                     //Datos validos
                     $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
                     //If rows > 0 it means that everything went right
-                    if($id !== 'error'){
+                    if(is_int($id)){
                         $datosArray = $id;
                     }else{
                         //Something wrong happend during postOrientation()
-                        $datosArray = $this->res->error('Something went wrong in the server');
+                        $datosArray = $this->res->error($id);
                     }
                 }
             }

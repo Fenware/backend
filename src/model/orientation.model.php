@@ -16,56 +16,73 @@ class OrientationModel extends Model{
     }
 
     public function postOrientation($name,$year,$subjects){
-        $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
-        $rows = parent::nonQuery($stm,[$name,$year]);
-        if($rows > 0){
-            $id = parent::lastInsertId();
-            $rows = $this->postSubjectsInOrientation($id,$subjects);
+        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 1';
+        $orientation = parent::query($stm,[$name,$year]);
+        if($orientation){
+            return 'La orientacion ya existe';
         }else{
-            $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
+            $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 0';
             $orientation = parent::query($stm,[$name,$year]);
             if($orientation){
                 $id = $orientation[0]['id'];
+                $stm = 'UPDATE orientation SET `state` = 1 WHERE id = ?';
+                parent::nonQuery($stm,[$id]);
                 $rows = $this->postSubjectsInOrientation($id,$subjects);
+                return (int)$id;
             }else{
-                $rows = 0;
+                $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
+                $rows = parent::nonQuery($stm,[$name,$year]);
+                if($rows > 0){
+                    $id = parent::lastInsertId();
+                    $rows = $this->postSubjectsInOrientation($id,$subjects);
+                    return (int)$id;
+                }else{
+                    return 'Algo salio mal al crear la orientacion';
+                }
             }
-        }
-        if($rows == 0){
-            return 'error';
-        }else{
-            return $id;
         }
     }
 
     public function postSubjectsInOrientation($id,$subjects){
-        $error = false;
         $count = count($subjects);
         for($i = 0 ;$i < $count ;$i++){
-            $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
-            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
-            //Cambiando el state a mano en vez de simplemente dejarse al default me permite agregar materias ya borradas ,ya que al ser unicas no puedo agregar una misma materia 2 veces pero puedo simplemente devolver la materia a la vida poniendo el state a 1
-            $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_subject = ? AND id_orientation = ?';
-            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
-            if($rows == 0){
-                $error = true;
+            $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 0';
+            $subject_orientation = parent::query($stm,[$subjects[$i],$id]);
+            if($subject_orientation){
+                $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_subject = ? AND id_orientation = ?';
+                $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
+            }else{
+                $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 1';
+                $subject_orientation = parent::query($stm,[$subjects[$i],$id]);
+                if($subject_orientation){
+                    //La orientacion ya existia , paso 
+                }else{
+                    $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
+                    $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
+                }
             }
         }
-        if($error){
-            return 0;
-        }else{
+        if($rows > 0){
             return 1;
+        }else{
+            return 0;
         }
+        
     }
 
     public function deleteSubjectsInOrientation($id,$subjects){
         $error = false;
         $count = count($subjects);
         for($i = 0 ;$i < $count ;$i++){
-            $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
-            $rows = parent::nonQuery($stm,[$subjects[$i],$id]);
-            if($rows == 0){
-                $error = true;
+            $subject_id  = $subjects[$i];
+            $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 1';
+            $subject_orientation = parent::query($stm,[$subject_id,$id]);
+            if($subject_orientation){
+                $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
+                $rows = parent::nonQuery($stm,[$subject_id,$id]);
+                if($rows == 0){
+                    $error = true;
+                }
             }
         }
         if($error){
