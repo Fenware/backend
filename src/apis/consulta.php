@@ -46,7 +46,15 @@ class ConsultaAPI extends API{
     }
     
     public function GET($token,$data){
-        $datosArray = $this->consulta->getConsultasFromUser($token->user_id);
+        if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
+            if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
+                $datosArray = $this->consulta->getConsultaById($data['consulta']);
+            }else{
+                $datosArray = $this->res->error_403();
+            }
+        }else{
+            $datosArray = $this->consulta->getConsultasFromUser($token->user_id);
+        }
         echo json_encode($datosArray);
     }
 
