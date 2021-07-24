@@ -114,13 +114,12 @@ class SubjectModel extends Model{
         FROM teacher_group_subject tgs
         WHERE tgs.id_subject = ? AND tgs.id_group = ? AND `state`= 1 ';
         $data = parent::query($stm,[$subject,$group]);
-        try {
+        if($data){
             $id_teacher = $data[0]['id_teacher'];
             return (int)$id_teacher;
-        } catch (\Throwable $th) {
+        }else{
             return 'Ningun profesor tiene esta materia';
         }
-        
     }
 
     public function getId()
