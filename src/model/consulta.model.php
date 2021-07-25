@@ -135,4 +135,10 @@ class ConsultaModel extends Model{
         $rows = parent::nonQuery($stm,[$consulta]);
         return $rows;
     }
+
+    public function setConsultaToAnswered($consulta){
+        $stm = 'UPDATE `query` SET `state` = 2 WHERE id = ?';
+        $rows = parent::nonQuery($stm,[$consulta]);
+        return $rows;
+    }
 }
