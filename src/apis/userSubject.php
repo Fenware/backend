@@ -27,7 +27,7 @@ class UserSubjectAPI extends API{
                 if($this->grupo->IsSubjectInGroup($data['grupo'],$data['materia'])){
                     $taken = $this->materia->IsSubjectInGroupTaken($data['grupo'],$data['materia']);
                     if($taken){
-                        $datosArray = $this->res->error('La materia en este grupo ya tiene profesor');
+                        $datosArray = $this->res->error('Esta materia ya tiene un docente');
                     }else{
                         $in_group = $this->user->IsUserInGroup($token->user_id,$data['grupo'],$token->user_type);
                         if($in_group){
