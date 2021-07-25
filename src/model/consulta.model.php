@@ -139,6 +139,7 @@ class ConsultaModel extends Model{
         foreach($messages as $message){
             $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
         }
+        return $rows;
     }
 
     public function setConsultaToAnswered($consulta){
