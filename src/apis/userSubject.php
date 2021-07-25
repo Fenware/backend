@@ -25,10 +25,12 @@ class UserSubjectAPI extends API{
         if($token->user_type == 'teacher'){
             if(parent::isTheDataCorrect($data,['grupo'=>'is_int','materia'=>'is_int'])){
                 if($this->grupo->IsSubjectInGroup($data['grupo'],$data['materia'])){
-                    if($this->materia->IsSubjectInGroupTaken($data['grupo'],$data['materia'])){
+                    $taken = $this->materia->IsSubjectInGroupTaken($data['grupo'],$data['materia']);
+                    if($taken){
                         $datosArray = $this->res->error('La materia en este grupo ya tiene profesor');
                     }else{
-                        if($this->user->IsUserInGroup($token->user_id,$data['grupo'],$token->user_type)){
+                        $in_group = $this->user->IsUserInGroup($token->user_id,$data['grupo'],$token->user_type);
+                        if($in_group){
                             $datosArray =$this->materia->GiveSubjectInGroupToTeacher($token->user_id,$data['grupo'],$data['materia']);
                         }else{
                             $datosArray = $this->res->error('No perteneces a este grupo');

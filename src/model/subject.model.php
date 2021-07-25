@@ -87,7 +87,7 @@ class SubjectModel extends Model{
     //To check if a  subject in a  group is already talken
     public function IsSubjectInGroupTaken($group,$subject){
         $stm = 'SELECT * FROM teacher_group_subject t,`user` u 
-        WHERE t.id_teacher = i.id AND t.id_group = ? AND t.id_subject = ? AND u.state_account = 1';
+        WHERE t.id_teacher = u.id AND t.id_group = ? AND t.id_subject = ? AND u.state_account = 1 AND t.`state` = 1';
         $data = parent::query($stm,[$group,$subject]);
         if($data){
             return true;
