@@ -125,7 +125,7 @@ class ConsultaModel extends Model{
     }
 
     public function getMessageFromConsulta($consulta){
-        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
+        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
         $messages = parent::query($stm,[$consulta]);
         return $messages;
     }
@@ -133,7 +133,12 @@ class ConsultaModel extends Model{
     public function closeConsulta($consulta){
         $stm = 'UPDATE `query` SET `state` = 0 WHERE id = ?';
         $rows = parent::nonQuery($stm,[$consulta]);
-        return $rows;
+        //Start Resume
+        $messages = $this->getMessageFromConsulta($consulta);
+        $resume = 'Resumen \n';
+        foreach($messages as $message){
+            $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
+        }
     }
 
     public function setConsultaToAnswered($consulta){
