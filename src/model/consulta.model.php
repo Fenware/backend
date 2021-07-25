@@ -114,7 +114,43 @@ class ConsultaModel extends Model{
         return $consulta;
     }
 
+    public function getAllConsultasFromUser($id,$type){
+        switch($type){
+            case 'teacher':
+                $stm = 'SELECT * FROM `query` WHERE id_teacher = ?';
+                break;
+            case 'student':
+                $stm = 'SELECT * FROM `query` WHERE id_student = ?';
+                break;
+        }
+        $consultas = parent::query($stm,[$id]);
+        foreach($consultas as &$consulta){
+            //busco al estudiante que la  creo
+            $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
+            $autor = parent::query($stm_autor,[$consulta['id_student']]);
+            //agrego el campo student_name
+            $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
+             //busco al docente al que va dirigido  
+            $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
+            $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
+            //agrego el campo teacher_name
+            $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
+            //busco el nombre de la materia
+            $stm = 'SELECT * FROM `subject` WHERE id = ?';
+            $id_subject = $consulta['id_subject'];
+            $subject = parent::query($stm,[$id_subject]);
+            //agrego el campo subject_name
+            $consulta['subject_name'] = $subject[0]['name'];
 
+            //busco el grupo
+            $stm = 'SELECT * FROM `group` WHERE id = ?';
+            $id_group = $consulta['id_group'];
+            $group = parent::query($stm,[$id_group]);
+            //agrego el campo subject_name
+            $consulta['group_name'] = $group[0]['name'];
+        }
+        return $consultas;
+    } 
     
 
     public function postMessagge($user,$consulta,$content){
