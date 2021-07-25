@@ -65,7 +65,8 @@ class ConsultaAPI extends API{
     public function DELETE($token,$data){
         if($token->user_type == 'student'){
             if(parent::isTheDataCorrect($data,['consulta'])){
-                if($this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta'])){
+                $acces = $this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta']);
+                if($acces){
                     $this->consulta->closeConsulta($data['consulta']);
                 }else{
                     $datosArray = $this->res->error_403();
