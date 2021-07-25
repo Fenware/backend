@@ -118,7 +118,7 @@ class ConsultaModel extends Model{
     }
 
     public function getMessageFromConsulta($consulta){
-        $stm = 'SELECT * FROM `message` WHERE id_query = ?';
+        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
         $messages = parent::query($stm,[$consulta]);
         return $messages;
     }
