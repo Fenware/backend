@@ -46,9 +46,16 @@ class ConsultaModel extends Model{
     }
 
   
-    public function getConsultasFromUser($id){
-        $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_student = ? OR id_teacher = ?';
-        $consultas = parent::query($stm,[$id,$id]);
+    public function getConsultasFromUser($id,$type){
+        switch($type){
+            case 'teacher':
+                $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_teacher = ?';
+                break;
+            case 'student':
+                $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_student = ?';
+                break;
+        }
+        $consultas = parent::query($stm,[$id]);
         foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
             $stm_autor = 'SELECT * FROM `user` WHERE id = ?';

@@ -53,7 +53,7 @@ class ConsultaAPI extends API{
                 $datosArray = $this->res->error_403();
             }
         }else{
-            $datosArray = $this->consulta->getConsultasFromUser($token->user_id);
+            $datosArray = $this->consulta->getConsultasFromUser($token->user_id,$token->user_type);
         }
         echo json_encode($datosArray);
     }
