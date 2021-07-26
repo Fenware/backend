@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear orientaciones
+*/
 class OrientacionAPI extends API{
     private $res;
     private $orientation;
@@ -105,20 +108,15 @@ class OrientacionAPI extends API{
 
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            //Is the id set?
-            if(!isset($data['id'])){
-                //No :/
-                $datosArray = $this->res->error_400();
-            }else{
-                //Yes :D
-                //Is the id a number?
-                if(!is_int($data['id'])){
-                    //No :/
-                    $datosArray = $this->res->error_400();
+            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
+                $result = $this->orientation->deleteOrientation($data['id']);
+                if(is_int($result)){
+                    $datosArray = $result;
                 }else{
-                    //Yes :D
-                    $datosArray = $this->orientation->deleteOrientation($data['id']);
+                    $datosArray = $this->res->error($result);
                 }
+            }else{
+                $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }else{

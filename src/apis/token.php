@@ -2,7 +2,9 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
-
+/*
+API para chequear el token
+*/
 class TokenAPI extends API{
 
     private $res;

@@ -20,7 +20,11 @@ class SubjectAPI extends API{
             if($this->isPostDataCorrect($data)){
                 $name = $data['name'];
                 $id = $this->materia->postSubject($name);
-                $datosArray = $id;
+                if(is_int($id)){
+                    $datosArray = $id;
+                }else{
+                    $datosArray = $this->res->error($id);
+                }
             }else{
                 $datosArray = $this->res->error_400();
             }
