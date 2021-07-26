@@ -75,7 +75,7 @@ class AuthModel extends Model{
                             return $res->error('Contrasenna Incorrecta');
                         }
                     }else{
-                        return $res->error('El usuario esta a la espera de ser aceptado por un administrador');
+                        return $res->error('Tu cuenta aun no fue aceptada por un administrador');
                     }
                 }else{
                     return $res->error('El usuario no existe');
