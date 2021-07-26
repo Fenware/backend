@@ -21,7 +21,7 @@ class GroupModel extends Model{
     */
     public function postGroup($name,$orientation){
         $stm = 'SELECT * FROM orientation WHERE `state` = 1 AND `name` = ? AND id_orientation = ?';
-        $query_orientation = parent::query($stm,[$orientation]);
+        $query_orientation = parent::query($stm,[$name,$orientation]);
         //Chequeo si la orientacion ya existe
         if($query_orientation){
             //genero el codigo del grupo
