@@ -52,7 +52,7 @@ class AuthModel extends Model{
                 return $res->OOPSIE();
             }else{
                 
-                if($datos){
+                if($data){
                     //Chequeo si el usuario esta activo {0:inactivo;1:activo;2:pendiente}
                     if($data[0]['state_account'] == 1){
                         //Si la contraseña del usuario en la base de datos es igual a la que me mando el usuario
