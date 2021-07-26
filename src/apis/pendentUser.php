@@ -31,9 +31,9 @@ class PendentUserAPI extends API{
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
             $datosArray = $this->user->getPendentUsers();
-            foreach($datosArray as $user=>$value){
-                $type = $this->user->getUserType($datosArray[$user]['id']);
-                $datosArray[$user]['type'] = $type;
+            foreach($datosArray as &$user){
+                $type = $this->user->getUserType($user['id']);
+                $user['type'] = $type;
             }
             echo json_encode($datosArray);
         }else{
