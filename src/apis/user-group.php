@@ -4,7 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
-
+/*
+API para asignar grupos a usuarios
+*/
 class UserGroupAPI extends API{
     private $res;
     private $group;
@@ -31,9 +33,13 @@ class UserGroupAPI extends API{
                 if($this->user->userHasGroup($token->user_id)){
                     $datosArray =  $this->res->error('Un estudiante solo puede estar en un grupo a la vez');
                 }else{
-                    $datosArray = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
+                    $result = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
+                    if(is_int($result)){
+                        $datosArray = $result;
+                    }else{
+                        $datosArray = $this->res->error($result);
+                    }
                 }
-                
             }else{
                 $datosArray = $this->res->error_400();
             }

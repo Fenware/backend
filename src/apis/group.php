@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear grupos
+*/
 class GroupAPI extends API{
     private $res;
     private $group;
@@ -16,13 +19,15 @@ class GroupAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            if(!isset($data['name']) || !isset($data['orientacion'])){
+            //Cheque la informacion
+            if(parent::isTheDataCorrect($data,['name'=>'is_string','orientacion'=>'is_int'])){
                 $datosArray = $this->res->error_400();
             }else{
-                if(!is_string($data['name']) || !is_int($data['orientacion'])){
-                    $datosArray = $this->res->error_400();
+                $id = $this->group->postGroup($data['name'],$data['orientacion']);
+                if(is_int($id)){
+                    $datosArray = $id;
                 }else{
-                    $datosArray = $this->group->postGroup($data['name'],$data['orientacion']);
+                    $datosArray = $this->res->error($id);
                 }
             }
             echo json_encode($datosArray);

@@ -7,6 +7,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/subject.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear consultas
+*/
 class ConsultaAPI extends API{
     private $res;
     private $consulta;

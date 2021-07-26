@@ -3,6 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+Modelo de los usuarios
+*/
 class UserModel extends Model{
 
     private $id;
@@ -23,6 +26,9 @@ class UserModel extends Model{
         parent::__construct();
     }
 
+    /*
+    Crea un usuario
+    */
     public function postUser($data){
         $stm = 'INSERT INTO `user`(ci,`name`,surname,email,nickname,`password`)
         VALUES(:ci,:name,:surname,:email,:nickname,:password)';
@@ -41,7 +47,9 @@ class UserModel extends Model{
             return 'error';
         } 
     }
-
+    /*
+    Modifica un usuario
+    */
     public function patchUser($id,$column,$value){
         $stm = 'UPDATE `user` SET '.$column.' = :value WHERE id = :id';
         $foo = [
@@ -51,11 +59,18 @@ class UserModel extends Model{
         return parent::nonQuery($stm,$foo);
     }
 
+    /*
+    Define si un usuario es alumno o docente
+    */
     public function setUserType($id,$type){
         $stm = 'INSERT INTO '.$type.'(id) VALUES(:id)';
         $foo = ['id' => $id];
         return parent::nonQuery($stm,$foo);
     }
+
+    /*
+    Devuelve la informacion de un usuario(no devolver esta info al usuario)
+    */
     public function getUser($user){
         $stm = 'SELECT * FROM user WHERE email = ? OR nickname = ?';
         $data = parent::query($stm,[$user,$user]);
@@ -63,7 +78,9 @@ class UserModel extends Model{
     }
 
 
-
+    /*
+    Devuelve los usuarios pendientes
+    */
     public function getPendentUsers(){
         $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
         FROM user 
@@ -72,6 +89,9 @@ class UserModel extends Model{
         return $data;
     }
 
+    /*
+    Devuelve la informacion de un usuario por cedula
+    */
     public function getUserByCiSafe($ci){
         $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
         FROM user WHERE ci = ?';
@@ -79,6 +99,9 @@ class UserModel extends Model{
         return $data;
     }
 
+    /*
+    Devuelve la informacion de un usuario por id
+    */
     public function getUserByIdSafe($id){
         $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
         FROM user WHERE id = ?';
@@ -86,12 +109,18 @@ class UserModel extends Model{
         return $data;
     }
 
+    /*
+    Chequea si un usuario es de cierto tipo
+    */
     public function checkUserType($id,$type){
         $stm = 'SELECT * FROM '.$type.' WHERE id = ?';
         $data = parent::query($stm,[$id]);
         return $data;
     }
 
+    /*
+    Devuelve que tipo de usuario es un usuario
+    */
     public function getUserType($id){
         if($this->checkUserType($id,'teacher')){
             return 'teacher';
@@ -104,7 +133,9 @@ class UserModel extends Model{
         }
     }
     
-    //No muestra administradores por seguridad
+    /*
+    Devuelve todos los usuarios
+    */
     public function getAllUsers(){
         $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
         FROM user u,administrator a
@@ -114,30 +145,42 @@ class UserModel extends Model{
     }
 
 
+    /*
+    Proteje la constraseña de un usuario 
+    */
     public function hash($password){
         $hashed_pwd  = password_hash($password,PASSWORD_DEFAULT);
         return $hashed_pwd;
     }
 
+    /*
+    Agrego a un usuario a un grupo
+    */
     public function giveUserGroup($id,$code,$type){
+        //Chequeo si el grupo ya existe y esta activo
         $stm = 'SELECT * FROM `group` WHERE `code` = ? AND `state` = 1';
         $group = parent::query($stm,[$code]);
+        //Chequeo si el grupo ya existe y esta activo
         if($group){
             switch($type){
                 case 'teacher':
+                    //Agrego al usuario al grupo
                     $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
                     $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    //Si el usuario estaba en el grupo pero desabilitado le cambio el estado
                     $stm = 'UPDATE teacher_group SET `state` = 1 WHERE id_teacher = ? AND id_group = ?';
                     $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
                     break;
                 case 'student':
+                    //Agrego al usuario al grupo
                     $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
                     $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
+                    //Si el usuario estaba en el grupo pero desabilitado le cambio el estado
                     $stm = 'UPDATE student_group SET `state` = 1 WHERE id_student = ? AND id_group = ?';
                     $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
                     break;
                 default:
-                    $rows = 'error';
+                    $rows = 0;
                     break;
             }
             if($rows > 0){
@@ -149,10 +192,13 @@ class UserModel extends Model{
             }
             
         }else{
-            return $this->res->error('El grupo no existe');
+            return 'El grupo no existe';
         }
     }
 
+    /*
+    Remueve a un usuario de un grupo
+    */
     public function deleteUserGroup($id,$group = 0,$type){
         switch($type){
             case 'teacher':
@@ -167,8 +213,21 @@ class UserModel extends Model{
         return $rows;
     }
 
+    /*
+    Chequea si un usuario esta en un grupo
+    */
     public function IsUserInGroup($user,$group,$type){
-        $stm = 'SELECT * FROM '.$type.'_group WHERE id_'.$type.' = ? AND id_group = ?';
+        switch($type){
+            case 'teacher':
+                $stm = 'SELECT * FROM teacher_group WHERE id_teacher = ? AND id_group = ? AND `state` = 1';
+                break;
+            case 'student':
+                $stm = 'SELECT * FROM student_group WHERE id_student = ? AND id_group = ? AND `state` = 1';
+                break;
+            default:
+                return false;
+                break;
+        }
         $data =  parent::query($stm,[$user,$group]);
         if($data){
             return true;
@@ -177,6 +236,9 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Devuelve los grupos de un usuario
+    */
     public function getUserGroups($user,$type){
         switch($type){
             case 'teacher':
@@ -198,6 +260,9 @@ class UserModel extends Model{
         return $data;
     }
 
+    /*
+    Chequea si un estudiante pertenece a un grupo
+    */
     public function userHasGroup($id){
         $stm = 'SELECT * FROM student_group WHERE id_student = ? AND `state` = 1';
         $rows = parent::nonQuery($stm,[$id]);
@@ -208,6 +273,9 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Chequea si un usuario tiene acceso a una consulta
+    */
     public function UserHasAccesToConsulta($user,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
         $querys = parent::query($stm,[$user,$user,$consulta]);
@@ -218,6 +286,9 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Chequea si un estudiante es el autor de una consutla
+    */
     public function StudentIsAutorOfConsulta($student,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? AND id_query = ?';
         $rows = parent::query($stm,[$student,$consulta]);

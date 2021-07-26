@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para agregar materias a una orientacion
+*/
 class OrientacionSubjectAPI extends API{
     private $res;
     private $orientation;
