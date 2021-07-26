@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear manejar usuarios
+*/
 class UserAPI extends API{
     
     private $user;
@@ -153,13 +156,7 @@ class UserAPI extends API{
             return true;
         }
     }
-    private function setUserType($id,$type){
-        if($type == 'teacher'){
 
-        }elseif($type == 'student'){
-
-        }
-    }
 
     private function is_email($email){
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -170,6 +167,7 @@ class UserAPI extends API{
         }
     }
 
+    //Pido la informacion de un usuario
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
             $datosArray = $this->user->getAllUsers();
@@ -182,6 +180,7 @@ class UserAPI extends API{
         }
     }
 
+    //Modifico a un usuario
     public function PUT($token,$data){
         if($token->user_type == 'administrator'){
             //TODO
@@ -198,6 +197,7 @@ class UserAPI extends API{
         }
     }
 
+    //Borro a un usuario
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
             //TODO

@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para acceptar usuarios pendientes
+*/
 class PendentUserAPI extends API{
     private $user;
     private $res;

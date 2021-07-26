@@ -31,7 +31,12 @@ class UserSubjectAPI extends API{
                     }else{
                         $in_group = $this->user->IsUserInGroup($token->user_id,$data['grupo'],$token->user_type);
                         if($in_group){
-                            $datosArray =$this->materia->GiveSubjectInGroupToTeacher($token->user_id,$data['grupo'],$data['materia']);
+                            $result = $this->materia->GiveSubjectInGroupToTeacher($token->user_id,$data['grupo'],$data['materia']);
+                            if(is_int($result)){
+                                $datosArray = $result;
+                            }else{
+                                $datosArray = $this->res->error($result);
+                            }
                         }else{
                             $datosArray = $this->res->error('No perteneces a este grupo');
                         }

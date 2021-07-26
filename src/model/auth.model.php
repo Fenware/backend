@@ -8,6 +8,10 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 
+/*
+Modelo para autenticar logins
+Al logearse de forma exitosa este genera el token para el usuario
+*/
 class AuthModel extends Model{
 
     private $user;

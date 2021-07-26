@@ -2,7 +2,9 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
-
+/*
+Modelo para las consultas
+*/
 class ConsultaModel extends Model{
 
     public function __construct()
@@ -10,6 +12,9 @@ class ConsultaModel extends Model{
         parent::__construct();
     }
 
+    /*
+    Crea una consulta
+    */
     public function createConsulta($id_student,$id_teacher,$id_group,$id_subject,$theme){
         $stm = 'INSERT INTO `query`(id_student,id_teacher,id_group,id_subject,theme,creation_date) VALUES(?,?,?,?,?,?)';
         $date = date('Y-m-d H:i:s', time());
@@ -45,7 +50,9 @@ class ConsultaModel extends Model{
         return $consulta;
     }
 
-  
+    /*
+    Devuelve todas las consultas de un usuario que no esten cerradas
+    */
     public function getConsultasFromUser($id,$type){
         switch($type){
             case 'teacher':
@@ -84,6 +91,9 @@ class ConsultaModel extends Model{
         return $consultas;
     }   
 
+    /*
+    Devuelve una consulta en base a su id
+    */
     public function getConsultaById($consulta){
         $stm = 'SELECT * FROM `query` WHERE id = ?';
         $consulta =  parent::query($stm,[$consulta]);
@@ -114,6 +124,9 @@ class ConsultaModel extends Model{
         return $consulta;
     }
 
+    /*
+    Devuelve todas las consultas de un usuario sin importar su estado
+    */
     public function getAllConsultasFromUser($id,$type){
         switch($type){
             case 'teacher':
@@ -153,6 +166,9 @@ class ConsultaModel extends Model{
     } 
     
 
+    /*
+    Envia un mensaje a una consulta
+    */
     public function postMessagge($user,$consulta,$content){
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
         $date = date('Y-m-d H:i:s', time());
@@ -160,16 +176,22 @@ class ConsultaModel extends Model{
         return $rows;
     }
 
+    /*
+    Devuelve los mensajes de una consulta
+    */
     public function getMessageFromConsulta($consulta){
         $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
         $messages = parent::query($stm,[$consulta]);
         return $messages;
     }
 
+    /*
+    Cierra una consulta
+    */
     public function closeConsulta($consulta){
         $stm = 'UPDATE `query` SET `state` = 0 WHERE id = ?';
         $rows = parent::nonQuery($stm,[$consulta]);
-        //Start Resume
+        //Genero el resumen de la consulta
         $messages = $this->getMessageFromConsulta($consulta);
         $resume = 'Resumen \n';
         foreach($messages as $message){
@@ -178,6 +200,9 @@ class ConsultaModel extends Model{
         return $rows;
     }
 
+    /*
+    Cambio el estado de una consulta a contestada
+    */
     public function setConsultaToAnswered($consulta){
         $stm = 'UPDATE `query` SET `state` = 2 WHERE id = ?';
         $rows = parent::nonQuery($stm,[$consulta]);

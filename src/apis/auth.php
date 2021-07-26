@@ -6,7 +6,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
 header('Content-type: application/json');
-
+/*
+Api para logearse
+*/
 class AuthAPI{
     private $auth;
     private $res;

@@ -3,7 +3,9 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
-
+/*
+API para auto registrarse
+*/
 class SelfRegisterAPI{
     
     private $user;
@@ -33,6 +35,7 @@ class SelfRegisterAPI{
         
     
 
+    //Creo el usuario
     private function POST($data){
         if(!$this->isDataCorrect($data)){
             $datosArray = $this->res->error_400();
@@ -167,13 +170,7 @@ class SelfRegisterAPI{
             return true;
         }
     }
-    private function setUserType($id,$type){
-        if($type == 'teacher'){
 
-        }elseif($type == 'student'){
-
-        }
-    }
 
     private function is_email($email){
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
