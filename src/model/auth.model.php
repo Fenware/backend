@@ -68,11 +68,11 @@ class AuthModel extends Model{
                                     return $result;
                                 }
                             }else{
-                                return $res->error('El usuario no es '.$type);
+                                return $res->error('El usuario no es un '.$type);
                             }
                             
                         }else{
-                            return $res->error('Contrasenna Incorrecta');
+                            return $res->error('Contraseña Incorrecta');
                         }
                     }else{
                         return $res->error('Tu cuenta aun no fue aceptada por un administrador');
