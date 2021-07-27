@@ -151,11 +151,11 @@ INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_accoun
 INSERT INTO teacher(id) value(3);
 
 
-SELECT * FROM user;
-SELECT * FROM student;
-SELECT * FROM teacher;
-SELECT * FROM `subject`;
-SELECT * FROM orientation;
-SELECT * FROM subject_orientation ;
-SELECT * FROM `group`;
-SELECT * FROM  teacher_group;
+-- SELECT * FROM user;
+-- SELECT * FROM student;
+-- SELECT * FROM teacher;
+-- SELECT * FROM `subject`;
+-- SELECT * FROM orientation;
+-- SELECT * FROM subject_orientation ;
+-- SELECT * FROM `group`;
+-- SELECT * FROM  teacher_group;
