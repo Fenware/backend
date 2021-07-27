@@ -151,26 +151,11 @@ INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_accoun
 INSERT INTO teacher(id) value(3);
 
 
-select * from user;
-select * from student;
-select * from teacher;
-select * from `subject`;
-select * from orientation;
-select * from subject_orientation ;
-select * from `group`;
-select * from  teacher_group;
-
-SELECT s.id,s.`name`,s.state,o.id,so.state
-FROM `subject` s,orientation o,subject_orientation so
-WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
-
-UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
-
-UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
-UPDATE `group` SET `state` = 1 WHERE id = 1;
-
-DELETE FROM `subject`;
-
-SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
-FROM user u,administrator a
-WHERE a.id != u.id;
+SELECT * FROM user;
+SELECT * FROM student;
+SELECT * FROM teacher;
+SELECT * FROM `subject`;
+SELECT * FROM orientation;
+SELECT * FROM subject_orientation ;
+SELECT * FROM `group`;
+SELECT * FROM  teacher_group;
