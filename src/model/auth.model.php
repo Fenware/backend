@@ -75,7 +75,11 @@ class AuthModel extends Model{
                             return $res->error('Contraseña Incorrecta');
                         }
                     }else{
-                        return $res->error('Tu cuenta aun no fue aceptada por un administrador');
+                        if($data[0]['state_account'] == 2){
+                            return $res->error('Tu cuenta aun no fue aceptada por un administrador');
+                        }else{
+                            return $res->error('El usuario no existe');
+                        }
                     }
                 }else{
                     return $res->error('El usuario no existe');
