@@ -22,7 +22,7 @@ class SubjectModel extends Model{
         $stm = 'SELECT * FROM `subject` WHERE `name` = ?';
         $materia_existe = parent::query($stm, [$nombre] );
         if($materia_existe){
-            $state = $materia_existe['state'];
+            $state = $materia_existe[0]['state'];
             if($state == 1){
                 return 'La materia ya existe';
             }else{

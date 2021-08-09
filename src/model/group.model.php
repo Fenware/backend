@@ -28,12 +28,11 @@ class GroupModel extends Model{
             $code = $this->generateCode();
 
             //Compruevo si el grupo ya existe y esta activo
-            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ';
+            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ?';
             $grupo_existe = parent::query($stm, [$name,$orientation] );
-            
             //Compruevo si el grupo ya existe
             if($grupo_existe){
-                $state = $grupo_existe['state'];
+                $state = $grupo_existe[0]['state'];
                 if($state == 1){
                     return 'El grupo ya existe';
                 }else{

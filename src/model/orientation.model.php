@@ -28,7 +28,7 @@ class OrientationModel extends Model{
         
         //Chequeo si la orientacion ya existe
         if($orientation){
-            $state = $orientation['state'];
+            $state = $orientation[0]['state'];
             if($state == 1){
                 return 'La orientacion ya existe';
             }else{
