@@ -330,7 +330,7 @@ class UserModel extends Model{
     /*
     Chequea si un estudiante es el autor de una consutla
     */
-    public function StudentIsAutorOfConsulta($student,$consulta){
+    public function StudentIsAutorOfQuery($student,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? AND id_query = ?';
         $rows = parent::query($stm,[$student,$consulta]);
         if($rows > 0){
