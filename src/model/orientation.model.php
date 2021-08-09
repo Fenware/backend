@@ -40,7 +40,7 @@ class OrientationModel extends Model{
                 parent::nonQuery($stm,[$id]);
                 //Le agrego sus materias
                 $rows = $this->postSubjectsInOrientation($id,$subjects);
-                return (int)$id;
+                return $this->getOrientationById($id);
             }else{
                 //creo la orientacion
                 $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
@@ -49,7 +49,7 @@ class OrientationModel extends Model{
                     $id = parent::lastInsertId();
                     //Le agrego sus materias
                     $rows = $this->postSubjectsInOrientation($id,$subjects);
-                    return (int)$id;
+                    return $this->getOrientationById($id);
                 }else{
                     return 'Algo salio mal al crear la orientacion';
                 }
@@ -144,7 +144,9 @@ class OrientationModel extends Model{
     */
     public function getOrientationById($id){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE id = ? AND `state` = 1';
-        return parent::query($stm,[$id]);
+        $orientation = parent::query($stm,[$id]);
+        $orientation['subjects'] = $this->getOrientationSubjects($id);
+        return $orientation;
     }
 
     /*

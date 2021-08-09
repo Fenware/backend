@@ -29,13 +29,13 @@ class OrientacionAPI extends API{
                     $datosArray = $this->res->error_400();
                 }else{
                     //Datos validos
-                    $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
-                    //If rows > 0 it means that everything went right
-                    if(is_int($id)){
-                        $datosArray = $id;
+                    $orientacion = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
+                    //Si devuelvo un string es por que hubo un error
+                    if(!is_string($orientacion)){
+                        $datosArray = $orientacion;
                     }else{
                         //Something wrong happend during postOrientation()
-                        $datosArray = $this->res->error($id);
+                        $datosArray = $this->res->error($orientacion);
                     }
                 }
             }
