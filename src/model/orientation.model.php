@@ -141,7 +141,7 @@ class OrientationModel extends Model{
     public function getOrientationById($id){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE id = ? AND `state` = 1';
         $orientation = parent::query($stm,[$id]);
-        $orientation['subjects'] = $this->getOrientationSubjects($id);
+        $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
         return $orientation;
     }
 
