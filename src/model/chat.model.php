@@ -17,16 +17,15 @@ class ChatModel extends QueryModel{
     Crea una consulta
     */
 
-    
-    public function createConsulta(){
-        $stm = 'INSERT INTO individual(id) VALUES(?)';
+    public function createChat(){
+        $stm = 'INSERT INTO `room`(id) VALUES(?)';
         parent::nonQuery($stm,[parent::getId()]);
     }
 
     /*
     Devuelve todas las consultas de un usuario que no esten cerradas
     */
-    public function getConsultasFromUser($id,$type){
+    public function getChatFromUser($id,$type){
         switch($type){
             case 'teacher':
                 $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_teacher = ?';
@@ -72,7 +71,7 @@ class ChatModel extends QueryModel{
     /*
     Devuelve todas las consultas de un usuario sin importar su estado
     */
-    public function getChatsConsultasFromUser($id,$type){
+    public function getChatsFromUser($id,$type){
         switch($type){
             case 'teacher':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
@@ -114,7 +113,7 @@ class ChatModel extends QueryModel{
         return $consultas;
     } 
     
-    public function getAllChatsConsultasFromUser($id,$type){
+    public function getAllChatsFromUser($id,$type){
         switch($type){
             case 'teacher':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`

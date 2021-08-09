@@ -30,8 +30,6 @@ class QueryModel extends Model{
         $this->creation_date = date('Y-m-d H:i:s', time());
         $row = parent::nonQuery($stm,[$this->id_student,$this->id_teacher,$this->id_group,$this->id_subject,$this->theme,$this->creation_date]);
         $this->id = parent::lastInsertId();
-        $stm = 'INSERT INTO individual(id) VALUES(?)';
-        parent::nonQuery($stm,[$this->id]);
         //devuelvo la consulta con datos extra
         $stm = 'SELECT * FROM `query` WHERE id = ?';
         $consulta =  parent::query($stm,[$this->id]);
