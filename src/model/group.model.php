@@ -42,20 +42,18 @@ class GroupModel extends Model{
                     $stm = 'UPDATE `group` SET `state` = 1 WHERE `name` = ? AND id_orientation = ?';
                     parent::nonQuery($stm,[$name,$orientation]);
                     $id = $grupo_existe_borrado[0]['id'];
+                    return $this->getGroupById($id);
                 }else{
                     //Creo el grupo
                     $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
                     parent::nonQuery($stm,[$orientation,$name,$code]);
                     $id = $this->lastInsertId();
+                    return $this->getGroupById($id);
                 }
-                //Me aseguro de devolver un numero
-                return (int)$id;
             }
-            
         }else{
             return 'La orientacion no existe o fue borrada';
         }
-        
     }
 
     /*

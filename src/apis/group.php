@@ -21,11 +21,11 @@ class GroupAPI extends API{
         if($token->user_type == 'administrator'){
             //Cheque la informacion
             if(parent::isTheDataCorrect($data,['name'=>'is_string','orientacion'=>'is_int'])){
-                $id = $this->group->postGroup($data['name'],$data['orientacion']);
-                if(is_int($id)){
-                    $datosArray = $id;
+                $grupito = $this->group->postGroup($data['name'],$data['orientacion']);
+                if(!is_string($grupito)){
+                    $datosArray = $grupito;
                 }else{
-                    $datosArray = $this->res->error($id);
+                    $datosArray = $this->res->error($grupito);
                 }
             }else{
                 
