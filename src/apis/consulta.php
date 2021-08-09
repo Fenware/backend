@@ -33,7 +33,14 @@ class ConsultaAPI extends API{
                 $grupo = $student_group[0]['id_group'];
                 $teacher = $this->subject->getTeacherFromSubjectInGroup($data['materia'],$grupo);
                 if(is_int($teacher)){
-                    $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['materia'],$data['asunto']);
+                    $this->consulta->setStudent($token->user_id);
+                    $this->consulta->setTeacher($teacher);
+                    $this->consulta->setGroup($grupo);
+                    $this->consulta->setSubject($data['materia']);
+                    $this->consulta->setTheme($data['asunto']);
+                    $consulta = $this->consulta->createQuery();
+                    $datosArray = $this->consulta->createConsulta($consulta[0]['id']);
+                    $datosArray = $consulta;
                 }else{
                     //si no es un  numero entonces capte un error 
                     $datosArray = $this->res->error($teacher);
@@ -49,20 +56,25 @@ class ConsultaAPI extends API{
     }
     
     public function GET($token,$data){
-        if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
-            if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
-                $datosArray = $this->consulta->getConsultaById($data['consulta']);
-            }else{
-                $datosArray = $this->res->error_403();
-            }
+        if($token->user_type == 'administrator'){
+            $datosArray = $this->res->error('Work In Progress');
         }else{
-            if(isset($data['all'])){
-                $datosArray = $this->consulta->getAllConsultasFromUser($token->user_id,$token->user_type);
+            if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
+                if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
+                    $datosArray = $this->consulta->getQueryById($data['consulta']);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
             }else{
-                $datosArray = $this->consulta->getConsultasFromUser($token->user_id,$token->user_type);
+                if(isset($data['all'])){
+                    $datosArray = $this->consulta->getAllConsultasFromUser($token->user_id,$token->user_type);
+                }else{
+                    $datosArray = $this->consulta->getConsultasFromUser($token->user_id,$token->user_type);
+                }
+                
             }
-            
         }
+        
         echo json_encode($datosArray);
     }
 
@@ -75,7 +87,7 @@ class ConsultaAPI extends API{
             if(parent::isTheDataCorrect($data,['consulta'=>'is_int'])){
                 $acces = $this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta']);
                 if($acces){
-                    $datosArray = $this->consulta->closeConsulta($data['consulta']);
+                    $datosArray = $this->consulta->closeQuery($data['consulta']);
                 }else{
                     $datosArray = $this->res->error_403();
                 }

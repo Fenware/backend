@@ -284,11 +284,46 @@ class UserModel extends Model{
     */
     public function UserHasAccesToConsulta($user,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
-        $querys = parent::query($stm,[$user,$user,$consulta]);
-        if(empty($querys)){
+        $query = parent::query($stm,[$user,$user,$consulta]);
+        if(empty($query)){
             return false;
         }else{
             return true;
+        }
+    }
+
+    public function UserHasAccesToChat($user,$chat){
+        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
+        $query = parent::query($stm,[$user,$user,$chat]);
+        if($query){
+            $grupo = $query[0]['id_group'];
+            $materia = $query[0]['id_subject'];
+            $type = $this->getUserType($user);
+            switch($type){
+                case 'teacher':
+                    $stm = 'SELECT * FROM `teacher_group_subject` WHERE id_teacher = ? AND id_group = ? AND id_subject = ?';
+                    $acces = parent::query($stm, [$user,$grupo,$materia] );
+                    if($acces){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    break;
+                case 'student':
+                    $stm = 'SELECT * FROM `student_group` WHERE id_student = ? AND id_group = ?';
+                    $acces = parent::query($stm, [$user,$grupo] );
+                    if($acces){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    break; 
+                default:
+                    return false;
+                    break;      
+            }
+        }else{
+            return false;
         }
     }
 

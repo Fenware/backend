@@ -28,7 +28,7 @@ class ConsultaMessageAPI extends API{
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
                 $datosArray = $this->consulta->postMessagge($token->user_id,$data['consulta'],$data['msg']);
                 if($token->user_type == 'teacher'){
-                    $this->consulta->setConsultaToAnswered($data['consulta']);
+                    $this->consulta->setQueryToAnswered($data['consulta']);
                 }
             }else{
                 $datosArray = $this->res->error_403();
