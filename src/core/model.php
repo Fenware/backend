@@ -27,7 +27,7 @@ class Model{
     function query($stm, $datos = []){
         $data = $this->conn->prepare($stm);
         $data->execute($datos);
-        $data = $data->fetchAll();
+        $data = $data->fetchAll(PDO::FETCH_ASSOC);
         return $this->toUTF8($data);
     }
 
