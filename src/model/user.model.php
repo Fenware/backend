@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 /*
@@ -245,19 +246,24 @@ class UserModel extends Model{
                 $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name
                 FROM teacher_group tg,`group` g,orientation o 
                 WHERE tg.id_teacher = ? AND tg.id_group = g.id AND g.id_orientation = o.id AND tg.state = 1 AND g.state = 1 AND o.state = 1';
-                $data = parent::query($stm,[$user]);
+                $grupos = parent::query($stm,[$user]);
+                $orientation_model = new OrientationModel();
+                foreach($grupos as &$grupo){
+                    $grupo['subjects'] = $orientation_model->getOrientationSubjects($grupo['id_orientation']);
+                }
                 break;
             case 'student':
                 $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name
                 FROM student_group sg,`group` g,orientation o 
                 WHERE sg.id_student = ? AND sg.id_group = g.id AND g.id_orientation = o.id AND sg.state = 1 AND g.state = 1 AND o.state = 1';
-                $data = parent::query($stm,[$user]);
+                $grupos = parent::query($stm,[$user]);
                 break;
             default:
-                $data = 'No correct user type';
+                $grupos = 'No correct user type';
                 break;
         }
-        return $data;
+        
+        return $grupos;
     }
 
     /*
