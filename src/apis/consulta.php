@@ -85,7 +85,7 @@ class ConsultaAPI extends API{
     public function DELETE($token,$data){
         if($token->user_type == 'student'){
             if(parent::isTheDataCorrect($data,['consulta'=>'is_int'])){
-                $acces = $this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta']);
+                $acces = $this->user->StudentIsAutorOfQuery($token->user_id,$data['consulta']);
                 if($acces){
                     $datosArray = $this->consulta->closeQuery($data['consulta']);
                 }else{
