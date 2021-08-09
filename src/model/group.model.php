@@ -28,28 +28,25 @@ class GroupModel extends Model{
             $code = $this->generateCode();
 
             //Compruevo si el grupo ya existe y esta activo
-            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ? AND `state` = 1';
+            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ';
             $grupo_existe = parent::query($stm, [$name,$orientation] );
+            
             //Compruevo si el grupo ya existe
             if($grupo_existe){
-                return 'El grupo ya existe';
-            }else{
-                //Chequeo si el grupo existe pero esta 'borrado'
-                $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ? AND `state` = 0';
-                $grupo_existe_borrado = parent::query($stm, [$name,$orientation] );
-                if($grupo_existe_borrado){
-                    //Cambio su estado de  0 a 1 (1 = activo)
+                $state = $grupo_existe['state'];
+                if($state == 1){
+                    return 'El grupo ya existe';
+                }else{
                     $stm = 'UPDATE `group` SET `state` = 1 WHERE `name` = ? AND id_orientation = ?';
                     parent::nonQuery($stm,[$name,$orientation]);
-                    $id = $grupo_existe_borrado[0]['id'];
-                    return $this->getGroupById($id);
-                }else{
-                    //Creo el grupo
-                    $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
-                    parent::nonQuery($stm,[$orientation,$name,$code]);
-                    $id = $this->lastInsertId();
+                    $id = $grupo_existe[0]['id'];
                     return $this->getGroupById($id);
                 }
+            }else{
+                $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
+                parent::nonQuery($stm,[$orientation,$name,$code]);
+                $id = $this->lastInsertId();
+                return $this->getGroupById($id);
             }
         }else{
             return 'La orientacion no existe o fue borrada';

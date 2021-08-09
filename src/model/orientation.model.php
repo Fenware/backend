@@ -25,25 +25,22 @@ class OrientationModel extends Model{
         //Chequeo si la orientacion ya existe
         $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 1';
         $orientation = parent::query($stm,[$name,$year]);
+        
         //Chequeo si la orientacion ya existe y esta activa
         if($orientation){
-            return 'La orientacion ya existe';
-        }else{
-            //Chequeo si la orientacion ya existe pero esta 'borrada'
-            $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 0';
-            $orientation = parent::query($stm,[$name,$year]);
-             //Chequeo si la orientacion ya existe pero esta 'borrada'
-            if($orientation){
-                //Cambio su estado de 0 a 1 para activarla
+            $state = $orientation['state'];
+            if($state == 1){
+                return 'La orientacion ya existe';
+            }else{
                 $id = $orientation[0]['id'];
                 $stm = 'UPDATE orientation SET `state` = 1 WHERE id = ?';
                 parent::nonQuery($stm,[$id]);
                 //Le agrego sus materias
                 $rows = $this->postSubjectsInOrientation($id,$subjects);
                 return $this->getOrientationById($id);
-            }else{
-                //creo la orientacion
-                $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
+            }
+        }else{
+            $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
                 $rows = parent::nonQuery($stm,[$name,$year]);
                 if($rows > 0){
                     $id = parent::lastInsertId();
@@ -53,7 +50,6 @@ class OrientationModel extends Model{
                 }else{
                     return 'Algo salio mal al crear la orientacion';
                 }
-            }
         }
     }
 
