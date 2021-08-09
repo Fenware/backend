@@ -30,13 +30,13 @@ class SubjectModel extends Model{
                 $id = $materia_borrada[0]['id'];
                 $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
                 parent::nonQuery($stm,[$id]);
-                return (int)$id;
+                return $this->getSubjectById($id);
             }else{
                 $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
                 $rows = parent::nonQuery($stm,[$nombre]);
                 if($rows > 0){
                     $id = parent::lastInsertId();
-                    return (int)$id;
+                    return $this->getSubjectById($id);
                 }else{
                     return 'Surgio un problema al crear la materia';
                 }
