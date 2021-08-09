@@ -23,10 +23,10 @@ class OrientationModel extends Model{
     */
     public function postOrientation($name,$year,$subjects){
         //Chequeo si la orientacion ya existe
-        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 1';
+        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
         $orientation = parent::query($stm,[$name,$year]);
         
-        //Chequeo si la orientacion ya existe y esta activa
+        //Chequeo si la orientacion ya existe
         if($orientation){
             $state = $orientation['state'];
             if($state == 1){
@@ -41,15 +41,15 @@ class OrientationModel extends Model{
             }
         }else{
             $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
-                $rows = parent::nonQuery($stm,[$name,$year]);
-                if($rows > 0){
-                    $id = parent::lastInsertId();
-                    //Le agrego sus materias
-                    $rows = $this->postSubjectsInOrientation($id,$subjects);
-                    return $this->getOrientationById($id);
-                }else{
-                    return 'Algo salio mal al crear la orientacion';
-                }
+            $rows = parent::nonQuery($stm,[$name,$year]);
+            if($rows > 0){
+                $id = parent::lastInsertId();
+                //Le agrego sus materias
+                $rows = $this->postSubjectsInOrientation($id,$subjects);
+                return $this->getOrientationById($id);
+            }else{
+                return 'Algo salio mal al crear la orientacion';
+            }
         }
     }
 
