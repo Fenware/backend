@@ -45,10 +45,9 @@ class ChatAPI extends API{
                     $socket->connect("tcp://localhost:5555");
                     $entryData = array(
                         'category' => $student_group[0]['id_group'],
-                        'chat' =>$chat
+                        'chat' => $chat[0]
                     );
                     $socket->send(json_encode($entryData));
-                    $datosArray = 'Funciono? grupo: '.$student_group[0]['id_group'];
                 }else{
                     //si no es un  numero entonces capte un error 
                     $datosArray = $this->res->error($teacher);
