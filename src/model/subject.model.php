@@ -68,8 +68,9 @@ class SubjectModel extends Model{
     */
     public function getSubjectById($id){
         $stm = 'SELECT * FROM `subject` WHERE id = ? AND `state` = 1';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $materia_data = parent::query($stm,[$id]);
+        $materia = $materia_data[0];
+        return $materia;
     }
 
     /*
