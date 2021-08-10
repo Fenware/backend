@@ -1,8 +1,8 @@
 <?php
     require '/var/www/html/vendor/autoload.php';
-
+    require '/var/www/html/ws/pusher.php';
     $loop   = React\EventLoop\Factory::create();
-    $pusher = new MyApp\Pusher;
+    $pusher = new Pusher;
 
     // Listen for the web server to make a ZeroMQ push after an ajax request
     $context = new React\ZMQ\Context($loop);
