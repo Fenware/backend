@@ -1,7 +1,7 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
 /*
 Modelo para las materias
 */

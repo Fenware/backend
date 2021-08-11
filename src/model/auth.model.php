@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 use Firebase\JWT\JWT;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/vendor/autoload.php';
+include_once '/var/www/html/core/model.php';
+include_once '/var/www/html/model/user.model.php';
+include_once '/var/www/html/core/response.php';
 
 
 /*

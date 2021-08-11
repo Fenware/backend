@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/config/config.php';
+require_once '/var/www/html/config/config.php';
 class Conexion{
 
     private $host;

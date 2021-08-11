@@ -1,6 +1,6 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/conexion.php';
+require_once '/var/www/html/core/conexion.php';
 
 /*
 Clase Model :

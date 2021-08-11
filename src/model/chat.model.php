@@ -1,8 +1,8 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/model/query.model.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
+require_once '/var/www/html/model/query.model.php';
 /*
 Modelo para las consultas
 */
