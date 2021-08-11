@@ -9,11 +9,6 @@
             "email": "fds.workmail@gmail.com"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "MyApp\\": "./ws/"
-        }
-    },
     "minimum-stability": "dev",
     "require": {
         "firebase/php-jwt": "^5.2",
