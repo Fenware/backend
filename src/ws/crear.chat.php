@@ -10,14 +10,16 @@ require_once '/var/www/html/core/response.php';
 require_once '/var/www/html/vendor/autoload.php';
 require_once '/var/www/html/config/config.php';
 require_once '/var/www/html/core/response.php';
+require_once '/var/www/html/model/user.model.php';
 
 
-class Pusher implements WampServerInterface {
+class CrearChat implements WampServerInterface {
     /**
      * A lookup of all the topics clients have subscribed to
      */
 
     //private $token_manager;
+    private $user_model;
     private $res;
     protected $clients;
     protected $subscribedTopics = array();
@@ -26,20 +28,31 @@ class Pusher implements WampServerInterface {
         $this->clients = new \SplObjectStorage;
     //$this->token_manager = new TokenManager();
         $this->res = new Response();
+        $this->user_model = new UserModel();
     }
 
     public function onSubscribe(ConnectionInterface $conn, $topic) {
+        //obtengo el contenido del url ?token=asdasdasdasdasasd
         $querystring = $conn->httpRequest->getUri()->getQuery();
-        print_r($querystring);
-        $token = explode('=',$querystring);
-        $token = $this->hasValidToken($token[1]);
+        //Separo el contenido  me queda token en  la posicion 0 y el token mismo en la posicion 1
+        $temp_token = explode('=',$querystring);
+        //valido el token
+        $token = $this->hasValidToken($temp_token[1]);
         if($token != false){
-            
-            $this->subscribedTopics[$topic->getId()] = $topic;
-            echo "Connection {$conn->resourceId} has suscribed to {$topic}\n";
+            //El supuesto error en token es solo VScode priando colores
+            //Chequeo que el usuario pertenesca al grupo al que busca suscribirse
+            $access = $this->user_model->IsUserInGroup($token->user_id,$topic,$token->user_type);
+            if($access){
+                //Lo suscribo al grupo
+                $this->subscribedTopics[$topic->getId()] = $topic;
+                echo "Connection {$conn->resourceId} has suscribed to {$topic}\n";
+            }else{
+                //Lo desconecto por seguridad
+                $this->clients->detach($conn);
+                $conn->close();
+            }
         }else{
             $this->clients->detach($conn);
-        
             $conn->close();
         }
     }
@@ -69,10 +82,9 @@ class Pusher implements WampServerInterface {
         $conn->close();
     }
 
-    public function onBlogEntry($entry) {
-        echo 'sala nueva';
+    //Se ejecuta cuando se crea una sala
+    public function onChatEntry($entry) {
         $entryData = json_decode($entry, true);
-        print_r($entry);
         // If the lookup topic object isn't set there is no one to publish to
         if (!array_key_exists($entryData['category'], $this->subscribedTopics)) {
             return;
