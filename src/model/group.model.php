@@ -65,8 +65,9 @@ class GroupModel extends Model{
     */
     public function getGroupById($id){
         $stm = 'SELECT * FROM `group` WHERE id = ? AND `state` = 1 ';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $group_data = parent::query($stm,[$id]);
+        $grupo = $group_data[0];
+        return $grupo;
     }
 
     /*

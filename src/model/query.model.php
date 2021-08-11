@@ -82,14 +82,17 @@ class QueryModel extends Model{
     Cierra una consulta
     */
     public function closeQuery($consulta){
-        $stm = 'UPDATE `query` SET `state` = 0 WHERE id = ?';
-        $rows = parent::nonQuery($stm,[$consulta]);
-        //Genero el resumen de la consulta
+        $this->finish_date = date('Y-m-d H:i:s', time());
         $messages = $this->getMessageFromConsulta($consulta);
         $resume = 'Resumen \n';
         foreach($messages as $message){
             $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
         }
+        $stm = 'UPDATE `query` 
+        SET `state` = 0 ,finish_date = ? ,`resume` = ?
+        WHERE id = ?';
+        $rows = parent::nonQuery($stm,[$this->finish_date,$resume,$consulta]);
+        //Genero el resumen de la consulta
         return $rows;
     }
 
