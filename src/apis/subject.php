@@ -21,7 +21,7 @@ class SubjectAPI extends API{
                 $name = $data['name'];
                 $subj = $this->materia->postSubject($name);
                 if(!is_string($subj)){
-                    $datosArray = $subj[0];
+                    $datosArray = $subj;
                 }else{
                     $datosArray = $this->res->error($subj);
                 }
