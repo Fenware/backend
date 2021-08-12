@@ -19,6 +19,6 @@ RUN a2enmod rewrite
 
 COPY src/php.ini /usr/local/etc/php/php.ini 
 
-EXPOSE 80 5555 8085
+EXPOSE 80 5555 5556 8085 8086
 
 #CMD php /var/www/html/ws/bin/crear-chat-server.php 
