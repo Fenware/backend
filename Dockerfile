@@ -21,4 +21,4 @@ COPY src/php.ini /usr/local/etc/php/php.ini
 
 EXPOSE 80 5555 8085
 
-#CMD php /var/www/html/ws/bin/push-server.php 
+#CMD php /var/www/html/ws/bin/crear-chat-server.php 
