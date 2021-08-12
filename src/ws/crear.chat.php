@@ -72,9 +72,9 @@ class CrearChat implements WampServerInterface {
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         // In this application if clients send data it's because the user hacked around in console
+        //Comento callError por que me lo marca como error . 0 idea de porque 
         //$conn->callError($id, $topic, 'You are not allowed to make calls')->close();
-
-        echo '???';
+        $conn->close();
     }
     public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
         
