@@ -66,13 +66,16 @@ class QueryModel extends Model{
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
         $date = date('Y-m-d H:i:s', time());
         $rows = parent::nonQuery($stm,[$user,$consulta,$content,$date]);
-        return $rows;
+        $id = parent::lastInsertId();
+        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id = ? AND m.id_user = u.id';
+        $mensaje =  parent::query($stm, [ $id ]);
+        return $mensaje;
     }
 
     /*
     Devuelve los mensajes de una consulta
     */
-    public function getMessageFromConsulta($consulta){
+    public function getMessageFromQuery($consulta){
         $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
         $messages = parent::query($stm,[$consulta]);
         return $messages;
@@ -83,7 +86,7 @@ class QueryModel extends Model{
     */
     public function closeQuery($consulta){
         $this->finish_date = date('Y-m-d H:i:s', time());
-        $messages = $this->getMessageFromConsulta($consulta);
+        $messages = $this->getMessageFromQuery($consulta);
         $resume = 'Resumen \n';
         foreach($messages as $message){
             $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
