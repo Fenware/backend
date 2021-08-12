@@ -42,7 +42,7 @@ class ConsultaMessageAPI extends API{
     public function GET($token,$data){
         if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
-                $datosArray = $this->consulta->getMessageFromConsulta($data['consulta']);
+                $datosArray = $this->consulta->getMessageFromQuery($data['consulta']);
             }else{
                 $datosArray = $this->res->error_403();
             }
