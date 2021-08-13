@@ -13,9 +13,11 @@ class OrientationModel extends Model{
     private $subjects;
     private $state;
 
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*
@@ -30,7 +32,7 @@ class OrientationModel extends Model{
         if($orientation){
             $state = $orientation[0]['state'];
             if($state == 1){
-                return 'La orientacion ya existe';
+                return $this->res->error('La orientacion ya existe',1020); ;
             }else{
                 $id = $orientation[0]['id'];
                 $stm = 'UPDATE orientation SET `state` = 1 WHERE id = ?';
@@ -48,7 +50,7 @@ class OrientationModel extends Model{
                 $rows = $this->postSubjectsInOrientation($id,$subjects);
                 return $this->getOrientationById($id);
             }else{
-                return 'Algo salio mal al crear la orientacion';
+                return $this->res->error('Algo salio mal al crear la orientacion',1021);
             }
         }
     }
@@ -193,7 +195,7 @@ class OrientationModel extends Model{
             $error = true;
         }
         if($error){
-            return 'No se pudo borrar la orientacion';
+            return $this->res->error('No se pudo borrar la orientacion',1022);
         }else{
             return 1;
         }

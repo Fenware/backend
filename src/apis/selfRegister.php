@@ -12,7 +12,7 @@ class SelfRegisterAPI{
     private $res;
     function __construct()
     {
-        $this->res = new Response();
+
         $this->user = new UserModel();
         //obtengo el body
         $data = file_get_contents('php://input');
@@ -44,16 +44,16 @@ class SelfRegisterAPI{
             if($exists == false){
                 $id = $this->user->postUser($data);
                 if($id != 'error'){
-                $type = $data['type'];
-                $type = $this->filterType($type);
-                if($type != 'error'){
-                    $this->insertOptionalData($id,$data);
-                    $datosArray = $this->user->setUserType($id,$type);
+                    $type = $data['type'];
+                    $type = $this->filterType($type);
+                    if($type != 'error'){
+                        $this->insertOptionalData($id,$data);
+                        $datosArray = $this->user->setUserType($id,$type);
+                    }else{
+                        $datosArray = $this->res->error_400();
+                    }
                 }else{
-                    $datosArray = $this->res->error_400();
-                }
-                }else{
-                $datosArray = $this->res->OOPSIE();
+                    $datosArray = $this->res->OOPSIE();
                 }
             }else{
                 $datosArray = $exists;

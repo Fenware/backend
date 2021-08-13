@@ -17,9 +17,11 @@ class QueryModel extends Model{
     private $finish_date;
     private $resume;
 
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*

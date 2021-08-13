@@ -8,9 +8,11 @@ Modelo para las consultas
 */
 class ConsultaModel extends QueryModel{
 
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*
