@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 use Firebase\JWT\JWT;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/vendor/autoload.php';
+include_once '/var/www/html/core/model.php';
+include_once '/var/www/html/model/user.model.php';
+include_once '/var/www/html/core/response.php';
 
 
+/*
+Modelo para autenticar logins
+Al logearse de forma exitosa este genera el token para el usuario
+*/
 class AuthModel extends Model{
 
     private $user;
@@ -48,12 +52,12 @@ class AuthModel extends Model{
                 return $res->OOPSIE();
             }else{
                 
-                if($datos){
+                if($data){
                     //Chequeo si el usuario esta activo {0:inactivo;1:activo;2:pendiente}
                     if($data[0]['state_account'] == 1){
                         //Si la contraseña del usuario en la base de datos es igual a la que me mando el usuario
                         if(password_verify($this->user->getPassword(),$data[0]['password'])){
-                            $userType = $this->user->getUserType($data[0]['id'],$type);
+                            $userType = $this->user->checkUserType($data[0]['id'],$type);
                             if($userType){
                                 $token = $this->generateToken($data[0]['id'],$type);
                                 if($token){
@@ -64,14 +68,18 @@ class AuthModel extends Model{
                                     return $result;
                                 }
                             }else{
-                                return $res->error('El usuario no es '.$type);
+                                return $res->error('El usuario no es un '.$type);
                             }
                             
                         }else{
-                            return $res->error('Contrasenna Incorrecta');
+                            return $res->error('Contraseña Incorrecta');
                         }
                     }else{
-                        return $res->error('El usuario no existe');
+                        if($data[0]['state_account'] == 2){
+                            return $res->error('Tu cuenta aun no fue aceptada por un administrador');
+                        }else{
+                            return $res->error('El usuario no existe');
+                        }
                     }
                 }else{
                     return $res->error('El usuario no existe');

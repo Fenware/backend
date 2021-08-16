@@ -1,5 +1,8 @@
 <?php
 
+/*
+Esta clase es para crear objetos de la misma y tener un estandar de respuestas
+*/
 class Response{
 
     public $response = [
@@ -48,12 +51,14 @@ class Response{
         $this->response['status'] = 'error';
         $this->response['result'] = array(
             'error_id' => 010,
-            'error_msg' => 'OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!'
+            'error_msg' => 'ERROR'
         );
         return $this->response;
     }
 
-
+    /*
+    Metodo para crear errores unicos
+    */
     public function error($error_msg,$error_num = 666){
         $this->response['status'] = 'error';
         $this->response['result'] = array(

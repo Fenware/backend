@@ -7,12 +7,17 @@ header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: *");
 header('Content-type: application/json');
 
-
+/*
+Clase API :
+Todas las api que requieran el uso de token heredan de esta clase
+*/
 abstract class API{
-    //Chequeo que me llegue el token
     
     function __construct($res)
     {
+        /*
+        Segun el request metods ejecutamos cierto metodo
+        */
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $this->operate('POST',$res);
         }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
@@ -28,11 +33,17 @@ abstract class API{
         }
     }
 
+    /*
+    Creo metodos abstractos cosa de que todo API los tenga
+    */ 
     abstract protected function POST($token,$data);
     abstract protected function GET($token,$data);
     abstract protected function PUT($token,$data);
     abstract protected function DELETE($token,$data);
 
+    /*
+    checkToken , validToken ,HasValidToken se usan para validar un token. 
+    */
     private function checkToken($res){
         if (!preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             // header('HTTP/1.0 400 Bad Request');
@@ -90,20 +101,31 @@ abstract class API{
     }
 
 
-    //Validates token and  if so runs the function $function
+    /*
+    Aca validamos el token y si es el caso se ejecuta la funcion
+    */
     public function operate($function,$res){
         $token = $this->HasValidToken($res);
         if($token == false){
             header('HTTP/1.1 401 Unauthorized');
             echo json_encode($res->error('Not a valid token'));
         }else{
-            $data = $this->getJson();
+            //GET no funciona igual al resto de metodos por lo que hay que hacer una excepción
+            if($function == 'GET'){
+                $data = $_GET;
+            }else{
+                $data = $this->getJson();
+            }
             $this->$function($token,$data);
         }
     }
 
-    //$data is  the array of data,$vars is writen like so ['id' => 'is_int','name' => 'is_string']
-    //Checks if all the data requested is setted ,the correct variable type and if it is not empty
+    /*
+    Chequea que la informacion especificada de un array exista ,no este vacia y que sea del tipo correcto
+    El primer parametro es el array, el segundo se usa para indicar el nombre del campo y su tipo
+    Ej:
+    isTheDataCorrect($array_con_datos,['ci'=>'is_string','edad'=>'is_int'])
+    */
     public function isTheDataCorrect($data,$vars){
         $correct = true;
         foreach($vars as $key => $value){
@@ -116,8 +138,14 @@ abstract class API{
         return $correct;
     }
 
-    //Checks if the data inside and array is the correct type
-    //Ej : $type = 'is_int'
+    /*
+    Chequea si el contenido de un array es de cierto tipo
+    Ej:
+    isArrayDataCorrect(['Uruguay','Argentina','Chile'],is_int)
+    Devuelve falso
+    isArrayDataCorrect(['Uruguay','Argentina','Chile'],is_string)
+    Devuelve verdadero
+    */
     public function isArrayDataCorrect($array,$type){
         $correct = true;
         foreach($array as $value){

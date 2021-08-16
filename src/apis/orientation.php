@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear orientaciones
+*/
 class OrientacionAPI extends API{
     private $res;
     private $orientation;
@@ -26,13 +29,13 @@ class OrientacionAPI extends API{
                     $datosArray = $this->res->error_400();
                 }else{
                     //Datos validos
-                    $id = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
-                    //If rows > 0 it means that everything went right
-                    if($id !== 'error'){
-                        $datosArray = $id;
+                    $orientacion = $this->orientation->postOrientation($data['name'],$data['year'],$data['subjects']);
+                    //Si devuelvo un string es por que hubo un error
+                    if(!is_string($orientacion)){
+                        $datosArray = $orientacion;
                     }else{
                         //Something wrong happend during postOrientation()
-                        $datosArray = $this->res->error('Something went wrong in the server');
+                        $datosArray = $this->res->error($orientacion);
                     }
                 }
             }
@@ -51,18 +54,15 @@ class OrientacionAPI extends API{
     }
 
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
-            if(isset($data['id'])){
-                $datosArray = $this->orientation->getOrientationById($data['id']);
-            }elseif(isset($data['name'])){
-                $datosArray = $this->orientation->getOrientationByName($data['name']);
-            }else{
-                $datosArray = $this->orientation->getOrientations();
-            }
-            echo json_encode($datosArray);
+        //El id solo nos llega por string
+        if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
+            $datosArray = $this->orientation->getOrientationById($data['id']);
+        }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+            $datosArray = $this->orientation->getOrientationByName($data['name']);
         }else{
-            echo json_encode($this->res->error_403());
+            $datosArray = $this->orientation->getOrientations();
         }
+        echo json_encode($datosArray);
 
     }
 
@@ -108,20 +108,15 @@ class OrientacionAPI extends API{
 
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            //Is the id set?
-            if(!isset($data['id'])){
-                //No :/
-                $datosArray = $this->res->error_400();
-            }else{
-                //Yes :D
-                //Is the id a number?
-                if(!is_int($data['id'])){
-                    //No :/
-                    $datosArray = $this->res->error_400();
+            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
+                $result = $this->orientation->deleteOrientation($data['id']);
+                if(is_int($result)){
+                    $datosArray = $result;
                 }else{
-                    //Yes :D
-                    $datosArray = $this->orientation->deleteOrientation($data['id']);
+                    $datosArray = $this->res->error($result);
                 }
+            }else{
+                $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }else{

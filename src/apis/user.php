@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear manejar usuarios
+*/
 class UserAPI extends API{
     
     private $user;
@@ -55,7 +58,7 @@ class UserAPI extends API{
             if(count($array) > 0){
                 return $this->res->error('Este nickname ya esta tomado');
             }else{
-                $array = $this->user->getUserByCi($data['ci']);
+                $array = $this->user->getUserByCiSafe($data['ci']);
                 if(count($array) > 0){
                     return $this->res->error('Esta cedula ya esta tomada');
                 }else{
@@ -153,13 +156,7 @@ class UserAPI extends API{
             return true;
         }
     }
-    private function setUserType($id,$type){
-        if($type == 'teacher'){
 
-        }elseif($type == 'student'){
-
-        }
-    }
 
     private function is_email($email){
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -170,21 +167,46 @@ class UserAPI extends API{
         }
     }
 
+    //Pido la informacion de un usuario
     public function GET($token,$data){
-        if($token->user_type == 'administrador'){
+        if($token->user_type == 'administrator'){
             $datosArray = $this->user->getAllUsers();
             echo json_encode($datosArray);
         }else{
-            echo json_encode($this->res->error_403());
+            //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
+            $datosArray = $this->user->getUserByIdSafe($token->user_id);
+            echo json_encode($datosArray);
+            //echo json_encode($this->res->error_403());
         }
     }
 
+    //Modifico a un usuario
     public function PUT($token,$data){
-
+        if($token->user_type == 'administrator'){
+            //TODO
+        }else{
+            //me aseguro de que el id esta bien
+            if(parent::isTheDataCorrect($data,['avatar'=>'is_string','nickname'=>'is_string'])){
+                $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
+                $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
+                $datosArray = 1;
+            }else{
+                $datosArray = $this->res->error_400();
+            }
+            echo json_encode($datosArray);
+        }
     }
 
+    //Borro a un usuario
     public function DELETE($token,$data){
-
+        if($token->user_type == 'administrator'){
+            //TODO
+        }else{
+            // me aseguro que que quiere modificarse a si mismo
+            //me aseguro de que el id esta bien
+            $datosArray = $this->user->patchUser($token->user_id,'state_account',0);
+            echo json_encode($datosArray);
+        }
     }
 
 }

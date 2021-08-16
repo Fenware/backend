@@ -6,7 +6,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
 header('Content-type: application/json');
-
+/*
+Api para logearse
+*/
 class AuthAPI{
     private $auth;
     private $res;
@@ -33,12 +35,6 @@ class AuthAPI{
     public function POST(){
         $postBody = file_get_contents('php://input');
         $datosArray = $this->auth->login($postBody);
-        if(isset($datosArray['result']['error_id'])){
-        $response_code = $datosArray['result']['error_id'];
-        http_response_code($response_code);
-        }else{
-            http_response_code(200);
-        }
         echo json_encode($datosArray);
     }
 

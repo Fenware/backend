@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para crear grupos
+*/
 class GroupAPI extends API{
     private $res;
     private $group;
@@ -16,14 +19,17 @@ class GroupAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            if(!isset($data['name']) || !isset($data['orientacion'])){
-                $datosArray = $this->res->error_400();
-            }else{
-                if(!is_string($data['name']) || !is_int($data['orientacion'])){
-                    $datosArray = $this->res->error_400();
+            //Cheque la informacion
+            if(parent::isTheDataCorrect($data,['name'=>'is_string','orientacion'=>'is_int'])){
+                $grupito = $this->group->postGroup($data['name'],$data['orientacion']);
+                if(!is_string($grupito)){
+                    $datosArray = $grupito;
                 }else{
-                    $datosArray = $this->group->postGroup($data['name'],$data['orientacion']);
+                    $datosArray = $this->res->error($grupito);
                 }
+            }else{
+                
+                $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }else{
@@ -32,15 +38,10 @@ class GroupAPI extends API{
     }
     
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
-            if(isset($data['id'])){
-                if(is_int($data['id'])){
-                    $datosArray = $this->group->getGroupById($data['id']);
-                }else{
-                    $datosArray = $this->res->error_400();
-                }
-                
-            }elseif(isset($data['name'])){
+        if($token->user_type == 'administrator' || $token->user_type == 'teacher'){
+            if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
+                $datosArray = $this->group->getGroupById($data['id']);
+            }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
                 if(is_string($data['name'])){
                     $datosArray = $this->group->getGroupByName($data['name']);
                 }else{

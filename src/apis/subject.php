@@ -19,8 +19,12 @@ class SubjectAPI extends API{
         if($token->user_type == 'administrator'){
             if($this->isPostDataCorrect($data)){
                 $name = $data['name'];
-                $id = $this->materia->postSubject($name);
-                $datosArray = $id;
+                $subj = $this->materia->postSubject($name);
+                if(!is_string($subj)){
+                    $datosArray = $subj;
+                }else{
+                    $datosArray = $this->res->error($subj);
+                }
             }else{
                 $datosArray = $this->res->error_400();
             }
@@ -35,24 +39,21 @@ class SubjectAPI extends API{
     }
 
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
-            if($this->isGetDataCorrectId($data)){
-                $id = $data['id'];
-                $datosArray = $this->materia->getSubjectById($id);
-            }elseif($this->isGetDataCorrectName($data)){
-                $name = $data['name'];
-                $datosArray = $this->materia->getSubjectByName($name);
-            }else{
-                $datosArray = $this->materia->getSubjects();
-            }
-            echo json_encode($datosArray);
+        if($this->isGetDataCorrectId($data)){
+            $id = $data['id'];
+            $datosArray = $this->materia->getSubjectById($id);
+        }elseif($this->isGetDataCorrectName($data)){
+            $name = $data['name'];
+            $datosArray = $this->materia->getSubjectByName($name);
         }else{
-            echo json_encode($this->res->error('No tienes los permisos para acceder a este recurso'));
+            $datosArray = $this->materia->getSubjects();
         }
+        echo json_encode($datosArray);
     }
 
     private function isGetDataCorrectId($data){
-        return parent::isTheDataCorrect($data,['id' => 'is_int']);
+        //id llega  como string si es por url
+        return parent::isTheDataCorrect($data,['id' => 'is_string']);
     }
 
     private function isGetDataCorrectName($data){

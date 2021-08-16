@@ -33,7 +33,18 @@ class ConsultaAPI extends API{
                 $grupo = $student_group[0]['id_group'];
                 $teacher = $this->subject->getTeacherFromSubjectInGroup($data['materia'],$grupo);
                 if(is_int($teacher)){
+<<<<<<< HEAD
                     $datosArray = $this->consulta->createConsulta($token->user_id,$teacher,$grupo,$data['materia'],$data['asunto']);
+=======
+                    $this->consulta->setStudent($token->user_id);
+                    $this->consulta->setTeacher($teacher);
+                    $this->consulta->setGroup($grupo);
+                    $this->consulta->setSubject($data['materia']);
+                    $this->consulta->setTheme($data['asunto']);
+                    $consulta = $this->consulta->createQuery();
+                    $datosArray = $this->consulta->createConsulta($consulta[0]['id']);
+                    $datosArray = $consulta;
+>>>>>>> 9d080a2264822c9a2d0b4fb1cfc47846ecd288d4
                 }else{
                     //si no es un  numero entonces capte un error 
                     $datosArray = $this->res->error($teacher);
@@ -48,6 +59,7 @@ class ConsultaAPI extends API{
         echo json_encode($datosArray);
     }
     
+<<<<<<< HEAD
     
 
     public function GET($token,$data){
@@ -64,6 +76,15 @@ class ConsultaAPI extends API{
             if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
                 if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
                     $datosArray = $this->consulta->getConsultaById($data['consulta']);
+=======
+    public function GET($token,$data){
+        if($token->user_type == 'administrator'){
+            $datosArray = $this->res->error('Work In Progress');
+        }else{
+            if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
+                if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
+                    $datosArray = $this->consulta->getQueryById($data['consulta']);
+>>>>>>> 9d080a2264822c9a2d0b4fb1cfc47846ecd288d4
                 }else{
                     $datosArray = $this->res->error_403();
                 }
@@ -75,12 +96,20 @@ class ConsultaAPI extends API{
                 }
                 
             }
+<<<<<<< HEAD
     }
         echo json_encode($datosArray);
     }
 
     
 
+=======
+        }
+        
+        echo json_encode($datosArray);
+    }
+
+>>>>>>> 9d080a2264822c9a2d0b4fb1cfc47846ecd288d4
     public function PUT($token,$data){
         
     }
@@ -88,9 +117,15 @@ class ConsultaAPI extends API{
     public function DELETE($token,$data){
         if($token->user_type == 'student'){
             if(parent::isTheDataCorrect($data,['consulta'=>'is_int'])){
+<<<<<<< HEAD
                 $acces = $this->user->StudentIsAutorOfConsulta($token->user_id,$data['consulta']);
                 if($acces){
                     $datosArray = $this->consulta->closeConsulta($data['consulta']);
+=======
+                $acces = $this->user->StudentIsAutorOfQuery($token->user_id,$data['consulta']);
+                if($acces){
+                    $datosArray = $this->consulta->closeQuery($data['consulta']);
+>>>>>>> 9d080a2264822c9a2d0b4fb1cfc47846ecd288d4
                 }else{
                     $datosArray = $this->res->error_403();
                 }

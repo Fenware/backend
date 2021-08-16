@@ -4,6 +4,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+/*
+API para agregar materias a una orientacion
+*/
 class OrientacionSubjectAPI extends API{
     private $res;
     private $orientation;
@@ -39,16 +42,12 @@ class OrientacionSubjectAPI extends API{
     }
 
     public function GET($token,$data){
-        if($token->user_type == 'administrator'){
-            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
-                $datosArray = $this->orientation->getOrientationSubjects($data['id']);
-            }else{
-                $datosArray = $this->res->error_400();
-            }
-            echo json_encode($datosArray);
+        if(parent::isTheDataCorrect($data,['id'=>'is_string'])){
+            $datosArray = $this->orientation->getOrientationSubjects($data['id']);
         }else{
-            echo json_encode($this->res->error_403());
+            $datosArray = $this->res->error_400();
         }
+        echo json_encode($datosArray);
         
     }
 

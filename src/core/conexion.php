@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/config/config.php';
+require_once '/var/www/html/config/config.php';
 class Conexion{
 
     private $host;
@@ -20,7 +20,7 @@ class Conexion{
             $conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->database , $this->user, $this->password);
             return $conn;
         } catch (PDOException $error) {
-            echo 'no db conexion';
+            echo 'Se nos cayo el servidor,perdon <3';
             return false;
         }
     }

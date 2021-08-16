@@ -1,8 +1,11 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
 
+/*
+    Modelo para los grupos
+*/
 class GroupModel extends Model{
     private $id;
     private $name;
@@ -13,43 +16,90 @@ class GroupModel extends Model{
         parent::__construct();
     }
 
+    /*
+    Crea el grupo
+    */
     public function postGroup($name,$orientation){
-        $code = $this->generateCode();
-        $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
-        $rows = parent::nonQuery($stm,[$orientation,$name,$code]);
-        return $rows;
+        $stm = 'SELECT * FROM orientation WHERE `state` = 1 AND id = ?';
+        $query_orientation = parent::query($stm,[$orientation]);
+        //Chequeo si la orientacion ya existe
+        if($query_orientation){
+            //genero el codigo del grupo
+            $code = $this->generateCode();
+
+            //Compruevo si el grupo ya existe y esta activo
+            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ?';
+            $grupo_existe = parent::query($stm, [$name,$orientation] );
+            //Compruevo si el grupo ya existe
+            if($grupo_existe){
+                $state = $grupo_existe[0]['state'];
+                if($state == 1){
+                    return 'El grupo ya existe';
+                }else{
+                    $stm = 'UPDATE `group` SET `state` = 1 WHERE `name` = ? AND id_orientation = ?';
+                    parent::nonQuery($stm,[$name,$orientation]);
+                    $id = $grupo_existe[0]['id'];
+                    return $this->getGroupById($id);
+                }
+            }else{
+                $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
+                parent::nonQuery($stm,[$orientation,$name,$code]);
+                $id = $this->lastInsertId();
+                return $this->getGroupById($id);
+            }
+        }else{
+            return 'La orientacion no existe o fue borrada';
+        }
     }
 
+    /*
+    Devuelve todos los grupos
+    */
     public function getGroups(){
         $stm = 'SELECT * FROM `group` WHERE `state` = 1 ';
         $data = parent::query($stm);
         return $data;
     }
-    
+    /*
+    Devuelve un grupo por id
+    */
     public function getGroupById($id){
         $stm = 'SELECT * FROM `group` WHERE id = ? AND `state` = 1 ';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $group_data = parent::query($stm,[$id]);
+        $grupo = $group_data[0];
+        return $grupo;
     }
 
+    /*
+    Devuelve un grupo por nombre
+    */
     public function getGroupByName($name){
         $stm = 'SELECT * FROM `group` WHERE `name` LIKE ? AND `state` = 1 ';
         $data = parent::query($stm,['%'.$name.'%']);
         return $data;
     }
 
-
+    /*
+    Modifica un grupo
+    */
     public function putGroup($id,$name,$orientation){
         $stm = 'UPDATE `group` SET `name` = ? , id_orientation = ? WHERE id = ?';
         $rows = parent::nonQuery($stm,[$name,$orientation,$id]);
         return $rows;
     }
 
+    /*
+    'Borra' un grupo
+    */
     public function deleteGroup($id){
         $stm = 'UPDATE `group` SET `state` = 0 WHERE id = ?';
         $rows = parent::nonQuery($stm,[$id]);
         return $rows;
     }
+
+    /*
+    Genera el codigo para un grupo
+    */
     private function generateCode(){
         $used_code = true;
         do{
@@ -63,6 +113,36 @@ class GroupModel extends Model{
         return $code;
     }
 
+
+    
+    /*
+    Devuelve el id de la orientacion de un grupo
+    */
+    public function getGroupOrientation($group){
+        $stm = 'SELECT * FROM `group` WHERE id = ?';
+        $data = parent::query($stm,[$group]);
+        $orientation = $data[0]['id_orientation'];
+        return $orientation;
+    }
+
+    /*
+    Chequea si una materia esta en un grupo
+    */
+    public function IsSubjectInGroup($group,$subject){
+        $orientation = $this->getGroupOrientation($group);
+        $stm = 'SELECT * FROM subject_orientation WHERE id_orientation = ? AND id_subject =?';
+        $subject = parent::query($stm,[$orientation,$subject]);
+        if($subject){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    /*
+    Genera un string aleatorio  (es usado el generar un codigo)
+    */
     private function randomString($length){
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);

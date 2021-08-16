@@ -10,7 +10,7 @@ CREATE TABLE `user`(
     surname 			VARCHAR(16) NOT NULL,
     second_surname 		VARCHAR(16),
     email 				VARCHAR(100) UNIQUE NOT NULL,
-    avatar 				VARCHAR(50),  -- Agregar default avatar
+    avatar 				VARCHAR(50) DEFAULT '01-man.svg',  -- Agregar default avatar
     nickname 			VARCHAR(32) UNIQUE NOT NULL,  
     state_account 		TINYINT(1) NOT NULL DEFAULT 2, -- 0 inactiv 1 activ 2 pendent 
     `password` 			VARCHAR(128) NOT NULL -- hashed pasword
@@ -96,10 +96,9 @@ CREATE TABLE teacher_group_subject(
 );
 
 CREATE TABLE student_group(
-	id_student			INT NOT NULL,
+	id_student			INT NOT NULL PRIMARY KEY,
     id_group 			INT NOT NULL,
     state 				TINYINT(1) NOT NULL DEFAULT 1,
-	PRIMARY KEY(id_student, id_group),
     FOREIGN KEY(id_student) REFERENCES student(id),
 	FOREIGN KEY(id_group) REFERENCES `group`(id)
 );
@@ -115,7 +114,7 @@ CREATE TABLE `query`(
     creation_date		DATETIME NOT NULL,
     finish_date 		DATETIME,
     `resume`			TEXT,
-    state 				TINYINT(1) NOT NULL DEFAULT 1, /*1 realizada por el alumno 2 contestada por el  3 recibida*/
+    state 				TINYINT(1) NOT NULL DEFAULT 1, /*1 recibida ,2 contestada ,0 cerrada*/
     FOREIGN KEY(id_student) REFERENCES student(id),
     FOREIGN KEY(id_teacher, id_group, id_subject) REFERENCES teacher_group_subject(id_teacher, id_group, id_subject)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -142,27 +141,21 @@ CREATE TABLE message(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','/assets/admin.png','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','01-man.svg','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO administrator(id) value(1);
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','/assets/alumno.png','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('11111111','ELu','Kitas','lukovich@hotmail.com','02-boy.svg','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO student(id) value(2);
 
-select * from user;
-select * from student;
-select * from teacher;
-select * from `subject`;
-select * from orientation;
-select * from subject_orientation;
-select * from `group`;
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('22222222','Elcome','Piedras Volador','teacher@edu.com','07-boy-2.svg','ElProfeSAPEEEEE','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO teacher(id) value(3);
 
-SELECT s.id,s.`name`,s.state,o.id,so.state
-FROM `subject` s,orientation o,subject_orientation so
-WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
 
-UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
-
-UPDATE orientation SET `name` = "POPO", `year` = 3 WHERE id = 1;
-UPDATE `group` SET `state` = 1 WHERE id = 1;
-
-DELETE FROM `subject`;
+-- SELECT * FROM user;
+-- SELECT * FROM student;
+-- SELECT * FROM teacher;
+-- SELECT * FROM `subject`;
+-- SELECT * FROM orientation;
+-- SELECT * FROM subject_orientation ;
+-- SELECT * FROM `group`;
+-- SELECT * FROM  teacher_group;
