@@ -10,10 +10,11 @@ class GroupModel extends Model{
     private $id;
     private $name;
     private $code;
-
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*
@@ -34,7 +35,7 @@ class GroupModel extends Model{
             if($grupo_existe){
                 $state = $grupo_existe[0]['state'];
                 if($state == 1){
-                    return 'El grupo ya existe';
+                    return $this->res->error('El grupo ya existe',1030);
                 }else{
                     $stm = 'UPDATE `group` SET `state` = 1 WHERE `name` = ? AND id_orientation = ?';
                     parent::nonQuery($stm,[$name,$orientation]);
@@ -48,7 +49,7 @@ class GroupModel extends Model{
                 return $this->getGroupById($id);
             }
         }else{
-            return 'La orientacion no existe o fue borrada';
+            return $this->res->error('La orientacion no existe o fue borrada',1031);
         }
     }
 

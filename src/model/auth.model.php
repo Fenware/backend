@@ -15,9 +15,11 @@ Al logearse de forma exitosa este genera el token para el usuario
 class AuthModel extends Model{
 
     private $user;
+    private $res;
     function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     public function login($json){
@@ -68,21 +70,21 @@ class AuthModel extends Model{
                                     return $result;
                                 }
                             }else{
-                                return $res->error('El usuario no es un '.$type);
+                                return $res->error('El usuario no es un '.$type,1004);
                             }
                             
                         }else{
-                            return $res->error('Contraseña Incorrecta');
+                            return $res->error('Contraseña Incorrecta',1003);
                         }
                     }else{
                         if($data[0]['state_account'] == 2){
-                            return $res->error('Tu cuenta aun no fue aceptada por un administrador');
+                            return $res->error('Tu cuenta aun no fue aceptada por un administrador',1001);
                         }else{
-                            return $res->error('El usuario no existe');
+                            return $res->error('El usuario no existe',1002);
                         }
                     }
                 }else{
-                    return $res->error('El usuario no existe');
+                    return $res->error('El usuario no existe',1002);
                 }
             }
             

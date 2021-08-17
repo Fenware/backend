@@ -22,13 +22,8 @@ class GroupAPI extends API{
             //Cheque la informacion
             if(parent::isTheDataCorrect($data,['name'=>'is_string','orientacion'=>'is_int'])){
                 $grupito = $this->group->postGroup($data['name'],$data['orientacion']);
-                if(!is_string($grupito)){
-                    $datosArray = $grupito;
-                }else{
-                    $datosArray = $this->res->error($grupito);
-                }
+                $datosArray = $grupito;
             }else{
-                
                 $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);

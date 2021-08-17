@@ -9,10 +9,11 @@ class SubjectModel extends Model{
 
     private $id;
     private $nombre;
-
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
     
     /*
@@ -24,7 +25,7 @@ class SubjectModel extends Model{
         if($materia_existe){
             $state = $materia_existe[0]['state'];
             if($state == 1){
-                return 'La materia ya existe';
+                return $this->res->error('La materia ya existe',1010);
             }else{
                 if($state == 0){
                     $id = $materia_existe[0]['id'];
@@ -40,7 +41,7 @@ class SubjectModel extends Model{
                     $id = parent::lastInsertId();
                     return $this->getSubjectById($id);
                 }else{
-                    return 'Surgio un problema al crear la materia';
+                    return $this->res->error('Surgio un problema al crear la materia',1011);
                 }
         }
     }
@@ -108,7 +109,7 @@ class SubjectModel extends Model{
             return 1;
         }else{
             //no se pudo tomar la materia
-            return 'Ocurrio un problema al intentar tomar la materia';
+            return $this->res->error('Ocurrio un problema al tomar la materia',1013);
         }
     }
 
