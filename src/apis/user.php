@@ -202,14 +202,14 @@ class UserAPI extends API{
             $type = $this->user->getUserType($data['user']);
             //Me aseguro de que el usuario que quiero modificar no sea un administrador
             if($type != 'administrator'){
-                if(parent::isTheDataCorrect($data,['ci'=>'is_string'])){
-                    /*
-                    Es posible que el administrador no deba ser capas de modificar la cedula de identidad de un usuario
-    
-                    */
-                    $this->user->patchUser($data['user'],'ci',$data['ci']);
-                }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+                if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+
                     $this->user->patchUser($data['user'],'name',$data['name']);
+
+                }elseif(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
+                    
                 }/*elseif(){
                     Asi con el resto de columnas de un usuario
                 }*/
