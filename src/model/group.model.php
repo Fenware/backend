@@ -57,7 +57,7 @@ class GroupModel extends Model{
     Devuelve todos los grupos
     */
     public function getGroups(){
-        $stm = 'SELECT g.id ,g.id_orientation,o.name AS orientation_name ,g.`name`,g.`code`,g.`state` FROM `group` g,orientation o WHERE g.`state` = 1 ';
+        $stm = 'SELECT g.id ,g.id_orientation,o.name AS orientation_name ,g.`name`,g.`code`,g.`state` FROM `group` g,orientation o WHERE g.`state` = 1 AND g.id_orientation = o.id';
         $data = parent::query($stm);
         return $data;
     }
