@@ -203,16 +203,42 @@ class UserAPI extends API{
             //Me aseguro de que el usuario que quiero modificar no sea un administrador
             if($type != 'administrator'){
                 if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
-
                     $this->user->patchUser($data['user'],'name',$data['name']);
-
-                }elseif(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
+                }
+                if(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
 
                     $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
                     
-                }/*elseif(){
-                    Asi con el resto de columnas de un usuario
-                }*/
+                }
+                if(parent::isTheDataCorrect($data,['surname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'surname',$data['surname']);
+
+                }
+                if(parent::isTheDataCorrect($data,['second_surname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'second_surname',$data['second_surname']);
+
+                }
+                if(parent::isTheDataCorrect($data,['email'=>'is_string']) && $this->is_email($data['email']) ){
+
+                    $this->user->patchUser($data['user'],'email',$data['email']);
+
+                }
+
+                if(parent::isTheDataCorrect($data,['avatar'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'email',$data['email']);
+
+                }
+
+                if(parent::isTheDataCorrect($data,['nickname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'nickname',$data['nickname']);
+
+                }
+
+
             }else{
                 return $this->res->error_403();
             }
