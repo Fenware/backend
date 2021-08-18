@@ -183,7 +183,8 @@ class UserAPI extends API{
     //Modifico a un usuario
     public function PUT($token,$data){
         if($token->user_type == 'administrator'){
-            //TODO
+            //Esto es largo asi q lo mando aca
+            $datosArray = $this->administradorEditaUsuario($data);
         }else{
             //me aseguro de que el id esta bien
             if(parent::isTheDataCorrect($data,['avatar'=>'is_string','nickname'=>'is_string'])){
@@ -194,6 +195,28 @@ class UserAPI extends API{
                 $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
+        }
+    }
+    public function administradorEditaUsuario($data){
+        if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+            $type = $this->user->getUserType($data['user']);
+            //Me aseguro de que el usuario que quiero modificar no sea un administrador
+            if($type != 'administrator'){
+                if(parent::isTheDataCorrect($data,['ci'=>'is_string'])){
+                    /*
+                    Es posible que el administrador no deba ser capas de modificar la cedula de identidad de un usuario
+    
+                    */
+                    $this->user->patchUser($data['user'],'ci',$data['ci']);
+                }elseif(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+                    $this->user->patchUser($data['user'],'name',$data['name']);
+                }/*elseif(){
+                    Asi con el resto de columnas de un usuario
+                }*/
+            }else{
+                return $this->res->error_403();
+            }
+            
         }
     }
 
