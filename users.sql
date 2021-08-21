@@ -48,7 +48,7 @@ CREATE TABLE orientation(
 CREATE TABLE `group`(
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_orientation 		INT NOT NULL,
-	`name` 				VARCHAR(3) UNIQUE NOT NULL,
+	`name` 				VARCHAR(3) NOT NULL,
 	`code` 				CHAR(8) UNIQUE NOT NULL,
     state 				TINYINT(1) NOT NULL DEFAULT 1,
     FOREIGN KEY(id_orientation) REFERENCES orientation(id)
