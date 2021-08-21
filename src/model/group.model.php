@@ -25,10 +25,13 @@ class GroupModel extends Model{
         $query_orientation = parent::query($stm,[$orientation]);
         //Chequeo si la orientacion ya existe
         if($query_orientation){
-            $year = $query_orientation[0]['year'];
+            $year = (int)$query_orientation[0]['year'];
+
             //Compruebo si el grupo ya existe y esta activo
-            $grupo_existe = 'SELECT g.id,g.id_orientation,g.`name`,g.`code` ,g.`state` FROM `group` g,orientation o 
-            WHERE g.`name` = ? AND o.`year` = ? AND g.id_orientation = o.id ';
+            $stm = 
+            "SELECT g.id,g.id_orientation,g.`name`,g.`code` ,g.state
+            FROM `group` g , orientation o 
+            WHERE g.id_orientation = o.id AND g.`name` = ? AND o.`year` = ?";
             $grupo_existe = parent::query($stm , [$name, $year]); 
             //Compruebo si el grupo ya existe
             if($grupo_existe){
