@@ -170,7 +170,16 @@ class UserAPI extends API{
     //Pido la informacion de un usuario
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            $datosArray = $this->user->getAllUsers();
+            if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+                $type = $this->user->getUserType($data['user']);
+                if($type != 'administrator'){
+                    $datosArray = $this->user->getUserByIdSafe($data['user']);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+            }else{
+                $datosArray = $this->user->getAllUsers();
+            }
             echo json_encode($datosArray);
         }else{
             //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
