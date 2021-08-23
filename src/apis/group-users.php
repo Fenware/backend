@@ -41,7 +41,11 @@ class GroupUserAPI extends API{
                 $datosArray = $teachers;
             }elseif($data['type'] == 'student'){
                 $datosArray = $this->group->getStudentsInGroup($data['group']);
+            }else{
+                $datosArray = $this->res->error_400();
             }
+        }else{
+            $datosArray = $this->res->error_400();
         }
         echo json_encode($datosArray);
     }
