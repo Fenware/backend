@@ -141,8 +141,15 @@ class UserModel extends Model{
         $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
         FROM user u,administrator a
         WHERE a.id != u.id';
-        $data = parent::query($stm);
-        return $data;
+        $users = parent::query($stm);
+
+        // Loop para agregarle el tipo de usuario
+        foreach ($users as &$user) {
+            $user_type = $this->getUserType($user['id']);
+            $user['type'] = $user_type;
+        }
+
+        return $users;
     }
 
 
