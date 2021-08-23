@@ -158,5 +158,21 @@ class GroupModel extends Model{
         return $randomString;
     }
 
+    public function getStudentsInGroup($group){
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        FROM `user` u,student_group sg
+        WHERE u.id = sg.id_student AND sg.id_group = ?';
+        $users = parent::query($stm , [$group]);
+        return $users;
+    }
+
+    public function getTeachersInGroup($group){
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        FROM `user` u,teacher_group tg
+        WHERE u.id = tg.id_student AND tg.id_group = ?';
+        $teachers = parent::query($stm , [$group]);
+        return $teachers;
+    }
+
 
 }
