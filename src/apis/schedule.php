@@ -83,7 +83,7 @@ class ScheduleAPI extends API{
     public function GET($token,$data){
         if($token->user_type == 'teacher'){
             $datosArray = $this->schedule_model->getTeacherSchedule($token->user_id);
-        }elseif(parent::isTheDataCorrect($data, ['teacher'=>'is_int'] )){
+        }elseif(parent::isTheDataCorrect($data, ['teacher'=>'is_string'] )){
             $datosArray = $this->schedule_model->getTeacherSchedule($data['teacher']);
         }else{
             $datosArray = $this->res->error_400();
