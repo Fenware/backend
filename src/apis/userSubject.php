@@ -49,8 +49,18 @@ class UserSubjectAPI extends API{
     public function GET($token,$data){
         if($token->user_type == 'teacher'){
             $datosArray = $this->materia->getTeacherSubjects($token->user_id);
-            echo json_encode($datosArray);
+        }else{
+            if(parent::isTheDataCorrect($data, ['teacher'=>'is_string'] )){
+                if(parent::isTheDataCorrect($data,['group'=>'is_string'])){
+                    $datosArray = $this->materia->getTeacherSubjectsInGroup($data['teacher'],$data['group']);
+                }else{
+                    $datosArray = $this->materia->getTeacherSubjects($data['teacher']);
+                }
+            }else{
+                $datosArray = $this->res->error_400();
+            }
         }
+        echo json_encode($datosArray);
     }
     public function PUT($token,$data){
         if($token->user_type == 'teacher'){
