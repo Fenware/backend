@@ -31,7 +31,7 @@ class GroupUserAPI extends API{
     }
 
     public function GET($token,$data){
-        if(parent::isTheDataCorrect($data, ['type'=>'is_string','group'=>'is_sting'] )){
+        if(parent::isTheDataCorrect($data, ['type'=>'is_string','group'=>'is_string'] )){
             if($data['type'] == 'teacher'){
                 $teachers = $this->group->getTeachersInGroup($data['group']);
                 foreach($teachers as &$t){
@@ -39,8 +39,7 @@ class GroupUserAPI extends API{
                     $t['subjects'] = $this->subject_model->getTeacherSubjectsInGroup($t['id'],$data['group']);
                 }
                 $datosArray = $teachers;
-            }
-            if($data['type'] == 'student'){
+            }elseif($data['type'] == 'student'){
                 $datosArray = $this->group->getStudentsInGroup($data['group']);
             }
         }
