@@ -23,6 +23,7 @@ CREATE TABLE administrator(
 
 CREATE TABLE teacher(
 	id 					INT PRIMARY KEY NOT NULL,
+    max_rooms_per_gs    INT NOT NULL DEFAULT 1 CHECK (max_rooms_per_gs > 0),
     FOREIGN KEY(id) REFERENCES `user`(id)
 );
 
