@@ -184,6 +184,9 @@ class UserAPI extends API{
         }else{
             //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
             $datosArray = $this->user->getUserByIdSafe($token->user_id);
+            if($token->user_type == 'teacher'){
+                $datosArray['max_rooms_per_gs'] = $this->user->getMaxRoomsPerGs($token->user_id);
+            }
             echo json_encode($datosArray);
             //echo json_encode($this->res->error_403());
         }
