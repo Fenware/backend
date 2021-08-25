@@ -200,6 +200,12 @@ class UserAPI extends API{
                 $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
                 $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
                 $datosArray = 1;
+            }elseif($token->user_type == 'teacher'){
+                if(parent::isTheDataCorrect($data,['max_rooms_per_gs'=>'is_int'])){
+                    $datosArray = $this->user->setMaxRoomsPerGs($token->user_id,$data['max_rooms_per_gs']);
+                }else{
+                    $datosArray = $this->res->error_400();
+                }
             }else{
                 $datosArray = $this->res->error_400();
             }
