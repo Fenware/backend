@@ -12,7 +12,8 @@ CREATE TABLE `user`(
     email 				VARCHAR(100) UNIQUE NOT NULL,
     avatar 				VARCHAR(50) DEFAULT '01-man.svg',  -- Agregar default avatar
     nickname 			VARCHAR(32) UNIQUE NOT NULL,  
-    state_account 		TINYINT(1) NOT NULL DEFAULT 2, -- 0 inactiv 1 activ 2 pendent 
+    state_account 		TINYINT(1) NOT NULL DEFAULT 2,
+    connection_time     DATETIME, -- 0 inactiv 1 activ 2 pendent 
     `password` 			VARCHAR(128) NOT NULL -- hashed pasword
 ); 
 
