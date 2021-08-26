@@ -275,6 +275,8 @@ class UserAPI extends API{
                     $datosArray = $this->res->error_403();
                 }
                 echo json_encode($datosArray);
+            }else{
+                $datosArray = $this->res->error_400();
             }
         }else{
             // me aseguro que que quiere modificarse a si mismo
