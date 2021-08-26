@@ -184,6 +184,9 @@ class UserAPI extends API{
         }else{
             //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
             $datosArray = $this->user->getUserByIdSafe($token->user_id);
+            if($token->user_type == 'teacher'){
+                $datosArray['max_rooms_per_gs'] = $this->user->getMaxRoomsPerGs($token->user_id);
+            }
             echo json_encode($datosArray);
             //echo json_encode($this->res->error_403());
         }
@@ -200,6 +203,12 @@ class UserAPI extends API{
                 $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
                 $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
                 $datosArray = 1;
+            }elseif($token->user_type == 'teacher'){
+                if(parent::isTheDataCorrect($data,['max_rooms_per_gs'=>'is_int'])){
+                    $datosArray = $this->user->setMaxRoomsPerGs($token->user_id,$data['max_rooms_per_gs']);
+                }else{
+                    $datosArray = $this->res->error_400();
+                }
             }else{
                 $datosArray = $this->res->error_400();
             }
@@ -258,7 +267,17 @@ class UserAPI extends API{
     //Borro a un usuario
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            //TODO
+            if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+                $type = $this->user->getUserType($data['user']);
+                if($type != 'administrator'){
+                    $datosArray = $this->user->patchUser($data['user'],'state_account',0);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+                echo json_encode($datosArray);
+            }else{
+                $datosArray = $this->res->error_400();
+            }
         }else{
             // me aseguro que que quiere modificarse a si mismo
             //me aseguro de que el id esta bien

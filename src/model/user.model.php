@@ -347,6 +347,11 @@ class UserModel extends Model{
         }
     }
 
+    public function setMaxRoomsPerGs($teacher,$max){
+        $stm = 'UPDATE teacher SET max_rooms_per_gs = ? WHERE id = ?';
+        $rows = parent::nonQuery($stm , [$max,$teacher] );
+        return $rows;
+    }
     
     /**
      * Get the value of id
