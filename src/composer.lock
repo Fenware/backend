@@ -1308,12 +1308,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "632484e59b081e13258d0fc4acab5cc0e6834200"
+                "reference": "b6bf8f2a2013a995c3cfe33e2d956d9584d5308e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/632484e59b081e13258d0fc4acab5cc0e6834200",
-                "reference": "632484e59b081e13258d0fc4acab5cc0e6834200",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/b6bf8f2a2013a995c3cfe33e2d956d9584d5308e",
+                "reference": "b6bf8f2a2013a995c3cfe33e2d956d9584d5308e",
                 "shasum": ""
             },
             "require": {
@@ -1373,7 +1373,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-09T09:36:42+00:00"
+            "time": "2021-08-26T08:23:47+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1546,12 +1546,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing.git",
-                "reference": "f242c65730dce47846fea028ea80847a33bca87f"
+                "reference": "d49fdd06dc330bf7ba91641cc7712ab814a7f10e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/routing/zipball/f242c65730dce47846fea028ea80847a33bca87f",
-                "reference": "f242c65730dce47846fea028ea80847a33bca87f",
+                "url": "https://api.github.com/repos/symfony/routing/zipball/d49fdd06dc330bf7ba91641cc7712ab814a7f10e",
+                "reference": "d49fdd06dc330bf7ba91641cc7712ab814a7f10e",
                 "shasum": ""
             },
             "require": {
@@ -1628,7 +1628,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-04T21:43:13+00:00"
+            "time": "2021-08-18T08:03:57+00:00"
         }
     ],
     "packages-dev": [],
