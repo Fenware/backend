@@ -267,7 +267,15 @@ class UserAPI extends API{
     //Borro a un usuario
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            //TODO
+            if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+                $type = $this->user->getUserType($data['user']);
+                if($type != 'administrator'){
+                    $datosArray = $this->user->patchUser($data['user'],'state_account',0);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+                echo json_encode($datosArray);
+            }
         }else{
             // me aseguro que que quiere modificarse a si mismo
             //me aseguro de que el id esta bien
