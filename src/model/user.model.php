@@ -250,7 +250,7 @@ class UserModel extends Model{
     public function getUserGroups($user,$type){
         switch($type){
             case 'teacher':
-                $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name
+                $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name, g.code
                 FROM teacher_group tg,`group` g,orientation o 
                 WHERE tg.id_teacher = ? AND tg.id_group = g.id AND g.id_orientation = o.id AND tg.state = 1 AND g.state = 1 AND o.state = 1';
                 $grupos = parent::query($stm,[$user]);
