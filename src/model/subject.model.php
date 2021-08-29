@@ -152,15 +152,10 @@ class SubjectModel extends Model{
     }
 
     public function getTeacherSubjectsInGroup($teacher,$group){
-        $stm = 'SELECT tgs.id_group,g.id_orientation,tgs.id_subject AS id ,s.name
+        $stm = 'SELECT s.id
         FROM `subject` s ,teacher_group_subject tgs ,`group` g
         WHERE tgs.id_teacher = ? AND g.id = ? AND s.id = tgs.id_subject AND tgs.state = 1 AND s.state = 1 AND tgs.id_group = g.id';
         $data = parent::query($stm,[$teacher,$group]);
-        //le agrego selected pa ayudar a los de frontend
-        //es remobible pero ellos se tienen que enterar
-        foreach($data as $item){
-            $item['selected'] = true;
-        }
         return $data;
     }
 
