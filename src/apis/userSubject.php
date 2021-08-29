@@ -47,7 +47,7 @@ class UserSubjectAPI extends API{
         }
     }
     public function GET($token,$data){
-        if($token->user_type == 'teacher'){
+        /* if($token->user_type == 'teacher'){
             $datosArray = $this->materia->getTeacherSubjects($token->user_id);
         }else{
             if(parent::isTheDataCorrect($data, ['teacher'=>'is_string'] )){
@@ -56,6 +56,14 @@ class UserSubjectAPI extends API{
                 }else{
                     $datosArray = $this->materia->getTeacherSubjects($data['teacher']);
                 }
+            }else{
+                $datosArray = $this->res->error_400();
+            }
+        } */
+        // Ni idea bro son las 2:30 am, no entinedo un choto y necesit materias por grupo :)
+        if($token->user_type == 'teacher'){
+            if(parent::isTheDataCorrect($data,['group'=>'is_string'])){
+                $datosArray = $this->materia->getTeacherSubjectsInGroup($token->user_id, $data['group']);
             }else{
                 $datosArray = $this->res->error_400();
             }
