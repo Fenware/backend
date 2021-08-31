@@ -94,7 +94,7 @@ class UserModel extends Model{
     Devuelve la informacion de un usuario por cedula
     */
     public function getUserByCiSafe($ci){
-        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
         FROM user WHERE ci = ?';
         $data = parent::query($stm,[$ci]);
         return $data;
@@ -104,7 +104,7 @@ class UserModel extends Model{
     Devuelve la informacion de un usuario por id
     */
     public function getUserByIdSafe($id){
-        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user WHERE id = ?';
         $data = parent::query($stm,[$id]);
         return $data;
@@ -138,7 +138,7 @@ class UserModel extends Model{
     Devuelve todos los usuarios
     */
     public function getAllUsers(){
-        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user u,administrator a
         WHERE a.id != u.id';
         $users = parent::query($stm);
@@ -352,7 +352,25 @@ class UserModel extends Model{
         $rows = parent::nonQuery($stm , [$max,$teacher] );
         return $rows;
     }
+
+    public function getMaxRoomsPerGs($teacher){
+        $stm =  'SELECT max_rooms_per_gs FROM teacher WHERE id = ?';
+        $max_rooms_per_gs = parent::query($stm, [$teacher] );
+        return $max_rooms_per_gs[0]['max_rooms_per_gs'];
+    }
     
+    public function actualizeLastConnectionTime($user){
+        $date = date('Y-m-d H:i:s', time());
+        $stm = 'UPDATE `user` SET connection_time = ? WHERE id = ?';
+        $rows = parent::nonQuery($stm , [$date ,$user]);
+        return $rows;
+    }
+    public function getLastConnectionTime($user){
+        $date = date('Y-m-d H:i:s', time());
+        $stm = 'SELECT connection_time FROM `user` WHERE id = ?';
+        $time = parent::query($stm , [$user]);
+        return $time;
+    }
     /**
      * Get the value of id
      */ 
