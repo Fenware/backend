@@ -71,7 +71,7 @@ class QueryModel extends Model{
         $id = parent::lastInsertId();
         $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id = ? AND m.id_user = u.id';
         $mensaje =  parent::query($stm, [ $id ]);
-        return $mensaje;
+        return $mensaje[0];
     }
 
     /*
@@ -138,7 +138,7 @@ class QueryModel extends Model{
         $group = parent::query($stm,[$id_group]);
         //agrego el campo subject_name
         $consulta[0]['group_name'] = $group[0]['name'];
-        return $consulta;
+        return $consulta[0];
     }
 
 
