@@ -198,7 +198,9 @@ class UserAPI extends API{
             //Esto es largo asi q lo mando aca
             $datosArray = $this->administradorEditaUsuario($data);
         }else{
-            //me aseguro de que el id esta bien
+            if(parent::isTheDataCorrect($data,['time'=>'is_string'])){
+                $this->user->actualizeLastConnectionTime($token->user_id);
+            }
             if(parent::isTheDataCorrect($data,['avatar'=>'is_string','nickname'=>'is_string'])){
                 $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
                 $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
