@@ -13,12 +13,14 @@ RUN apt-get update && apt-get install libzmq3-dev git -y \
 
 RUN docker-php-ext-enable zmq
 
+COPY src/php.ini /usr/local/etc/php/php.ini 
+
+COPY src/ /var/www/html/
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN a2enmod rewrite
 
-COPY src/php.ini /usr/local/etc/php/php.ini 
-
 EXPOSE 80 5555 5556 8085 8086
 
-#CMD php /var/www/html/ws/bin/crear-chat-server.php 
+CMD sh /var/www/html/init-script.sh
