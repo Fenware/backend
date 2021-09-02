@@ -272,7 +272,7 @@ class UserAPI extends API{
             if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
                 $type = $this->user->getUserType($data['user']);
                 if($type != 'administrator'){
-                    $datosArray = $this->user->patchUser($data['user'],'state_account',0);
+                    $datosArray = $this->user->removeUser($data['user'],$type);
                 }else{
                     $datosArray = $this->res->error_403();
                 }
@@ -283,7 +283,7 @@ class UserAPI extends API{
         }else{
             // me aseguro que que quiere modificarse a si mismo
             //me aseguro de que el id esta bien
-            $datosArray = $this->user->patchUser($token->user_id,'state_account',0);
+            $datosArray = $this->user->removeUser($token->user_id,$token->user_type);
             echo json_encode($datosArray);
         }
     }

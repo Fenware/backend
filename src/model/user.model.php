@@ -212,6 +212,7 @@ class UserModel extends Model{
             case 'teacher':
                 $stm =  'UPDATE teacher_group SET `state` = 0 WHERE id_teacher = ? AND id_group = ?';
                 $rows = parent::nonQuery($stm,[$id,$group]);
+                $this->removeTeacherFromAllSubjectsInGroup($id,$group);
                 break;
             case 'student' : 
                 $stm =  'UPDATE student_group SET `state` = 0 WHERE id_student = ?';
@@ -370,6 +371,41 @@ class UserModel extends Model{
         $stm = 'SELECT connection_time FROM `user` WHERE id = ?';
         $time = parent::query($stm , [$user]);
         return $time;
+    }
+
+    public function removeUser($user,$type){
+        $rows = $this->patchUser($user,'state_account',0);
+        switch($type){
+            case 'teacher':
+                $this->removeTeacherFromAllGroups($user);
+                $this->removeTeacherFromAllSubjects($user);
+                break;
+            case 'student':
+                $this->deleteUserGroup($user,0,$type);
+            default:
+                break;
+        }
+        $this->removeTeacherFromAllGroups($user);
+        return $rows;
+    }
+
+
+    public function removeTeacherFromAllGroups($teacher){
+        $stm = 'UPDATE teacher_group SET `state` = 0 WHERE id_teacher = ?';
+        $rows = parent::nonQuery($stm, [$teacher] );
+        return $rows;
+    }
+
+    public function removeTeacherFromAllSubjects($teacher){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_teacher = ?';
+        $rows = parent::nonQuery($stm, [$teacher] );
+        return $rows;
+    }
+
+    public function removeTeacherFromAllSubjectsInGroup($teacher,$group){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_teacher = ? AND id_group = ?';
+        $rows = parent::nonQuery($stm, [$teacher ,$group] );
+        return $rows;
     }
     /**
      * Get the value of id
