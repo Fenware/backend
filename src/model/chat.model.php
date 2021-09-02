@@ -19,6 +19,12 @@ class ChatModel extends QueryModel{
     Crea una consulta
     */
 
+    public function amountOfActiveChatsFromSubjecGroup($subject,$group){
+        $stm = 'SELECT * FROM `query` q ,room r WHERE q.id_subject = ? AND q.id_group = ? AND q.`state` != 0 AND q.id = r.id';
+        $amount = parent::query($stm , [$subject,$group] );
+        return count($amount);
+    }
+
     public function createChat(){
         $stm = 'INSERT INTO `room`(id) VALUES(?)';
         parent::nonQuery($stm,[parent::getId()]);

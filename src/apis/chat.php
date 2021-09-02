@@ -33,21 +33,28 @@ class ChatAPI extends API{
                 $grupo = $student_group[0]['id_group'];
                 $teacher = $this->subject->getTeacherFromSubjectInGroup($data['materia'],$grupo);
                 if(is_int($teacher)){
-                    $this->chat->setStudent($token->user_id);
-                    $this->chat->setTeacher($teacher);
-                    $this->chat->setGroup($grupo);
-                    $this->chat->setSubject($data['materia']);
-                    $this->chat->setTheme($data['asunto']);
-                    $chat = $this->chat->createQuery();
-                    $datosArray = $this->chat->createChat($chat[0]['id']);
-                    $context = new ZMQContext();
-                    $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
-                    $socket->connect("tcp://localhost:5555");
-                    $entryData = array(
-                        'category' => $student_group[0]['id_group'],
-                        'chat' => $chat[0]
-                    );
-                    $socket->send(json_encode($entryData));
+                    $max_rooms_per_gs = $this->user->getMaxRoomsPerGs($teacher);
+                    $active_rooms = $this->chat->amountOfActiveChatsFromSubjecGroup($data['materia'],$grupo);
+                    if($max_rooms_per_gs > $active_rooms){
+                        $this->chat->setStudent($token->user_id);
+                        $this->chat->setTeacher($teacher);
+                        $this->chat->setGroup($grupo);
+                        $this->chat->setSubject($data['materia']);
+                        $this->chat->setTheme($data['asunto']);
+                        $chat = $this->chat->createQuery();
+                        $datosArray = $this->chat->createChat($chat[0]['id']);
+                        $context = new ZMQContext();
+                        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+                        $socket->connect("tcp://localhost:5555");
+                        $entryData = array(
+                            'category' => $student_group[0]['id_group'],
+                            'chat' => $chat[0]
+                        );
+                        $socket->send(json_encode($entryData));
+                    }else{
+                        $datosArray = $this->res->error('Ya hay demasiadas salas de chat abiertas en esta materia',1080);
+                    }
+                    
                 }else{
                     //si no es un  numero entonces capte un error 
                     $datosArray = $this->res->error($teacher);
