@@ -50,7 +50,7 @@ class ChatAPI extends API{
                             'category' => $student_group[0]['id_group'],
                             'chat' => $chat[0]
                         );
-                        $socket->send(json_encode($entryData));
+                        $socket->send(json_encode($datosArray));
                     }else{
                         $datosArray = $this->res->error('Ya hay demasiadas salas de chat abiertas en esta materia',1080);
                     }
