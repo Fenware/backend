@@ -27,7 +27,7 @@ class ChatModel extends QueryModel{
 
     public function createChat(){
         $stm = 'INSERT INTO `room`(id) VALUES(?)';
-        parent::nonQuery($stm,[parent::getId()]);
+        return parent::nonQuery($stm,[parent::getId()]);
     }
 
     /*
