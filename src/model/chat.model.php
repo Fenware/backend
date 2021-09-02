@@ -83,13 +83,13 @@ class ChatModel extends QueryModel{
         switch($type){
             case 'teacher':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
-                FROM `query` q ,`room` r
-                WHERE q.`state` != 0 AND q.teacher = ? AND q.id = r.id';
+                FROM `query` q,`room` r,group g,teacher_group sg
+                WHERE q.`state` != 0 AND sg.id_teacher = ? AND sg.id_group = g.id AND q.id = r.id AND g.id = q.id_group';
                 break;
             case 'student':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
-                FROM `query` q ,`room` r 
-                WHERE q.`state` != 0 AND q.id_student = ? AND q.id = r.id';
+                FROM `query` q,`room` r,group g,student_group sg
+                WHERE q.`state` != 0 AND sg.id_student = ? AND sg.id_group = g.id AND q.id = r.id AND g.id = q.id_group';
                 break;
         }
         $consultas = parent::query($stm,[$id]);
@@ -125,13 +125,13 @@ class ChatModel extends QueryModel{
         switch($type){
             case 'teacher':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
-                FROM `query` q ,`room` r
-                WHERE q.teacher = ? AND q.id = r.id';
+                FROM `query` q,`room` r,group g,teacher_group sg
+                WHERE q.`state` != 0 AND sg.id_teacher = ? AND sg.id_group = g.id AND q.id = r.id AND g.id = q.id_group';
                 break;
             case 'student':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
-                FROM `query` q ,`room` r 
-                WHERE q.id_student = ? AND q.id = r.id';
+                FROM `query` q,`room` r,group g,student_group sg
+                WHERE q.`state` != 0 AND sg.id_student = ? AND sg.id_group = g.id AND q.id = r.id AND g.id = q.id_group';
                 break;
         }
         $consultas = parent::query($stm,[$id]);
