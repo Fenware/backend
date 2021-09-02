@@ -87,7 +87,7 @@ class ChatAPI extends API{
                 if(isset($data['all'])){
                     $datosArray = $this->chat->getAllChatsFromUser($token->user_id,$token->user_type);
                 }else{
-                    $datosArray = $this->chat->getChatsFromUsers($token->user_id,$token->user_type);
+                    $datosArray = $this->chat->getChatsFromUser($token->user_id,$token->user_type);
                 }
                 
             }
