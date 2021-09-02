@@ -14,6 +14,7 @@ class SelfRegisterAPI{
     {
 
         $this->user = new UserModel();
+        $this->res = new Response();
         //obtengo el body
         $data = file_get_contents('php://input');
         //lo convierto de json a array
