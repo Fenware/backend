@@ -45,7 +45,7 @@ class Chat implements WampServerInterface {
             if($access){
                 //Lo suscribo al grupo
                 $this->subscribedTopics[$chat->getId()] = $chat;
-                echo "Connection {$conn->resourceId} has suscribed to {$chat}\n";
+                echo "Mensaje: Connection {$conn->resourceId} has suscribed to {$chat}\n";
             }else{
                 //Lo desconecto por seguridad
                 $this->clients->detach($conn);
@@ -63,12 +63,12 @@ class Chat implements WampServerInterface {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
 
-        echo "New connection! ({$conn->resourceId})\n";
+        echo "Mensaje: New connection! ({$conn->resourceId})\n";
     }
     public function onClose(ConnectionInterface $conn) {
         $this->clients->detach($conn);
 
-        echo "Connection {$conn->resourceId} has disconnected\n";
+        echo "Mensaje: Connection {$conn->resourceId} has disconnected\n";
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         // In this application if clients send data it's because the user hacked around in console
