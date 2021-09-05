@@ -78,7 +78,7 @@ class ChatAPI extends API{
             $datosArray = $this->res->error('Work In Progress');
         }else{
             if(parent::isTheDataCorrect($data,['chat'=>'is_string'])){
-                if($this->user->UserHasAccesTochat($token->user_id,$data['chat'])){
+                if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
                     $datosArray = $this->chat->getQueryById($data['chat']);
                 }else{
                     $datosArray = $this->res->error_403();
