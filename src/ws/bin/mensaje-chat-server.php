@@ -2,7 +2,7 @@
     require '/var/www/html/vendor/autoload.php';
     require '/var/www/html/ws/chat.php';
     $loop   = React\EventLoop\Factory::create();
-    $pusher = new CrearChat;
+    $pusher = new Chat;
 
     // Listen for the web server to make a ZeroMQ push after an ajax request
     $context = new React\ZMQ\Context($loop);

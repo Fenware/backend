@@ -83,7 +83,7 @@ class QueryModel extends Model{
     Devuelve los mensajes de una consulta
     */
     public function getMessageFromQuery($consulta){
-        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id';
+        $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id ORDER BY `date`';
         $messages = parent::query($stm,[$consulta]);
         return $messages;
     }

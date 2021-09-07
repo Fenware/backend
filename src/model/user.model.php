@@ -301,8 +301,8 @@ class UserModel extends Model{
     }
 
     public function UserHasAccesToChat($user,$chat){
-        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
-        $query = parent::query($stm,[$user,$user,$chat]);
+        $stm = 'SELECT * FROM `query` WHERE id = ?';
+        $query = parent::query($stm,[$chat]);
         if($query){
             $grupo = $query[0]['id_group'];
             $materia = $query[0]['id_subject'];
