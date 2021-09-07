@@ -117,6 +117,7 @@ class ChatModel extends QueryModel{
             $group = parent::query($stm,[$id_group]);
             //agrego el campo subject_name
             $consulta['group_name'] = $group[0]['name'];
+            $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
         return $consultas;
     } 
@@ -159,8 +160,22 @@ class ChatModel extends QueryModel{
             $group = parent::query($stm,[$id_group]);
             //agrego el campo subject_name
             $consulta['group_name'] = $group[0]['name'];
+            $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
         return $consultas;
     } 
     
+    public function addParticipant($chat,$user){
+        $stm = 'INSERT INTO room_participants(id_room,id_user) VALUES(?,?)';
+        $rows = parent::nonQuery($stm , [$chat,$user] );
+        return $rows;
+    }
+
+    public function getParticipants($chat){
+        $stm = 'SELECT r.id ,u.name,u.middle_name,u.surname,u.second_surname
+        room_participants r,`user` u
+        WHERE r.id_room = ? AND r.id_user = u.id';
+        $participants = parent::query($stm , [$chat] );
+        return $participants;
+    }
 }
