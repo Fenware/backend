@@ -142,6 +142,14 @@ CREATE TABLE message(
     FOREIGN KEY(id_query) REFERENCES `query`(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE room_participants(
+    id_room         INT NOT NULL,
+    id_user         INT NOT NULL,
+    PRIMARY KEY (id_room,id_user),
+    FOREIGN KEY(id_room) REFERENCES room(id),
+    FOREIGN KEY(id_user) REFERENCES `user`(id),
+); 
+
 
 INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('00000000','Administrador','Administrador','administrador@admin.com','01-man.svg','administrador','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
 INSERT INTO administrator(id) value(1);
@@ -161,3 +169,4 @@ INSERT INTO teacher(id) value(3);
 -- SELECT * FROM subject_orientation ;
 -- SELECT * FROM `group`;
 -- SELECT * FROM  teacher_group;
+
