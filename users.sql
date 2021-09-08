@@ -1,4 +1,4 @@
-USE `database`;
+
 ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 /* Entities */
 CREATE TABLE `user`(  
