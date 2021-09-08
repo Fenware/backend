@@ -26,9 +26,14 @@ class ConsultaMessageAPI extends API{
     public function POST($token,$data){
         if(parent::isTheDataCorrect($data,['consulta'=>'is_int','msg'=>'is_string'])){
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
-                $datosArray = $this->consulta->postMessagge($token->user_id,$data['consulta'],$data['msg']);
-                if($token->user_type == 'teacher'){
-                    $this->consulta->setConsultaToAnswered($data['consulta']);
+                $chat = $this->consulta->getQueryById($data['consulta']);
+                if($chat['state'] != 0){
+                    $datosArray = $this->consulta->postMessagge($token->user_id,$data['consulta'],$data['msg']);
+                    if($token->user_type == 'teacher'){
+                        $this->consulta->setQueryToAnswered($data['consulta']);
+                    }
+                }else{
+                    $datosArray = $this->res->error('No puedes enviar mensajes a consultas cerradas',1085);
                 }
             }else{
                 $datosArray = $this->res->error_403();
@@ -42,7 +47,7 @@ class ConsultaMessageAPI extends API{
     public function GET($token,$data){
         if(parent::isTheDataCorrect($data,['consulta'=>'is_string'])){
             if($this->user->UserHasAccesToConsulta($token->user_id,$data['consulta'])){
-                $datosArray = $this->consulta->getMessageFromConsulta($data['consulta']);
+                $datosArray = $this->consulta->getMessageFromQuery($data['consulta']);
             }else{
                 $datosArray = $this->res->error_403();
             }

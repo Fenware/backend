@@ -1,7 +1,7 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
 
 /*
 Modelo de las orietnaciones
@@ -13,9 +13,11 @@ class OrientationModel extends Model{
     private $subjects;
     private $state;
 
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*
@@ -23,36 +25,32 @@ class OrientationModel extends Model{
     */
     public function postOrientation($name,$year,$subjects){
         //Chequeo si la orientacion ya existe
-        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 1';
+        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
         $orientation = parent::query($stm,[$name,$year]);
-        //Chequeo si la orientacion ya existe y esta activa
+        
+        //Chequeo si la orientacion ya existe
         if($orientation){
-            return 'La orientacion ya existe';
-        }else{
-            //Chequeo si la orientacion ya existe pero esta 'borrada'
-            $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ? AND `state` = 0';
-            $orientation = parent::query($stm,[$name,$year]);
-             //Chequeo si la orientacion ya existe pero esta 'borrada'
-            if($orientation){
-                //Cambio su estado de 0 a 1 para activarla
+            $state = $orientation[0]['state'];
+            if($state == 1){
+                return $this->res->error('La orientacion ya existe',1020); ;
+            }else{
                 $id = $orientation[0]['id'];
                 $stm = 'UPDATE orientation SET `state` = 1 WHERE id = ?';
                 parent::nonQuery($stm,[$id]);
                 //Le agrego sus materias
                 $rows = $this->postSubjectsInOrientation($id,$subjects);
-                return (int)$id;
+                return $this->getOrientationById($id);
+            }
+        }else{
+            $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
+            $rows = parent::nonQuery($stm,[$name,$year]);
+            if($rows > 0){
+                $id = parent::lastInsertId();
+                //Le agrego sus materias
+                $rows = $this->postSubjectsInOrientation($id,$subjects);
+                return $this->getOrientationById($id);
             }else{
-                //creo la orientacion
-                $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
-                $rows = parent::nonQuery($stm,[$name,$year]);
-                if($rows > 0){
-                    $id = parent::lastInsertId();
-                    //Le agrego sus materias
-                    $rows = $this->postSubjectsInOrientation($id,$subjects);
-                    return (int)$id;
-                }else{
-                    return 'Algo salio mal al crear la orientacion';
-                }
+                return $this->res->error('Algo salio mal al crear la orientacion',1021);
             }
         }
     }
@@ -144,7 +142,9 @@ class OrientationModel extends Model{
     */
     public function getOrientationById($id){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE id = ? AND `state` = 1';
-        return parent::query($stm,[$id]);
+        $orientation = parent::query($stm,[$id]);
+        $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
+        return $orientation[0];
     }
 
     /*
@@ -158,8 +158,9 @@ class OrientationModel extends Model{
     Devuelve las materias de una orientacion
     */
     public function getOrientationSubjects($id){
-        $stm = 'SELECT so.id_orientation,so.id_subject ,s.name FROM orientation o,subject s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
-        return parent::query($stm,[$id]);
+        $stm = 'SELECT s.id, s.name, s.state FROM orientation o,subject s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
+        $materias = parent::query($stm,[$id]);
+        return $materias;
     }
 
     /*
@@ -191,7 +192,7 @@ class OrientationModel extends Model{
             $error = true;
         }
         if($error){
-            return 'No se pudo borrar la orientacion';
+            return $this->res->error('No se pudo borrar la orientacion',1022);
         }else{
             return 1;
         }

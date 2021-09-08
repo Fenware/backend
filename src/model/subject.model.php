@@ -1,7 +1,7 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
 /*
 Modelo para las materias
 */
@@ -9,41 +9,41 @@ class SubjectModel extends Model{
 
     private $id;
     private $nombre;
-
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
     
     /*
     Crea una materia
     */
     public function postSubject($nombre){
-        $stm = 'SELECT * FROM `subject` WHERE `name` = ? AND `state` = 1';
+        $stm = 'SELECT * FROM `subject` WHERE `name` = ?';
         $materia_existe = parent::query($stm, [$nombre] );
         if($materia_existe){
-            return 'La materia ya existe';
-        }else{
-            $stm = 'SELECT * FROM `subject` WHERE `name` = ? AND `state` = 0';
-            $materia_borrada = parent::query($stm, [$nombre] );
-            if($materia_borrada){
-                $id = $materia_borrada[0]['id'];
-                $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
-                parent::nonQuery($stm,[$id]);
-                return (int)$id;
+            $state = $materia_existe[0]['state'];
+            if($state == 1){
+                return $this->res->error('La materia ya existe',1010);
             }else{
-                $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
+                if($state == 0){
+                    $id = $materia_existe[0]['id'];
+                    $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
+                    parent::nonQuery($stm,[$id]);
+                    return $this->getSubjectById($id);
+                }
+            }
+        }else{
+            $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
                 $rows = parent::nonQuery($stm,[$nombre]);
                 if($rows > 0){
                     $id = parent::lastInsertId();
-                    return (int)$id;
+                    return $this->getSubjectById($id);
                 }else{
-                    return 'Surgio un problema al crear la materia';
+                    return $this->res->error('Surgio un problema al crear la materia',1011);
                 }
-            }
-        
         }
-        
     }
 
     /*
@@ -69,8 +69,9 @@ class SubjectModel extends Model{
     */
     public function getSubjectById($id){
         $stm = 'SELECT * FROM `subject` WHERE id = ? AND `state` = 1';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $materia_data = parent::query($stm,[$id]);
+        $materia = $materia_data[0];
+        return $materia;
     }
 
     /*
@@ -108,7 +109,7 @@ class SubjectModel extends Model{
             return 1;
         }else{
             //no se pudo tomar la materia
-            return 'Ocurrio un problema al intentar tomar la materia';
+            return $this->res->error('Ocurrio un problema al tomar la materia',1013);
         }
     }
 
@@ -147,6 +148,14 @@ class SubjectModel extends Model{
         foreach($data as $item){
             $item['selected'] = true;
         }
+        return $data;
+    }
+
+    public function getTeacherSubjectsInGroup($teacher,$group){
+        $stm = 'SELECT s.id
+        FROM `subject` s ,teacher_group_subject tgs ,`group` g
+        WHERE tgs.id_teacher = ? AND g.id = ? AND s.id = tgs.id_subject AND tgs.state = 1 AND s.state = 1 AND tgs.id_group = g.id';
+        $data = parent::query($stm,[$teacher,$group]);
         return $data;
     }
 

@@ -1,7 +1,7 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/core/response.php';
 
 /*
     Modelo para los grupos
@@ -10,10 +10,11 @@ class GroupModel extends Model{
     private $id;
     private $name;
     private $code;
-
+    private $res;
     public function __construct()
     {
         parent::__construct();
+        $this->res = new Response();
     }
 
     /*
@@ -24,45 +25,43 @@ class GroupModel extends Model{
         $query_orientation = parent::query($stm,[$orientation]);
         //Chequeo si la orientacion ya existe
         if($query_orientation){
-            //genero el codigo del grupo
-            $code = $this->generateCode();
+            $year = (int)$query_orientation[0]['year'];
 
-            //Compruevo si el grupo ya existe y esta activo
-            $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ? AND `state` = 1';
-            $grupo_existe = parent::query($stm, [$name,$orientation] );
-            //Compruevo si el grupo ya existe
+            //Compruebo si el grupo ya existe y esta activo
+            $stm = 
+            "SELECT g.id,g.id_orientation,g.`name`,g.`code` ,g.state
+            FROM `group` g , orientation o 
+            WHERE g.id_orientation = o.id AND g.`name` = ? AND o.`year` = ?";
+            $grupo_existe = parent::query($stm , [$name, $year]); 
+            //Compruebo si el grupo ya existe
             if($grupo_existe){
-                return 'El grupo ya existe';
-            }else{
-                //Chequeo si el grupo existe pero esta 'borrado'
-                $stm = 'SELECT * FROM `group` WHERE `name` = ? AND id_orientation = ? AND `state` = 0';
-                $grupo_existe_borrado = parent::query($stm, [$name,$orientation] );
-                if($grupo_existe_borrado){
-                    //Cambio su estado de  0 a 1 (1 = activo)
-                    $stm = 'UPDATE `group` SET `state` = 1 WHERE `name` = ? AND id_orientation = ?';
-                    parent::nonQuery($stm,[$name,$orientation]);
-                    $id = $grupo_existe_borrado[0]['id'];
+                $state = $grupo_existe[0]['state'];
+                if($state == 1){
+                    return $this->res->error('El grupo ya existe',1030);
                 }else{
-                    //Creo el grupo
-                    $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
-                    parent::nonQuery($stm,[$orientation,$name,$code]);
-                    $id = $this->lastInsertId();
+                    $stm = 'UPDATE `group` SET `state` = 1 WHERE id = ?';
+                    $id = $grupo_existe[0]['id'];
+                    parent::nonQuery($stm,[$id]);
+                    return $this->getGroupById($id);
                 }
-                //Me aseguro de devolver un numero
-                return (int)$id;
+            }else{
+                //genero el codigo del grupo
+                $code = $this->generateCode();
+                $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
+                parent::nonQuery($stm,[$orientation,$name,$code]);
+                $id = $this->lastInsertId();
+                return $this->getGroupById($id);
             }
-            
         }else{
-            return 'La orientacion no existe o fue borrada';
+            return $this->res->error('La orientacion no existe o fue borrada',1031);
         }
-        
     }
 
     /*
     Devuelve todos los grupos
     */
     public function getGroups(){
-        $stm = 'SELECT * FROM `group` WHERE `state` = 1 ';
+        $stm = 'SELECT g.id ,g.id_orientation, o.name AS orientation_name , o.year, g.`name`,g.`code`,g.`state` FROM `group` g,orientation o WHERE g.`state` = 1 AND g.id_orientation = o.id';
         $data = parent::query($stm);
         return $data;
     }
@@ -70,9 +69,10 @@ class GroupModel extends Model{
     Devuelve un grupo por id
     */
     public function getGroupById($id){
-        $stm = 'SELECT * FROM `group` WHERE id = ? AND `state` = 1 ';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $stm = 'SELECT * FROM `group` WHERE id = ?';
+        $group_data = parent::query($stm,[$id]);
+        $grupo = $group_data[0];
+        return $grupo;
     }
 
     /*
@@ -156,6 +156,22 @@ class GroupModel extends Model{
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    public function getStudentsInGroup($group){
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
+        FROM `user` u,student_group sg
+        WHERE u.id = sg.id_student AND sg.id_group = ?';
+        $users = parent::query($stm , [$group]);
+        return $users;
+    }
+
+    public function getTeachersInGroup($group){
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
+        FROM `user` u,teacher_group tg
+        WHERE u.id = tg.id_student AND tg.id_group = ?';
+        $teachers = parent::query($stm , [$group]);
+        return $teachers;
     }
 
 

@@ -1,7 +1,8 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/model.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once '/var/www/html/core/model.php';
+require_once '/var/www/html/model/orientation.model.php';
+require_once '/var/www/html/core/response.php';
 
 /*
 Modelo de los usuarios
@@ -93,7 +94,7 @@ class UserModel extends Model{
     Devuelve la informacion de un usuario por cedula
     */
     public function getUserByCiSafe($ci){
-        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
         FROM user WHERE ci = ?';
         $data = parent::query($stm,[$ci]);
         return $data;
@@ -103,7 +104,7 @@ class UserModel extends Model{
     Devuelve la informacion de un usuario por id
     */
     public function getUserByIdSafe($id){
-        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user WHERE id = ?';
         $data = parent::query($stm,[$id]);
         return $data;
@@ -137,11 +138,18 @@ class UserModel extends Model{
     Devuelve todos los usuarios
     */
     public function getAllUsers(){
-        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
+        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user u,administrator a
         WHERE a.id != u.id';
-        $data = parent::query($stm);
-        return $data;
+        $users = parent::query($stm);
+
+        // Loop para agregarle el tipo de usuario
+        foreach ($users as &$user) {
+            $user_type = $this->getUserType($user['id']);
+            $user['type'] = $user_type;
+        }
+
+        return $users;
     }
 
 
@@ -204,6 +212,7 @@ class UserModel extends Model{
             case 'teacher':
                 $stm =  'UPDATE teacher_group SET `state` = 0 WHERE id_teacher = ? AND id_group = ?';
                 $rows = parent::nonQuery($stm,[$id,$group]);
+                $this->removeTeacherFromAllSubjectsInGroup($id,$group);
                 break;
             case 'student' : 
                 $stm =  'UPDATE student_group SET `state` = 0 WHERE id_student = ?';
@@ -242,22 +251,27 @@ class UserModel extends Model{
     public function getUserGroups($user,$type){
         switch($type){
             case 'teacher':
-                $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name
+                $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id ,g.`name`, g.code
                 FROM teacher_group tg,`group` g,orientation o 
                 WHERE tg.id_teacher = ? AND tg.id_group = g.id AND g.id_orientation = o.id AND tg.state = 1 AND g.state = 1 AND o.state = 1';
-                $data = parent::query($stm,[$user]);
+                $grupos = parent::query($stm,[$user]);
+                $orientation_model = new OrientationModel();
+                foreach($grupos as &$grupo){
+                    $grupo['subjects'] = $orientation_model->getOrientationSubjects($grupo['id_orientation']);
+                }
                 break;
             case 'student':
                 $stm = 'SELECT o.id AS id_orientation ,o.`name` AS orientation_name ,o.`year` AS orientation_year,g.id AS id_group ,g.`name` AS group_name
                 FROM student_group sg,`group` g,orientation o 
                 WHERE sg.id_student = ? AND sg.id_group = g.id AND g.id_orientation = o.id AND sg.state = 1 AND g.state = 1 AND o.state = 1';
-                $data = parent::query($stm,[$user]);
+                $grupos = parent::query($stm,[$user]);
                 break;
             default:
-                $data = 'No correct user type';
+                $grupos = 'No correct user type';
                 break;
         }
-        return $data;
+        
+        return $grupos;
     }
 
     /*
@@ -278,18 +292,53 @@ class UserModel extends Model{
     */
     public function UserHasAccesToConsulta($user,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
-        $querys = parent::query($stm,[$user,$user,$consulta]);
-        if(empty($querys)){
+        $query = parent::query($stm,[$user,$user,$consulta]);
+        if(empty($query)){
             return false;
         }else{
             return true;
         }
     }
 
+    public function UserHasAccesToChat($user,$chat){
+        $stm = 'SELECT * FROM `query` WHERE id = ?';
+        $query = parent::query($stm,[$chat]);
+        if($query){
+            $grupo = $query[0]['id_group'];
+            $materia = $query[0]['id_subject'];
+            $type = $this->getUserType($user);
+            switch($type){
+                case 'teacher':
+                    $stm = 'SELECT * FROM `teacher_group_subject` WHERE id_teacher = ? AND id_group = ? AND id_subject = ?';
+                    $acces = parent::query($stm, [$user,$grupo,$materia] );
+                    if($acces){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    break;
+                case 'student':
+                    $stm = 'SELECT * FROM `student_group` WHERE id_student = ? AND id_group = ?';
+                    $acces = parent::query($stm, [$user,$grupo] );
+                    if($acces){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    break; 
+                default:
+                    return false;
+                    break;      
+            }
+        }else{
+            return false;
+        }
+    }
+
     /*
     Chequea si un estudiante es el autor de una consutla
     */
-    public function StudentIsAutorOfConsulta($student,$consulta){
+    public function StudentIsAutorOfQuery($student,$consulta){
         $stm = 'SELECT * FROM `query` WHERE id_student = ? AND id_query = ?';
         $rows = parent::query($stm,[$student,$consulta]);
         if($rows > 0){
@@ -299,7 +348,65 @@ class UserModel extends Model{
         }
     }
 
+    public function setMaxRoomsPerGs($teacher,$max){
+        $stm = 'UPDATE teacher SET max_rooms_per_gs = ? WHERE id = ?';
+        $rows = parent::nonQuery($stm , [$max,$teacher] );
+        return $rows;
+    }
+
+    public function getMaxRoomsPerGs($teacher){
+        $stm =  'SELECT max_rooms_per_gs FROM teacher WHERE id = ?';
+        $max_rooms_per_gs = parent::query($stm, [$teacher] );
+        return $max_rooms_per_gs[0]['max_rooms_per_gs'];
+    }
     
+    public function actualizeLastConnectionTime($user){
+        $date = date('Y-m-d H:i:s', time());
+        $stm = 'UPDATE `user` SET connection_time = ? WHERE id = ?';
+        $rows = parent::nonQuery($stm , [$date ,$user]);
+        return $rows;
+    }
+    public function getLastConnectionTime($user){
+        $date = date('Y-m-d H:i:s', time());
+        $stm = 'SELECT connection_time FROM `user` WHERE id = ?';
+        $time = parent::query($stm , [$user]);
+        return $time;
+    }
+
+    public function removeUser($user,$type){
+        $rows = $this->patchUser($user,'state_account',0);
+        switch($type){
+            case 'teacher':
+                $this->removeTeacherFromAllGroups($user);
+                $this->removeTeacherFromAllSubjects($user);
+                break;
+            case 'student':
+                $this->deleteUserGroup($user,0,$type);
+            default:
+                break;
+        }
+        $this->removeTeacherFromAllGroups($user);
+        return $rows;
+    }
+
+
+    public function removeTeacherFromAllGroups($teacher){
+        $stm = 'UPDATE teacher_group SET `state` = 0 WHERE id_teacher = ?';
+        $rows = parent::nonQuery($stm, [$teacher] );
+        return $rows;
+    }
+
+    public function removeTeacherFromAllSubjects($teacher){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_teacher = ?';
+        $rows = parent::nonQuery($stm, [$teacher] );
+        return $rows;
+    }
+
+    public function removeTeacherFromAllSubjectsInGroup($teacher,$group){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_teacher = ? AND id_group = ?';
+        $rows = parent::nonQuery($stm, [$teacher ,$group] );
+        return $rows;
+    }
     /**
      * Get the value of id
      */ 

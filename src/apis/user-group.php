@@ -31,7 +31,7 @@ class UserGroupAPI extends API{
         if($token->user_type == 'student'){
             if(parent::isTheDataCorrect($data,['code'=>'is_string'])){
                 if($this->user->userHasGroup($token->user_id)){
-                    $datosArray =  $this->res->error('Un estudiante solo puede estar en un grupo a la vez');
+                    $datosArray =  $this->res->error('Un estudiante solo puede estar en un grupo a la vez',1050);
                 }else{
                     $result = $this->user->giveUserGroup($token->user_id,$data['code'],$token->user_type);
                     if(is_int($result)){

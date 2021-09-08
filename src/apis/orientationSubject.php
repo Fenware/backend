@@ -19,23 +19,16 @@ class OrientacionSubjectAPI extends API{
 
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            
-            if(!isset($data['id']) || !isset($data['subjects'])){
-                echo json_encode($this->res->error_400());
-            }else{
-                //Exists id  and subjects
-                if(!is_int($data['id']) || !is_array($data['subjects'])){
-                    echo json_encode($this->res->error_400());
+            if(parent::isTheDataCorrect($data,['id'=>'is_int','subjects'=>'is_array'])){
+                $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
+                if(!$valid){
+                    //Datos invalidos
+                    $datosArray = $this->res->error_400();
                 }else{
-                    //id is a  number and subjects an  array
-                    $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
-                    if(!$valid){
-                        //Datos invalidos
-                        $datosArray = $this->res->error_400();
-                    }else{
-                        $datosArray = $this->orientation->postSubjectsInOrientation($data['id'],$data['subjects']);
-                    }
+                    $datosArray = $this->orientation->postSubjectsInOrientation($data['id'],$data['subjects']);
                 }
+            }else{
+                $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }
@@ -57,23 +50,17 @@ class OrientacionSubjectAPI extends API{
 
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            
-            if(!isset($data['id']) || !isset($data['subjects'])){
-                echo json_encode($this->res->error_400());
-            }else{
-                //Exists id  and subjects
-                if(!is_int($data['id']) || !is_array($data['subjects'])){
-                    echo json_encode($this->res->error_400());
+            if(parent::isTheDataCorrect($data,['id'=>'is_int','subjects'=>'is_array'])){
+                //id is a  number and subjects an  array
+                $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
+                if(!$valid){
+                    //Datos invalidos
+                    $datosArray = $this->res->error_400();
                 }else{
-                    //id is a  number and subjects an  array
-                    $valid = parent::isArrayDataCorrect($data['subjects'],'is_int');
-                    if(!$valid){
-                        //Datos invalidos
-                        $datosArray = $this->res->error_400();
-                    }else{
-                        $datosArray = $this->orientation->deleteSubjectsInOrientation($data['id'],$data['subjects']);
-                    }
+                    $datosArray = $this->orientation->deleteSubjectsInOrientation($data['id'],$data['subjects']);
                 }
+            }else{
+                $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }else{
