@@ -26,19 +26,24 @@ class ChatMessageAPI extends API{
     public function POST($token,$data){
         if(parent::isTheDataCorrect($data,['chat'=>'is_int','msg'=>'is_string'])){
             if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
-                $datosArray = $this->consulta->postMessagge($token->user_id,$data['chat'],$data['msg']);
+                $chat = $this->consulta->getQueryById($data['chat']);
+                if($chat['state' != 0]){
+                    $datosArray = $this->consulta->postMessagge($token->user_id,$data['chat'],$data['msg']);
 
-                $context = new ZMQContext();
-                $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
-                $socket->connect("tcp://localhost:5556");
-                $entryData = array(
-                    'category' => $data['chat'],
-                    'msg' => $datosArray
-                );
-                $socket->send(json_encode($entryData));
+                    $context = new ZMQContext();
+                    $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+                    $socket->connect("tcp://localhost:5556");
+                    $entryData = array(
+                        'category' => $data['chat'],
+                        'msg' => $datosArray
+                    );
+                    $socket->send(json_encode($entryData));
 
-                if($token->user_type == 'teacher'){
-                    $this->consulta->setQueryToAnswered($data['chat']);
+                    if($token->user_type == 'teacher'){
+                        $this->consulta->setQueryToAnswered($data['chat']);
+                    }
+                }else{
+                    $datosArray = $this->res->error('No puedes enviar mensajes a chats cerrados',1095);
                 }
             }else{
                 $datosArray = $this->res->error_403();

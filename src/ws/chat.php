@@ -11,6 +11,7 @@ require_once '/var/www/html/vendor/autoload.php';
 require_once '/var/www/html/config/config.php';
 require_once '/var/www/html/core/response.php';
 require_once '/var/www/html/model/user.model.php';
+require_once '/var/www/html/model/chat.model.php';
 
 
 class Chat implements WampServerInterface {
@@ -20,6 +21,7 @@ class Chat implements WampServerInterface {
 
     //private $token_manager;
     private $user_model;
+    private $chat_model;
     private $res;
     protected $clients;
     protected $subscribedTopics = array();
@@ -29,6 +31,7 @@ class Chat implements WampServerInterface {
     //$this->token_manager = new TokenManager();
         $this->res = new Response();
         $this->user_model = new UserModel();
+        $this->chat_model = new ChatModel();
     }
 
     public function onSubscribe(ConnectionInterface $conn, $chat) {
@@ -45,6 +48,7 @@ class Chat implements WampServerInterface {
             if($access){
                 //Lo suscribo al grupo
                 $this->subscribedTopics[$chat->getId()] = $chat;
+                $this->chat_model->addParticipant($chat,$token->user_id);
                 echo "Mensaje: Connection {$conn->resourceId} has suscribed to {$chat}\n";
             }else{
                 //Lo desconecto por seguridad

@@ -105,8 +105,16 @@ class ChatAPI extends API{
             if(parent::isTheDataCorrect($data,['chat'=>'is_int'])){
                 $access = $this->user->StudentIsAutorOfQuery($token->user_id,$data['chat']);
                 if($access){
+                    $chat__ = $this->chat->getQueryById($data['chat']);
                     $datosArray = $this->chat->closeQuery($data['chat']);
-                    //TODO push message to chat so all user now 
+                    $context = new ZMQContext();
+                    $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+                    $socket->connect("tcp://localhost:5555");
+                    $entryData = array(
+                        'category' => $chat__['id_group'],
+                        'close' => $data['chat']
+                    );
+                    $socket->send(json_encode($entryData));
                 }else{
                     $datosArray = $this->res->error_403();
                 }
