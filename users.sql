@@ -1,7 +1,6 @@
--- -- -- drop  schema proyecto;
-CREATE SCHEMA proyecto;
-USE proyecto;
--- ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+-- CREATE SCHEMA proyecto;
+-- USE proyecto;
+ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 /* Entities */
 CREATE TABLE `user`(  
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,  
@@ -13,7 +12,8 @@ CREATE TABLE `user`(
     email 				VARCHAR(100) UNIQUE NOT NULL,
     avatar 				VARCHAR(50) DEFAULT '01-man.svg',  -- Agregar default avatar
     nickname 			VARCHAR(32) UNIQUE NOT NULL,  
-    state_account 		TINYINT(1) NOT NULL DEFAULT 2, -- 0 inactiv 1 activ 2 pendent 
+    state_account 		TINYINT(1) NOT NULL DEFAULT 2,
+    connection_time     DATETIME, -- 0 inactiv 1 activ 2 pendent 
     `password` 			VARCHAR(128) NOT NULL -- hashed pasword
 ); 
 
@@ -24,6 +24,7 @@ CREATE TABLE administrator(
 
 CREATE TABLE teacher(
 	id 					INT PRIMARY KEY NOT NULL,
+    max_rooms_per_gs    INT NOT NULL DEFAULT 1 CHECK (max_rooms_per_gs > 0),
     FOREIGN KEY(id) REFERENCES `user`(id)
 );
 
@@ -49,7 +50,7 @@ CREATE TABLE orientation(
 CREATE TABLE `group`(
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_orientation 		INT NOT NULL,
-	`name` 				VARCHAR(3) UNIQUE NOT NULL,
+	`name` 				VARCHAR(3) NOT NULL,
 	`code` 				CHAR(8) UNIQUE NOT NULL,
     state 				TINYINT(1) NOT NULL DEFAULT 1,
     FOREIGN KEY(id_orientation) REFERENCES orientation(id)
@@ -140,6 +141,15 @@ CREATE TABLE message(
     FOREIGN KEY(id_user) REFERENCES user(id),
     FOREIGN KEY(id_query) REFERENCES `query`(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE room_participants(
+    id_room         INT NOT NULL,
+    id_user         INT NOT NULL,
+    PRIMARY KEY (id_room,id_user),
+    FOREIGN KEY(id_room) REFERENCES room(id),
+    FOREIGN KEY(id_user) REFERENCES `user`(id),
+); 
+
 
 -- -------------------------------UNTIL END OF PAGE, HARCODEADOS ----------------------------------------------------------
 -- ADMIN
