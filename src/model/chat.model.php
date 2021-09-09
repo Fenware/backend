@@ -62,11 +62,12 @@ class ChatModel extends QueryModel{
             $consulta['subject_name'] = $subject[0]['name'];
 
             //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
+            $stm = 'SELECT g.name,o.year FROM `group` g,orientation o WHERE g.id = ? AND g.id_orientation = o.id';
             $id_group = $consulta['id_group'];
             $group = parent::query($stm,[$id_group]);
             //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
+            $consulta['group_name'] = $group[0]['year'].$group[0]['name'];
+            $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
         return $consultas;
     }   
@@ -112,11 +113,11 @@ class ChatModel extends QueryModel{
             $consulta['subject_name'] = $subject[0]['name'];
 
             //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
+            $stm = 'SELECT g.name,o.year FROM `group` g,orientation o WHERE g.id = ? AND g.id_orientation = o.id';
             $id_group = $consulta['id_group'];
             $group = parent::query($stm,[$id_group]);
             //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
+            $consulta['group_name'] = $group[0]['year'].$group[0]['name'];
             $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
         return $consultas;
@@ -155,11 +156,11 @@ class ChatModel extends QueryModel{
             $consulta['subject_name'] = $subject[0]['name'];
 
             //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
+            $stm = 'SELECT g.name,o.year FROM `group` g,orientation o WHERE g.id = ? AND g.id_orientation = o.id';
             $id_group = $consulta['id_group'];
             $group = parent::query($stm,[$id_group]);
             //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
+            $consulta['group_name'] = $group[0]['year'].$group[0]['name'];
             $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
         return $consultas;
