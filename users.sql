@@ -146,7 +146,7 @@ CREATE TABLE room_participants(
     id_user         INT NOT NULL,
     PRIMARY KEY (id_room,id_user),
     FOREIGN KEY(id_room) REFERENCES room(id),
-    FOREIGN KEY(id_user) REFERENCES `user`(id),
+    FOREIGN KEY(id_user) REFERENCES `user`(id)
 ); 
 
 
@@ -166,7 +166,7 @@ INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_accoun
 INSERT INTO student(id) value(5);
 INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55123882','David','De Los Santos','d2a@hotmail.com','07-boy-2.svg','El Planilla','$2y$10$4T.ztyM97bPBvpp6V9ZebOXNF7lhQxywgWDTtJS6z5VzGFstogqDK',1);
 INSERT INTO student(id) value(6);
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('351238821','Adrian','Del Valle','incongnito43@hotmail.com','07-boy-2.svg','Larabel','$2y$10$JNTSFAmrcEyG77WNpdD/FOS0cwNpzOClGNgG1fEoGhW7Nd8A2rdtS',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('35123882','Adrian','Del Valle','incongnito43@hotmail.com','07-boy-2.svg','Larabel','$2y$10$JNTSFAmrcEyG77WNpdD/FOS0cwNpzOClGNgG1fEoGhW7Nd8A2rdtS',1);
 INSERT INTO student(id) value(7);
 INSERT INTO user(ci,`name`,middle_name,surname,email,avatar,nickname,`password`,state_account) values('15123882','Maria','Antonieta','De Las Nieves','marymary@hotmail.com','07-boy-2.svg','La Chilindrina','$2y$10$Ir4hV9iwqBCImyijHvGy1OUM1eR3/MKTqghWVsa1iymX9IsHlfN3K',1);
 INSERT INTO student(id) value(8);

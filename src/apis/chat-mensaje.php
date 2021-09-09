@@ -27,7 +27,7 @@ class ChatMessageAPI extends API{
         if(parent::isTheDataCorrect($data,['chat'=>'is_int','msg'=>'is_string'])){
             if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
                 $chat = $this->consulta->getQueryById($data['chat']);
-                if($chat['state' != 0]){
+                if($chat['state'] != 0){
                     $datosArray = $this->consulta->postMessagge($token->user_id,$data['chat'],$data['msg']);
 
                     $context = new ZMQContext();

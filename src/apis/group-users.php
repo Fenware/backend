@@ -4,7 +4,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/api.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/subject.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/schedulo.model.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/model/schedule.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 /*
 API para asignar grupos a usuarios

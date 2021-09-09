@@ -24,3 +24,4 @@ RUN a2enmod rewrite
 EXPOSE 80 5555 5556 8085 8086
 
 CMD sh /var/www/html/init-script.sh
+#CMD /usr/sbin/apache2ctl -D FOREGROUND
