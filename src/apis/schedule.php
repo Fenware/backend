@@ -50,7 +50,7 @@ class ScheduleAPI extends API{
                 if($checked == true){
                     if(!$day_exists){
                         //Chequeo que el dia sea entre [1,7] (7 dias de la semana ,1 = lunes,7 = domingo)
-                        if( $day > 0 && $day < 8 ){
+                        if( $day > 0 && $day < 6 ){
                             $rows = $this->schedule_model->createScheduleForDay();
                             if($rows == 0){
                                 $datosArray = $this->res->error_500();
