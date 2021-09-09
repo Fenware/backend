@@ -172,7 +172,7 @@ class ChatModel extends QueryModel{
     }
 
     public function getParticipants($chat){
-        $stm = 'SELECT r.id ,u.name,u.middle_name,u.surname,u.second_surname
+        $stm = 'SELECT r.id_room ,u.name,u.middle_name,u.surname,u.second_surname
         FROM room_participants r,`user` u
         WHERE r.id_room = ? AND r.id_user = u.id';
         $participants = parent::query($stm , [$chat] );
