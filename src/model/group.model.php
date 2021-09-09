@@ -169,7 +169,7 @@ class GroupModel extends Model{
     public function getTeachersInGroup($group){
         $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
         FROM `user` u,teacher_group tg
-        WHERE u.id = tg.id_student AND tg.id_group = ?';
+        WHERE u.id = tg.id_teacher AND tg.id_group = ?';
         $teachers = parent::query($stm , [$group]);
         return $teachers;
     }
