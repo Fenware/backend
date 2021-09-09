@@ -11,36 +11,18 @@ header('Content-type: application/json');
 Clase API :
 Todas las api que requieran el uso de token heredan de esta clase
 */
-abstract class API{
+abstract class Controller{
     
-    function __construct($res)
+    private $data;
+
+    function __construct()
     {
-        /*
-        Segun el request metods ejecutamos cierto metodo
-        */
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $this->operate('POST',$res);
-        }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-            $this->operate('GET',$res);
-        }elseif($_SERVER['REQUEST_METHOD'] == 'PUT'){
-            $this->operate('PUT',$res);
-        }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
-            $this->operate('DELETE',$res);
-        }else{
-            header('Content-Type: applicaton/json');
-            $datosArray = $res->error_405();
-            echo json_encode($datosArray);
-        }
+        $this->data = $this->getJson();
     }
 
     /*
     Creo metodos abstractos cosa de que todo API los tenga
     */ 
-    abstract protected function POST($token,$data);
-    abstract protected function GET($token,$data);
-    abstract protected function PUT($token,$data);
-    abstract protected function DELETE($token,$data);
-
     /*
     checkToken , validToken ,HasValidToken se usan para validar un token. 
     */
@@ -101,24 +83,6 @@ abstract class API{
     }
 
 
-    /*
-    Aca validamos el token y si es el caso se ejecuta la funcion
-    */
-    public function operate($function,$res){
-        $token = $this->HasValidToken($res);
-        if($token == false){
-            header('HTTP/1.1 401 Unauthorized');
-            echo json_encode($res->error('Not a valid token'));
-        }else{
-            //GET no funciona igual al resto de metodos por lo que hay que hacer una excepción
-            if($function == 'GET'){
-                $data = $_GET;
-            }else{
-                $data = $this->getJson();
-            }
-            $this->$function($token,$data);
-        }
-    }
 
     /*
     Chequea que la informacion especificada de un array exista ,no este vacia y que sea del tipo correcto

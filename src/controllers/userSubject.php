@@ -6,7 +6,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
-class UserSubjectAPI extends API{
+class UserSubjectAPI extends Controller{
     
     private $materia;
     private $res;

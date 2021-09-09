@@ -20,30 +20,8 @@ class SubjectModel extends Model{
     Crea una materia
     */
     public function postSubject($nombre){
-        $stm = 'SELECT * FROM `subject` WHERE `name` = ?';
-        $materia_existe = parent::query($stm, [$nombre] );
-        if($materia_existe){
-            $state = $materia_existe[0]['state'];
-            if($state == 1){
-                return $this->res->error('La materia ya existe',1010);
-            }else{
-                if($state == 0){
-                    $id = $materia_existe[0]['id'];
-                    $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
-                    parent::nonQuery($stm,[$id]);
-                    return $this->getSubjectById($id);
-                }
-            }
-        }else{
-            $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
-                $rows = parent::nonQuery($stm,[$nombre]);
-                if($rows > 0){
-                    $id = parent::lastInsertId();
-                    return $this->getSubjectById($id);
-                }else{
-                    return $this->res->error('Surgio un problema al crear la materia',1011);
-                }
-        }
+        $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
+        return parent::nonQuery($stm,[$nombre]);
     }
 
     /*
@@ -80,7 +58,7 @@ class SubjectModel extends Model{
     public function getSubjectByName($name){
         $stm = "SELECT * FROM `subject` WHERE `name` LIKE ? AND `state` = 1";
         $data = parent::query($stm,['%'.$name.'%']);
-        return $data;
+        return $data[0];
     }
 
     /*
@@ -175,6 +153,10 @@ class SubjectModel extends Model{
         }
     }
 
+    public function changeSubjectState($id,$state){
+        $stm = 'UPDATE `subject` SET state = ? WHERE id = ?';
+        return parent::nonQuery($stm,[$state,$id]);
+    }
     public function getId()
     {
         return $this->id;
