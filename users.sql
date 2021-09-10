@@ -238,10 +238,7 @@ INSERT INTO teacher(id) value(14);
 
 -- tronco comun
 INSERT INTO `subject`(`name`) values("Matematica");
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,1);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,2);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,3);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,4);
+INSERT INTO subject_orientation(id_subject,id_orientation) values(1,1), (1,2), (1,3), (1,4);
 INSERT INTO `subject`(`name`) values("Ingles");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(2,1);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(2,2);
@@ -281,7 +278,7 @@ INSERT INTO subject_orientation(id_subject,id_orientation) values(15,1);
 INSERT INTO `subject`(`name`) values("Geometria");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(16,1);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(16,2);
-INSERT INTO `subject`(`name`) values("Lab. de Tecnologías Eléctricas Aplicadas");
+INSERT INTO `subject`(`name`) values("Lab. de Tecnologias Electricas Aplicadas");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(17,1);
 
 -- especificas 2
@@ -290,29 +287,29 @@ INSERT INTO subject_orientation(id_subject,id_orientation) values(18,2);
 INSERT INTO `subject`(`name`) values("Sistemas Operativos II");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(19,2);
 
-INSERT INTO `subject`(`name`) values("Diseño Web");
+INSERT INTO `subject`(`name`) values("Disenno Web");
 -- esta en 2 y en 3 de web
 INSERT INTO subject_orientation(id_subject,id_orientation) values(20,2);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(20,4);
 
 INSERT INTO `subject`(`name`) values("Sistemas de Bases de Datos I");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(21,2);
-INSERT INTO `subject`(`name`) values("Lab. de Redes de Área Local");
+INSERT INTO `subject`(`name`) values("Lab. de Redes de Area Local");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(22,2);
-INSERT INTO `subject`(`name`) values("Electrónica aplicada a la Informática");
+INSERT INTO `subject`(`name`) values("Electronica aplicada a la Informatica");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(23,2);
 
 -- especificas 3, WEB
 INSERT INTO `subject`(`name`) values("Programacion Web");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(24,4);
 
-INSERT INTO `subject`(`name`) values("Gestión de Proyectos Web");
+INSERT INTO `subject`(`name`) values("Gestion de Proyectos Web");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(25,4);
 
 -- especificas 3, SOPORTE 
 INSERT INTO `subject`(`name`) values("Programacion III");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(26,3);
-INSERT INTO `subject`(`name`) values("Gestión de Proyecto");
+INSERT INTO `subject`(`name`) values("Gestion de Proyecto");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(27,3);
 
 
@@ -329,7 +326,7 @@ INSERT INTO subject_orientation(id_subject,id_orientation) values(30,4);
 INSERT INTO `subject`(`name`) values("Sistemas Operativos III");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(31,3);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(31,4);
-INSERT INTO `subject`(`name`) values("Analisis y diseño de Aplicaciones");
+INSERT INTO `subject`(`name`) values("Analisis y disenno de Aplicaciones");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(32,3);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(32,4);
 
@@ -409,8 +406,6 @@ INSERT INTO consult_schedule values(13,1,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,2,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,3,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,4,"00:00:00","18:00:00");
-INSERT INTO consult_schedule values(13,5,"00:00:00","20:00:00");
-INSERT INTO consult_schedule values(13,6,"00:00:00","20:00:00");
 
 -- -----------------------------------------------------------------------------------------
 -- select * from user;
