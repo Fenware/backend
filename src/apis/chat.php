@@ -44,12 +44,13 @@ class ChatAPI extends API{
                         $chat = $this->chat->createQuery();
                         if($chat != 0){
                             $datosArray = $this->chat->createChat($chat[0]['id']);
+                            $chat = $this->chat->getChatFromUser($chat[0]['id']);
                             $context = new ZMQContext();
                             $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
                             $socket->connect("tcp://localhost:5555");
                             $entryData = array(
                                 'category' => $student_group[0]['id_group'],
-                                'chat' => $chat[0]
+                                'chat' => $chat
                             );
                             $socket->send(json_encode($entryData));
                         }else{
@@ -79,7 +80,7 @@ class ChatAPI extends API{
         }else{
             if(parent::isTheDataCorrect($data,['chat'=>'is_string'])){
                 if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
-                    $datosArray = $this->chat->getQueryById($data['chat']);
+                    $datosArray = $this->chat->getChatFromUser($data['chat']);
                 }else{
                     $datosArray = $this->res->error_403();
                 }

@@ -33,16 +33,9 @@ class ChatModel extends QueryModel{
     /*
     Devuelve todas las consultas de un usuario que no esten cerradas
     */
-    public function getChatFromUser($id,$type){
-        switch($type){
-            case 'teacher':
-                $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_teacher = ?';
-                break;
-            case 'student':
-                $stm = 'SELECT * FROM `query` WHERE `state` != 0 AND id_student = ?';
-                break;
-        }
-        $consultas = parent::query($stm,[$id]);
+    public function getChatFromUser($chat){
+        $stm = 'SELECT * FROM `query` WHERE id = ?';
+        $consultas = parent::query($stm,[$chat]);
         foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
             $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
@@ -69,7 +62,7 @@ class ChatModel extends QueryModel{
             $consulta['group_name'] = $group[0]['year'].$group[0]['name'];
             $consulta['participants'] = $this->getParticipants($consulta['id']);
         }
-        return $consultas;
+        return $consultas[0];
     }   
 
     /*
