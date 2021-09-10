@@ -238,10 +238,7 @@ INSERT INTO teacher(id) value(14);
 
 -- tronco comun
 INSERT INTO `subject`(`name`) values("Matematica");
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,1);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,2);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,3);
-INSERT INTO subject_orientation(id_subject,id_orientation) values(1,4);
+INSERT INTO subject_orientation(id_subject,id_orientation) values(1,1), (1,2), (1,3), (1,4);
 INSERT INTO `subject`(`name`) values("Ingles");
 INSERT INTO subject_orientation(id_subject,id_orientation) values(2,1);
 INSERT INTO subject_orientation(id_subject,id_orientation) values(2,2);
@@ -409,8 +406,6 @@ INSERT INTO consult_schedule values(13,1,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,2,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,3,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,4,"00:00:00","18:00:00");
-INSERT INTO consult_schedule values(13,5,"00:00:00","20:00:00");
-INSERT INTO consult_schedule values(13,6,"00:00:00","20:00:00");
 
 -- -----------------------------------------------------------------------------------------
 -- select * from user;
