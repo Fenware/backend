@@ -83,6 +83,7 @@ class ChatAPI extends API{
                 if($this->chat->isChat($data['chat'])){
                     if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
                         $datosArray = $this->chat->getChatFromUser($data['chat']);
+                        $datosArray['messages'] = $this->chat->getMessageFromQuery($data['chat']);
                     }else{
                         $datosArray = $this->res->error_403();
                     }
