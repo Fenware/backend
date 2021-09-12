@@ -44,6 +44,7 @@ class ChatAPI extends API{
                         $chat = $this->chat->createQuery();
                         if($chat != 0){
                             $datosArray = $this->chat->createChat($chat[0]['id']);
+                            $datosArray = $this->chat->getChatFromUser($chat[0]['id']);
                             $chat = $this->chat->getChatFromUser($chat[0]['id']);
                             $context = new ZMQContext();
                             $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
