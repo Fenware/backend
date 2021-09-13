@@ -56,7 +56,7 @@ class ChatMessageAPI extends API{
     
     public function GET($token,$data){
         if(parent::isTheDataCorrect($data,['chat'=>'is_string'])){
-            if($this->chat->isChat($data['chat'])){
+            if($this->consulta->isChat($data['chat'])){
                 if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
                     $datosArray = $this->consulta->getMessageFromQuery($data['chat']);
                     if($token->user_type != 'administrator'){
