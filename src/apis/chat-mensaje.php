@@ -59,6 +59,9 @@ class ChatMessageAPI extends API{
             if($this->chat->isChat($data['chat'])){
                 if($this->user->UserHasAccesToChat($token->user_id,$data['chat'])){
                     $datosArray = $this->consulta->getMessageFromQuery($data['chat']);
+                    if($token->user_type != 'administrator'){
+                        $this->consulta->addParticipant($data['chat'],$token->user_id);
+                    }   
                 }else{
                     $datosArray = $this->res->error_403();
                 }
