@@ -1,0 +1,1 @@
+docker exec -t php_chathink composer install

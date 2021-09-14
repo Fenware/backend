@@ -170,11 +170,23 @@ class UserAPI extends API{
     //Pido la informacion de un usuario
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
-            $datosArray = $this->user->getAllUsers();
+            if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+                $type = $this->user->getUserType($data['user']);
+                if($type != 'administrator'){
+                    $datosArray = $this->user->getUserByIdSafe($data['user']);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+            }else{
+                $datosArray = $this->user->getAllUsers();
+            }
             echo json_encode($datosArray);
         }else{
             //HAY QUE CAMBIARLO PARA PODES PEDIR OTROS USUARIOS
             $datosArray = $this->user->getUserByIdSafe($token->user_id);
+            if($token->user_type == 'teacher'){
+                $datosArray['max_rooms_per_gs'] = $this->user->getMaxRoomsPerGs($token->user_id);
+            }
             echo json_encode($datosArray);
             //echo json_encode($this->res->error_403());
         }
@@ -183,28 +195,95 @@ class UserAPI extends API{
     //Modifico a un usuario
     public function PUT($token,$data){
         if($token->user_type == 'administrator'){
-            //TODO
+            //Esto es largo asi q lo mando aca
+            $datosArray = $this->administradorEditaUsuario($data);
         }else{
-            //me aseguro de que el id esta bien
+            if(parent::isTheDataCorrect($data,['time'=>'is_string'])){
+                $this->user->actualizeLastConnectionTime($token->user_id);
+            }
             if(parent::isTheDataCorrect($data,['avatar'=>'is_string','nickname'=>'is_string'])){
                 $this->user->patchUser($token->user_id,'avatar',$data['avatar']);
                 $this->user->patchUser($token->user_id,'nickname',$data['nickname']);
                 $datosArray = 1;
+            }elseif($token->user_type == 'teacher'){
+                if(parent::isTheDataCorrect($data,['max_rooms_per_gs'=>'is_int'])){
+                    $datosArray = $this->user->setMaxRoomsPerGs($token->user_id,$data['max_rooms_per_gs']);
+                }else{
+                    $datosArray = $this->res->error_400();
+                }
             }else{
                 $datosArray = $this->res->error_400();
             }
             echo json_encode($datosArray);
         }
     }
+    public function administradorEditaUsuario($data){
+        if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+            $type = $this->user->getUserType($data['user']);
+            //Me aseguro de que el usuario que quiero modificar no sea un administrador
+            if($type != 'administrator'){
+                if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
+                    $this->user->patchUser($data['user'],'name',$data['name']);
+                }
+                if(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
+                    
+                }
+                if(parent::isTheDataCorrect($data,['surname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'surname',$data['surname']);
+
+                }
+                if(parent::isTheDataCorrect($data,['second_surname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'second_surname',$data['second_surname']);
+
+                }
+                if(parent::isTheDataCorrect($data,['email'=>'is_string']) && $this->is_email($data['email']) ){
+
+                    $this->user->patchUser($data['user'],'email',$data['email']);
+
+                }
+
+                if(parent::isTheDataCorrect($data,['avatar'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'email',$data['email']);
+
+                }
+
+                if(parent::isTheDataCorrect($data,['nickname'=>'is_string'])){
+
+                    $this->user->patchUser($data['user'],'nickname',$data['nickname']);
+
+                }
+
+
+            }else{
+                return $this->res->error_403();
+            }
+            
+        }
+    }
 
     //Borro a un usuario
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            //TODO
+            if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
+                $type = $this->user->getUserType($data['user']);
+                if($type != 'administrator'){
+                    $datosArray = $this->user->removeUser($data['user'],$type);
+                }else{
+                    $datosArray = $this->res->error_403();
+                }
+                echo json_encode($datosArray);
+            }else{
+                $datosArray = $this->res->error_400();
+            }
         }else{
             // me aseguro que que quiere modificarse a si mismo
             //me aseguro de que el id esta bien
-            $datosArray = $this->user->patchUser($token->user_id,'state_account',0);
+            $datosArray = $this->user->removeUser($token->user_id,$token->user_type);
             echo json_encode($datosArray);
         }
     }

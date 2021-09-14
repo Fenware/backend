@@ -19,7 +19,7 @@ class PendentUserAPI extends API{
     
     public function POST($token,$data){
         if($token->user_type == 'administrator'){
-            if(isset($data['id']) && is_int($data['id'])){
+            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
                 $datosArray = $this->user->patchUser($data['id'],'state_account',1);
             }
             echo json_encode($datosArray);
@@ -31,9 +31,9 @@ class PendentUserAPI extends API{
     public function GET($token,$data){
         if($token->user_type == 'administrator'){
             $datosArray = $this->user->getPendentUsers();
-            foreach($datosArray as $user=>$value){
-                $type = $this->user->getUserType($datosArray[$user]['id']);
-                $datosArray[$user]['type'] = $type;
+            foreach($datosArray as &$user){
+                $type = $this->user->getUserType($user['id']);
+                $user['type'] = $type;
             }
             echo json_encode($datosArray);
         }else{
@@ -47,9 +47,8 @@ class PendentUserAPI extends API{
 
     public function DELETE($token,$data){
         if($token->user_type == 'administrator'){
-            if(isset($data['id']) && is_int($data['id'])){
+            if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
                 $datosArray = $this->user->patchUser($data['id'],'state_account',0);
-                
             }
             echo json_encode($datosArray);
         }else{

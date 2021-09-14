@@ -27,22 +27,18 @@ class UserSubjectAPI extends API{
                 if($this->grupo->IsSubjectInGroup($data['grupo'],$data['materia'])){
                     $taken = $this->materia->IsSubjectInGroupTaken($data['grupo'],$data['materia']);
                     if($taken){
-                        $datosArray = $this->res->error('Esta materia ya tiene un docente');
+                        $datosArray = $this->res->error('Esta materia ya tiene un docente',1060);
                     }else{
                         $in_group = $this->user->IsUserInGroup($token->user_id,$data['grupo'],$token->user_type);
                         if($in_group){
                             $result = $this->materia->GiveSubjectInGroupToTeacher($token->user_id,$data['grupo'],$data['materia']);
-                            if(is_int($result)){
-                                $datosArray = $result;
-                            }else{
-                                $datosArray = $this->res->error($result);
-                            }
+                            $datosArray = $result;
                         }else{
-                            $datosArray = $this->res->error('No perteneces a este grupo');
+                            $datosArray = $this->res->error('No perteneces a este grupo',1061);
                         }
                     }
                 }else{
-                    $datosArray = $this->res->error('Esta materia no pertenece a este grupo');
+                    $datosArray = $this->res->error('Esta materia no pertenece a este grupo',1062);
                 }
             }else{
                 $datosArray = $this->res->error_400();
@@ -51,10 +47,28 @@ class UserSubjectAPI extends API{
         }
     }
     public function GET($token,$data){
-        if($token->user_type == 'teacher'){
+        /* if($token->user_type == 'teacher'){
             $datosArray = $this->materia->getTeacherSubjects($token->user_id);
-            echo json_encode($datosArray);
+        }else{
+            if(parent::isTheDataCorrect($data, ['teacher'=>'is_string'] )){
+                if(parent::isTheDataCorrect($data,['group'=>'is_string'])){
+                    $datosArray = $this->materia->getTeacherSubjectsInGroup($data['teacher'],$data['group']);
+                }else{
+                    $datosArray = $this->materia->getTeacherSubjects($data['teacher']);
+                }
+            }else{
+                $datosArray = $this->res->error_400();
+            }
+        } */
+        // Ni idea bro son las 2:30 am, no entinedo un choto y necesit materias por grupo :)
+        if($token->user_type == 'teacher'){
+            if(parent::isTheDataCorrect($data,['group'=>'is_string'])){
+                $datosArray = $this->materia->getTeacherSubjectsInGroup($token->user_id, $data['group']);
+            }else{
+                $datosArray = $this->res->error_400();
+            }
         }
+        echo json_encode($datosArray);
     }
     public function PUT($token,$data){
         if($token->user_type == 'teacher'){

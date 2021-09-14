@@ -45,7 +45,14 @@ class Response{
         return $this->response;
     }
 
-    
+    public function error_500(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 500,
+            'error_msg' => 'Algo salio mal en el servidor'
+        );
+        return $this->response;
+    }
 
     public function OOPSIE(){
         $this->response['status'] = 'error';

@@ -19,12 +19,8 @@ class SubjectAPI extends API{
         if($token->user_type == 'administrator'){
             if($this->isPostDataCorrect($data)){
                 $name = $data['name'];
-                $id = $this->materia->postSubject($name);
-                if(is_int($id)){
-                    $datosArray = $id;
-                }else{
-                    $datosArray = $this->res->error($id);
-                }
+                $subj = $this->materia->postSubject($name);
+                $datosArray = $subj;
             }else{
                 $datosArray = $this->res->error_400();
             }
