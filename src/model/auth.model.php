@@ -74,17 +74,17 @@ class AuthModel extends Model{
                             }
                             
                         }else{
-                            return $res->error('Contraseña Incorrecta',1003);
+                            return $res->error('No hay un usuario con esos valores en nuestro sistema',1003);
                         }
                     }else{
                         if($data[0]['state_account'] == 2){
                             return $res->error('Tu cuenta aun no fue aceptada por un administrador',1001);
                         }else{
-                            return $res->error('El usuario no existe',1002);
+                            return $res->error('No hay un usuario con esos valores en nuestro sistema',1002);
                         }
                     }
                 }else{
-                    return $res->error('El usuario no existe',1002);
+                    return $res->error('No hay un usuario con esos valores en nuestro sistema',1002);
                 }
             }
             
