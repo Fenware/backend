@@ -134,7 +134,7 @@ CREATE TABLE `message`(
 	id 					INT AUTO_INCREMENT NOT NULL,
     id_query 			INT NOT NULL,
     id_user				INT NOT NULL,
-    content 			TEXT NOT NULL,
+    content 			VARCHAR(300) NOT NULL,
     `date` 				DATETIME NOT NULL,
     PRIMARY KEY(id, id_query),
     FOREIGN KEY(id_user) REFERENCES user(id),
