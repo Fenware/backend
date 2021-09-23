@@ -140,7 +140,7 @@ class UserModel extends Model{
     public function getAllUsers(){
         $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user u,administrator a
-        WHERE a.id != u.id';
+        WHERE a.id != u.id AND u.state_account = 1';
         $users = parent::query($stm);
 
         // Loop para agregarle el tipo de usuario
@@ -164,45 +164,31 @@ class UserModel extends Model{
     /*
     Agrego a un usuario a un grupo
     */
-    public function giveUserGroup($id,$code,$type){
-        //Chequeo si el grupo ya existe y esta activo
-        $stm = 'SELECT * FROM `group` WHERE `code` = ? AND `state` = 1';
-        $group = parent::query($stm,[$code]);
-        //Chequeo si el grupo ya existe y esta activo
-        if($group){
-            switch($type){
-                case 'teacher':
-                    //Agrego al usuario al grupo
-                    $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
-                    $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
-                    //Si el usuario estaba en el grupo pero desabilitado le cambio el estado
-                    $stm = 'UPDATE teacher_group SET `state` = 1 WHERE id_teacher = ? AND id_group = ?';
-                    $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
-                    break;
-                case 'student':
-                    //Agrego al usuario al grupo
-                    $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
-                    $rows = parent::nonQuery($stm,[$id,$group[0]['id']]);
-                    //Si el usuario estaba en el grupo pero desabilitado le cambio el estado
-                    $stm = 'UPDATE student_group SET `state` = 1 WHERE id_student = ? AND id_group = ?';
-                    $rows_state = parent::nonQuery($stm,[$id,$group[0]['id']]);
-                    break;
-                default:
-                    $rows = 0;
-                    break;
-            }
-            if($rows > 0){
-                return 1;
-            }elseif($rows_state > 0){
-                return 1;
-            }else{
-                return 0;
-            }
-            
-        }else{
-            return 'El grupo no existe';
+
+    public function giveTeacherGroup($teacher,$group){
+        $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
+        $rows = parent::nonQuery($stm,[$teacher,$group]);
+        if($rows > 0){
+            return $rows;
+        }else{  
+            $stm = 'UPDATE teacher_group SET `state` = 1 WHERE id_teacher = ? AND id_group = ?';
+            $rows_state = parent::nonQuery($stm,[$teacher,$group]);
+            return $rows_state;
         }
     }
+
+    public function giveStudentGroup($student,$group){
+        $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
+        $rows = parent::nonQuery($stm,[$student,$group]);
+        if($rows > 0){
+            return $rows;
+        }else{  
+            $stm = 'UPDATE student_group SET `state` = 1 WHERE id_student = ? AND id_group = ?';
+            $rows_state = parent::nonQuery($stm,[$student,$group]);
+            return $rows_state;
+        }
+    }
+
 
     /*
     Remueve a un usuario de un grupo
@@ -291,7 +277,7 @@ class UserModel extends Model{
     Chequea si un usuario tiene acceso a una consulta
     */
     public function UserHasAccesToConsulta($user,$consulta){
-        $stm = 'SELECT * FROM `query` WHERE id_student = ? OR id_teacher = ? AND id = ?';
+        $stm = 'SELECT q.id FROM `query` q,`individual` i  WHERE q.id_student = ? OR q.id_teacher = ? AND q.id = ? AND q.id = i.id';
         $query = parent::query($stm,[$user,$user,$consulta]);
         if(empty($query)){
             return false;
@@ -301,7 +287,7 @@ class UserModel extends Model{
     }
 
     public function UserHasAccesToChat($user,$chat){
-        $stm = 'SELECT * FROM `query` WHERE id = ?';
+        $stm = 'SELECT q.id,q.id_group,q.id_subject FROM `query` q,`room` r WHERE id = ? AND q.id = r.id';
         $query = parent::query($stm,[$chat]);
         if($query){
             $grupo = $query[0]['id_group'];

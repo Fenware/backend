@@ -21,7 +21,8 @@ class SubjectModel extends Model{
     */
     public function postSubject($nombre){
         $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
-        return parent::nonQuery($stm,[$nombre]);
+        parent::nonQuery($stm,[$nombre]);
+        return parent::lastInsertId();
     }
 
     /*
@@ -87,7 +88,7 @@ class SubjectModel extends Model{
             return 1;
         }else{
             //no se pudo tomar la materia
-            return $this->res->error('Ocurrio un problema al tomar la materia',1013);
+            return 0;
         }
     }
 
@@ -155,7 +156,8 @@ class SubjectModel extends Model{
 
     public function changeSubjectState($id,$state){
         $stm = 'UPDATE `subject` SET state = ? WHERE id = ?';
-        return parent::nonQuery($stm,[$state,$id]);
+        parent::nonQuery($stm,[$state,$id]);
+        return parent::lastInsertId();
     }
     public function getId()
     {

@@ -45,28 +45,8 @@ class ChatModel extends QueryModel{
         $consultas = parent::query($stm,[$id]);
         foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
-            $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
-            $autor = parent::query($stm_autor,[$consulta['id_student']]);
-            //agrego el campo student_name
-            $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
-             //busco al docente al que va dirigido  
-            $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
-            $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
-            //agrego el campo teacher_name
-            $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
-            //busco el nombre de la materia
-            $stm = 'SELECT * FROM `subject` WHERE id = ?';
-            $id_subject = $consulta['id_subject'];
-            $subject = parent::query($stm,[$id_subject]);
-            //agrego el campo subject_name
-            $consulta['subject_name'] = $subject[0]['name'];
-
-            //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
-            $id_group = $consulta['id_group'];
-            $group = parent::query($stm,[$id_group]);
-            //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
+            $consulta =  parent::getExtraData($consulta);
+            $consulta = $this->addData($consulta);
         }
         return $consultas;
     }   
@@ -74,7 +54,17 @@ class ChatModel extends QueryModel{
     /*
     Devuelve una consulta en base a su id
     */
-    
+    public function getChatById($id)
+    {
+        $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
+                FROM `query` q ,`room` r 
+                WHERE q.`state` != 0 AND q.id = ? AND q.id = r.id';
+        $c = parent::query($stm,[$id]);
+        $chat = $c[0];
+        $chat = parent::getExtraData($chat);
+        $chat = $this->addData($chat);
+        return $chat;
+    }
 
     /*
     Devuelve todas las consultas de un usuario sin importar su estado
@@ -95,29 +85,8 @@ class ChatModel extends QueryModel{
         $consultas = parent::query($stm,[$id]);
         foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
-            $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
-            $autor = parent::query($stm_autor,[$consulta['id_student']]);
-            //agrego el campo student_name
-            $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
-             //busco al docente al que va dirigido  
-            $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
-            $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
-            //agrego el campo teacher_name
-            $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
-            //busco el nombre de la materia
-            $stm = 'SELECT * FROM `subject` WHERE id = ?';
-            $id_subject = $consulta['id_subject'];
-            $subject = parent::query($stm,[$id_subject]);
-            //agrego el campo subject_name
-            $consulta['subject_name'] = $subject[0]['name'];
-
-            //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
-            $id_group = $consulta['id_group'];
-            $group = parent::query($stm,[$id_group]);
-            //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
-            $consulta['participants'] = $this->getParticipants($consulta['id']);
+            $consulta = parent::getExtraData($consulta);
+            $consulta = $this->addData($consulta);
         }
         return $consultas;
     } 
@@ -138,29 +107,8 @@ class ChatModel extends QueryModel{
         $consultas = parent::query($stm,[$id]);
         foreach($consultas as &$consulta){
             //busco al estudiante que la  creo
-            $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
-            $autor = parent::query($stm_autor,[$consulta['id_student']]);
-            //agrego el campo student_name
-            $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
-             //busco al docente al que va dirigido  
-            $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
-            $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
-            //agrego el campo teacher_name
-            $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
-            //busco el nombre de la materia
-            $stm = 'SELECT * FROM `subject` WHERE id = ?';
-            $id_subject = $consulta['id_subject'];
-            $subject = parent::query($stm,[$id_subject]);
-            //agrego el campo subject_name
-            $consulta['subject_name'] = $subject[0]['name'];
-
-            //busco el grupo
-            $stm = 'SELECT * FROM `group` WHERE id = ?';
-            $id_group = $consulta['id_group'];
-            $group = parent::query($stm,[$id_group]);
-            //agrego el campo subject_name
-            $consulta['group_name'] = $group[0]['name'];
-            $consulta['participants'] = $this->getParticipants($consulta['id']);
+            $consulta = parent::getExtraData($consulta);
+            $consulta = $this->addData($consulta);
         }
         return $consultas;
     } 
@@ -178,4 +126,22 @@ class ChatModel extends QueryModel{
         $participants = parent::query($stm , [$chat] );
         return $participants;
     }
+
+    private function addData($consulta){
+        $consulta['participants'] = $this->getParticipants($consulta['id']);
+        return $consulta;
+    }
+
+    //Si es el autor o el docente del chatw
+    public function userHasHighAccessToChat($user,$chat){
+        $stm = 'SELECT q.id FROM `query` q,`room` r  WHERE q.id_student = ? OR q.id_teacher = ? AND q.id = ? AND q.id = r.id';
+        $query = parent::query($stm,[$user,$user,$chat]);
+        if(empty($query)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    
 }

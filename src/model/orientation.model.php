@@ -136,6 +136,11 @@ class OrientationModel extends Model{
         $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_orientation  = ? AND id_subject = ?';
         return parent::nonQuery($stm,[$orientation,$subject]);
     }
+    public function getOrientationGroups($orientation){
+        $stm = 'SELECT * FROM `group` WHERE id_orientation = ?';
+        $groups = parent::query($stm, [$orientation]);
+        return $groups;
+    }
 
     public function getId()
     {
