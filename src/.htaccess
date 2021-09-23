@@ -4,20 +4,8 @@ RewriteEngine On
 RewriteCond %{HTTP:Authorization} ^(.+)$
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-
-#Quita la necesidad de tener el .php en la url
+#Hago esto 
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.*)$ $1.php
-
-#Quita la necesidad de tener el .html en la url
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^(.*)$ $1.html
-
-# Si la ruta no es un archivo existente, ni una carpeta
-# Reescribir al index
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-#Si no existe la ruta te envia a index.php
-RewriteRule ^(.+?)/?$ index.php?url=$1 [L,QSA]
+RewriteCond %{REQUEST_FILENAME}.php !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
