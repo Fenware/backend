@@ -11,9 +11,11 @@ header('Content-type: application/json');
 Clase API :
 Todas las api que requieran el uso de token heredan de esta clase
 */
-abstract class Controller{
+class Controller{
     
     private $data;
+
+    private $token;
 
     function __construct()
     {
@@ -120,4 +122,14 @@ abstract class Controller{
         return $correct;
     }
    
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token)
+    {
+        $this->token = $token;
+    }
 }
