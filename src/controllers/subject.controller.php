@@ -15,21 +15,28 @@ class SubjectController extends Controller{
         parent::__construct();
     }
 
-    public function postSubject($data){
-        if(parent::isTheDataCorrect($this->data, ['name'=>'is_string'] )){
-            $subject =  $this->materia->getSubjectByName($this->data['name']); 
-            if($subject){
-                if($subject['state'] == 0){
-                    return $this->materia->changeSubjectState($this->data['name'],1);
+    public function createSubject(){
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data, ['name'=>'is_string'] )){
+                $subject =  $this->materia->getSubjectByName($this->data['name']); 
+                if($subject){
+                    if($subject['state'] == 0){
+                        $id = $this->materia->changeSubjectState($this->data['name'],1);
+                        return $this->materia->getSubjectById($id);
+                    }else{
+                        return $this->res->error('La materia ya existe',1010);
+                    }
                 }else{
-                    return $this->res->error('La materia ya existe',1010);
+                    $id = $this->materia->postSubject($this->data['name']);
+                    return $this->materia->getSubjectById($id);
                 }
             }else{
-                return $this->materia->postSubject($this->data['name']);
+                return $this->res->error_400();
             }
         }else{
-            return $this->res->error_400();
+            return $this->res->error_403();
         }
+        
     }
 
     public function getSubjects(){
@@ -53,19 +60,27 @@ class SubjectController extends Controller{
     }
 
     public function modifySubject(){
-        if(parent::isTheDataCorrect($this->data , ['id'=>'is_int','name'=>'is_string'])){
-            return $this->materia->putSubject($this->data['id'],$this->data['name']);
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data , ['id'=>'is_int','name'=>'is_string'])){
+                return $this->materia->putSubject($this->data['id'],$this->data['name']);
+            }else{
+                return $this->res->error_400();
+            }
         }else{
-            return $this->res->error_400();
+            return $this->res->error_403();
         }
     }
 
 
     public function deleteSubject(){
-        if(parent::isTheDataCorrect($this->data , ['id'=>'is_int'] )){
-            return $this->materia->deleteSubject($this->data['id']);
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data , ['id'=>'is_int'] )){
+                return $this->materia->deleteSubject($this->data['id']);
+            }else{
+                return $this->res->error_400();
+            }
         }else{
-            return $this->res->error_400();
+            return $this->res->error_403();
         }
     }
 
