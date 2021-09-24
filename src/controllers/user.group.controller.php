@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 /*
 API para asignar grupos a usuarios
@@ -12,12 +13,14 @@ class UserGroupController extends Controller{
     private $group;
     private $user;
     private $materia;
+    private $orientation;
     function __construct($token)
     {
         $this->res = new Response();
         $this->group = new GroupModel();
         $this->user = new UserModel();
         $this->materia = new SubjectModel();
+        $this->orientation = new OrientationModel();
         parent::__construct($token);
     }
 
@@ -129,5 +132,27 @@ class UserGroupController extends Controller{
         }else{
             return $this->res->error_403();
         }
+    }
+
+    public function getGroupSubjects(){
+        if(parent::isTheDataCorrect($this->data, ['group'=>'is_int'] )){
+            $ori = $this->group->getGroupOrientation($this->data['group']);
+            if($ori){
+                $subjects = $this->orientation->getOrientationSubjects($ori['id']);
+                foreach($subjects as &$s){
+                    if($this->materia->IsSubjectInGroupTaken($this->data['group'],$s)){
+                        $s['taken'] = true;
+                    }else{
+                        $s['taken'] = false;
+                    }
+                }
+                return $subjects;
+            }else{
+                return $this->res->error_500();
+            }
+        }else{
+            return $this->res->error_400();
+        }
+
     }
 }
