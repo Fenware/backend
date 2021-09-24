@@ -16,13 +16,13 @@ class OrientationController extends Controller{
     private $orientation;
     private $subject;
     private $group;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->orientation = new OrientationModel();
         $this->subject = new SubjectModel();
         $this->group = new GroupModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
 
@@ -57,7 +57,35 @@ class OrientationController extends Controller{
         }
     }
 
-    public function addOrientationSubjects($orientation,$subjects){
+    
+    public function addOrientationSubjects_(){
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data, ['orientation'=>'is_int','subjects'=>'is_array'] )){
+                if(parent::isArrayDataCorrect($this->data['subjects'],'is_int')){
+                    foreach($this->data['subjects'] as $s){
+                        $materia = $this->subject->getSubjectById($s);
+                        if($materia['state'] == 1){
+                            $so = $this->orientation->getSubjectInOrientation($this->data['orientation'],$materia['id']);
+                            if($so['state'] == 0){
+                                $this->orientation->reAddSubject($this->data['orientation'],$materia['id']);
+                            }else{
+                                $this->orientation->postSubjectInOrientation($this->data['orientation'],$materia['id']);
+                            }
+                        }   
+                }
+                }else{
+                    return $this->res->error_400();
+                }
+            }else{
+                return $this->res->error_400();
+            }
+            
+        }else{
+            return $this->res->error_403();
+        }
+    }
+
+    private function addOrientationSubjects($orientation,$subjects){
         if($this->token->user_type == 'administrator'){
             foreach($subjects as $s){
                 $materia = $this->subject->getSubjectById($s);
@@ -114,7 +142,7 @@ class OrientationController extends Controller{
                 }
                 return $rows;
             }else{
-                $datosArray = $this->res->error_400();
+                return $this->res->error_400();
             }
         }else{
             return $this->res->error_403();

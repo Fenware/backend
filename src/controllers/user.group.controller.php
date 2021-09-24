@@ -12,13 +12,13 @@ class UserGroupController extends Controller{
     private $group;
     private $user;
     private $materia;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->group = new GroupModel();
         $this->user = new UserModel();
         $this->materia = new SubjectModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     public function giveUserGroup(){

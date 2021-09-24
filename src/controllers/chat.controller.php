@@ -16,14 +16,14 @@ class ChatController extends Controller{
     private $user;
     private $group;
     private $subject;
-    function __construct()
+    function __construct($token)
     {
         $this->group = new GroupModel();
         $this->subject = new SubjectModel();
         $this->res = new Response();
         $this->user = new UserModel();
         $this->chat = new ChatModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
 
