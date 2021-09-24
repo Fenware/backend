@@ -39,8 +39,12 @@ class ConsultaAPI extends API{
                     $this->consulta->setSubject($data['materia']);
                     $this->consulta->setTheme($data['asunto']);
                     $consulta = $this->consulta->createQuery();
-                    $datosArray = $this->consulta->createConsulta($consulta[0]['id']);
-                    $datosArray = $consulta;
+                    if($consulta != 0){
+                        $datosArray = $this->consulta->createConsulta($consulta[0]['id']);
+                        $datosArray = $consulta;
+                    }else{
+                        $datosArray =  $this->res->error_500();
+                    }
                 }else{
                     //si no es un  numero entonces capte un error 
                     $datosArray = $this->res->error($teacher);
