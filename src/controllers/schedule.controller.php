@@ -10,11 +10,11 @@ class ScheduleController extends Controller{
 
     private $res;
     private $schedule_model;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->schedule_model = new ScheduleModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     public function addDayToSchedule(){

@@ -13,12 +13,12 @@ class UserController extends Controller{
     private $user;
     private $res;
     private $query;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->user = new UserModel();
         $this->query = new QueryModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     public function createUser(){

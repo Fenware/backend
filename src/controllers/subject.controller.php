@@ -8,11 +8,11 @@ class SubjectController extends Controller{
     
     private $materia;
     private $res;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->materia = new SubjectModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     public function createSubject(){
@@ -45,19 +45,12 @@ class SubjectController extends Controller{
 
     public function getSubjectById(){
         if(parent::isTheDataCorrect($this->data , ['id'=>'is_int'] )){
-            return $this->materia->getSubjectById($this->data['subject']);
+            return $this->materia->getSubjectById($this->data['id']);
         }else{
             return $this->res->error_400();
         }
     }
 
-    public function getSubjectByName(){
-        if(parent::isTheDataCorrect($this->data , ['name'=>'is_string'] )){
-            return $this->materia->getSubjectById($this->data['subject']);
-        }else{
-            return $this->res->error_400();
-        }
-    }
 
     public function modifySubject(){
         if($this->token->user_type == 'administrator'){

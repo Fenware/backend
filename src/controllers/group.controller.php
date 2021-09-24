@@ -1,26 +1,26 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 /*
 API para crear grupos
 */
-class GroupAPI extends Controller{
+class GroupController extends Controller{
     private $res;
     private $group;
     private $orientation;
     private $user;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->group = new GroupModel();
         $this->orientation = new OrientationModel();
         $this->user = new UserModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     public function createGroup(){

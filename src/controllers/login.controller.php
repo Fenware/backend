@@ -1,8 +1,9 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'].'/model/controller.model.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/auth.model.php';
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
 header('Content-type: application/json');
@@ -12,11 +13,11 @@ Api para logearse
 class LoginController extends Controller{
     private $auth;
     private $res;
-    function __construct()
+    function __construct($token)
     {
         $this->res = new Response();
         $this->auth = new AuthModel();
-        parent::__construct();
+        parent::__construct($token);
     }
 
     //LOGIN - IN POST FOR SECURITY
