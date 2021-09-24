@@ -233,6 +233,9 @@ class Router{
             case 'getUserSubjects':
                 return $ug->getUserSubjects();
                 break;
+            case 'getGroupSubjects':
+                return $ug->getGroupSubjects();
+                break;
             default:
                 return $this->res->error_404();
                 break;
