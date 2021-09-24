@@ -96,12 +96,12 @@ class ChatModel extends QueryModel{
             case 'teacher':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
                 FROM `query` q,`room` r
-                WHERE q.`state` != 0 AND q.id = r.id AND q.id_teacher = ?';
+                WHERE q.`state` != 0 AND q.id = r.id AND q.id_teacher = ? ORDER BY q.creation_date DESC';
                 break;
             case 'student':
                 $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
-                FROM `query` q,`room` r,`group` g,student_group sg
-                WHERE q.`state` != 0 AND q.id = r.id AND sg.id_group = q.id_group AND sg.id_student = ? AND g.id_group';
+                FROM `query` q,`room` r,student_group sg
+                WHERE q.`state` != 0 AND q.id = r.id AND sg.id_group = q.id_group AND sg.id_student = ? ORDER BY q.creation_date DESC';
                 break;
         }
         $consultas = parent::query($stm,[$id]);
