@@ -39,8 +39,12 @@ class ConsultaController extends Controller{
                     $this->consulta->setSubject($this->data['materia']);
                     $this->consulta->setTheme($this->data['asunto']);
                     $consulta = $this->consulta->createQuery();
-                    $datosArray = $this->consulta->createConsulta($consulta[0]['id']);
-                    return $consulta;
+                    if($consulta != 0){
+                        $this->consulta->createConsulta($consulta[0]['id']);
+                        return $consulta;
+                    }else{
+                        return $this->res->error_500();
+                    }
                 }else{
                     //si no es un  numero entonces capte un error 
                     return $this->res->error($teacher);
