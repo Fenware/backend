@@ -41,7 +41,7 @@ class OrientationModel extends Model{
     public function getSubjectInOrientation($orientation,$subject){
         $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ?';
         $data = parent::query($stm,[$subject,$orientation]);
-        return $data[0];
+        return !empty($data) ? $data[0] : $data;
     }
     /*
     Elimina materias de una orientacion
@@ -76,14 +76,18 @@ class OrientationModel extends Model{
     public function getOrientationById($id){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE id = ? AND `state` = 1';
         $orientation = parent::query($stm,[$id]);
-        $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
-        return $orientation[0];
+        if($orientation){
+            $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
+            return $orientation[0];
+        }else{
+            return $orientation;
+        }
     }
 
     public function getOrienation($name,$year){
         $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
         $orientation = parent::query($stm,[$name,$year]);
-        return $orientation[0];
+        return !empty($orientation) ? $orientation[0] : $orientation;
     }
     /*
     Devuelve una orientaciones en base a un nombre
@@ -101,6 +105,17 @@ class OrientationModel extends Model{
         return $materias;
     }
 
+    public function closeQuerysInSubjectOrientation($ori,$sub){
+        $stm = 'UPDATE orientation o,`group` g ,`query` q SET q.`state` = 0 WHERE o.id = g.id_orientation AND q.id_group = g.id AND g.id_orientation = ? AND q.id_subject = ? ';
+        $rows = parent::nonQuery($stm,[$ori,$sub]);
+        return $rows;
+    }
+
+    public function removeTeachersFromSubject($ori,$sub){
+        $stm =  'UPDATE orientation o,`group` g ,`teacher_group_subject` t SET t.`state` = 0 WHERE o.id = g.id_orientation AND t.id_group = g.id AND g.id_orientation = ? AND t.id_subject = ?';
+        $rows = parent::nonQuery($stm,[$ori,$sub]);
+        return $rows;
+    }
     /*
     Modifica una orientacion
     */
