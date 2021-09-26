@@ -33,7 +33,9 @@ class OrientationController extends Controller{
                     $orientacion = $this->orientation->getOrienation($this->data['name'],$this->data['year']);
                     if($orientacion){
                         if($orientacion['state'] == 0){
-                            return $this->orientation->changeOrientationState($orientacion['id'],1);
+                            $rows =  $this->orientation->changeOrientationState($orientacion['id'],1);
+                            $this->addOrientationSubjects($orientacion['id'],$this->data['subjects']);
+                            return $rows;
                         }else{
                             return $this->res->error('La orientacion ya existe',1020);
                         }   
@@ -47,9 +49,11 @@ class OrientationController extends Controller{
                         }
                     }
                 }else{
+                    echo 'mal subj';
                     return $this->res->error_400();
                 }
             }else{
+                echo 'mal gen';
                 return $this->res->error_400();
             }
         }else{
@@ -64,7 +68,7 @@ class OrientationController extends Controller{
                 if(parent::isArrayDataCorrect($this->data['subjects'],'is_int')){
                     foreach($this->data['subjects'] as $s){
                         $materia = $this->subject->getSubjectById($s);
-                        if($materia['state'] == 1){
+                        if($materia && $materia['state'] == 1){
                             $so = $this->orientation->getSubjectInOrientation($this->data['orientation'],$materia['id']);
                             if($so['state'] == 0){
                                 $this->orientation->reAddSubject($this->data['orientation'],$materia['id']);
@@ -89,9 +93,9 @@ class OrientationController extends Controller{
         if($this->token->user_type == 'administrator'){
             foreach($subjects as $s){
                 $materia = $this->subject->getSubjectById($s);
-                if($materia['state'] == 1){
+                if($materia && $materia['state'] == 1){
                     $so = $this->orientation->getSubjectInOrientation($orientation,$materia['id']);
-                    if($so['state'] == 0){
+                    if($so && $so['state'] == 0){
                         $this->orientation->reAddSubject($orientation,$materia['id']);
                     }else{
                         $this->orientation->postSubjectInOrientation($orientation,$materia['id']);
@@ -110,7 +114,7 @@ class OrientationController extends Controller{
     }
 
     public function getOrientationById(){
-        if(parent::isTheDataCorrect($this->data,['id'=>'is_string'])){
+        if(parent::isTheDataCorrect($this->data,['id'=>'is_int'])){
             return $this->orientation->getOrientationById($this->data['id']);
         }else{
             return $this->res->error_400();
@@ -154,6 +158,10 @@ class OrientationController extends Controller{
         if($this->token->user_type == 'administrator'){
             if(parent::isTheDataCorrect($this->data,['id'=>'is_int'])){
                 if(isset($this->data['subjects']) && parent::isArrayDataCorrect($this->data['subjects'],'is_int')){
+                    foreach($this->data['subjects'] as $s){
+                        $this->orientation->closeQuerysInSubjectOrientation($this->data['id'],$s);
+                        $this->orientation->removeTeachersFromSubject($this->data['id'],$s);
+                    }
                     return $this->orientation->deleteSubjectsInOrientation($this->data['id'],$this->data['subjects']);
                 }else{
                     return $this->res->error_400();
@@ -169,6 +177,7 @@ class OrientationController extends Controller{
     public function getOrienationSubjects(){
         if(parent::isTheDataCorrect($this->data,['id'=>'is_int'])){
             return $this->orientation->getOrientationSubjects($this->data['id']);
+            
         }else{
             return $this->res->error_400();
         }
