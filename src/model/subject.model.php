@@ -34,6 +34,20 @@ class SubjectModel extends Model{
         return $rows;
     }
 
+    public function deleteSubjectFromAllOrientations($materia){
+        $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
+
+    public function deleteTeachersFromSubject($materia){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
+
+    public function closeQuerysFromSubject($materia){
+        $stm = 'UPDATE `query` SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
     /*
     Devuelve todas las materias
     */
@@ -49,7 +63,7 @@ class SubjectModel extends Model{
     public function getSubjectById($id){
         $stm = 'SELECT * FROM `subject` WHERE id = ? AND `state` = 1';
         $materia_data = parent::query($stm,[$id]);
-        $materia = $materia_data[0];
+        $materia = !empty($materia_data) ? $materia_data[0] : $materia_data;
         return $materia;
     }
 
@@ -57,9 +71,10 @@ class SubjectModel extends Model{
     Devuelve materias en base a un nombre
     */
     public function getSubjectByName($name){
-        $stm = "SELECT * FROM `subject` WHERE `name` LIKE ? AND `state` = 1";
-        $data = parent::query($stm,['%'.$name.'%']);
-        return $data[0];
+        $stm = "SELECT * FROM `subject` WHERE `name` = ?";
+        $materia = parent::query($stm,[$name]);
+        $materia = !empty($materia) ? $materia[0] : $materia;
+        return $materia;
     }
 
     /*
@@ -155,9 +170,8 @@ class SubjectModel extends Model{
     }
 
     public function changeSubjectState($id,$state){
-        $stm = 'UPDATE `subject` SET state = ? WHERE id = ?';
-        parent::nonQuery($stm,[$state,$id]);
-        return parent::lastInsertId();
+        $stm = 'UPDATE `subject` SET `state` = ? WHERE id = ?';
+        return parent::nonQuery($stm,[$state,$id]);
     }
     public function getId()
     {
