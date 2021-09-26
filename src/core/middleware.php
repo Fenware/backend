@@ -12,9 +12,13 @@ class Middleware{
     public function validate(){
         if($this->verifyRequestMethods()){
             $token = $this->verifyToken();
-            return $token;
+            if($token){
+                return $token;
+            }else{
+                throw new Exception('No token found');
+            }
         }else{
-            return false;
+            throw new Exception('Metodo no permitido');
         }
     }
 
