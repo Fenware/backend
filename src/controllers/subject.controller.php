@@ -21,8 +21,12 @@ class SubjectController extends Controller{
                 $subject =  $this->materia->getSubjectByName($this->data['name']); 
                 if($subject){
                     if($subject['state'] == 0){
-                        $id = $this->materia->changeSubjectState($this->data['name'],1);
-                        return $this->materia->getSubjectById($id);
+                        $rows = $this->materia->changeSubjectState($subject['id'],1);
+                        if($rows > 0){
+                            return $this->materia->getSubjectById($subject['id']);
+                        }else{
+                            return 0;
+                        }
                     }else{
                         return $this->res->error('La materia ya existe',1010);
                     }
@@ -68,6 +72,9 @@ class SubjectController extends Controller{
     public function deleteSubject(){
         if($this->token->user_type == 'administrator'){
             if(parent::isTheDataCorrect($this->data , ['id'=>'is_int'] )){
+                $this->materia->deleteSubjectFromAllOrientations($this->data['id']);
+                $this->materia->deleteTeachersFromSubject($this->data['id']);
+                $this->materia->closeQuerysFromSubject($this->data['id']);
                 return $this->materia->deleteSubject($this->data['id']);
             }else{
                 return $this->res->error_400();
