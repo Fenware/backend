@@ -57,7 +57,7 @@ CREATE TABLE `group`(
 
 CREATE TABLE consult_schedule(
 	id_teacher 			INT NOT NULL,
-	`day` 				TINYINT(1) NOT NULL,
+	`day` 				TINYINT(1) NOT NULL CHECK (`day`>= 1 AND `day` <= 5),
     start_hour 			TIME NOT NULL,
     end_hour 			TIME NOT NULL,
     PRIMARY KEY(id_teacher,`day`),
