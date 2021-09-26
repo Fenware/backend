@@ -27,65 +27,76 @@ class Router{
     {
         $this->res = new Response();
         $middleware = new Middleware();
-        //Valido token
-        $this->token = $middleware->validate();
         //URL 
         $this->url = $_GET['url'];
         $this->url = rtrim($this->url,'/');
         $this->url = explode('/',$this->url);
-
-        if($this->token != false){
-            $this->route($this->url);
-        }elseif($this->url[0] == 'login'){
-            $this->route(['login']);
-        }else{
-            echo json_encode( $this->res->auth_error() );
+        //Valido token
+        try {
+            $this->token = $middleware->validate();
+            echo json_encode( $this->route($this->url) );
+        } catch (Exception $e) {
+            switch($e->getMessage()){
+                case 'Metodo no permitido':
+                    echo json_encode( $this->res->error_405() );
+                    break;
+                case 'No token found':
+                    if($this->url[0] == 'login'){
+                        echo json_encode( $this->route(['login']) );
+                    }else{
+                        echo json_encode( $this->res->auth_error() );
+                    }
+                    break;
+            }
         }
-        
     }
 
 
     private function route($url){
+        //url[1] seria el segundo parametro ,solo login no tiene  segundo parametro
+        if(empty($url[1]) && $url[0] != 'login'){
+            return $this->res->error_404();
+        }
         switch($url[0]){
             case 'login':
                 //Autenticacion
                 $login = new LoginController($this->token);
-                echo json_encode($login->login());
+                return $login->login();
                 break;
             case 'subject';
                 //Materias
-                echo json_encode($this->subjectRouter($url[1]));
+                    return $this->subjectRouter($url[1]);
                 break;
             case 'orientation':
                 //Orientaciones
-                echo json_encode($this->orientationRouter($url[1]));
+                return $this->orientationRouter($url[1]);
                 break;
             case 'group':
                 //Grupos
-                echo json_encode($this->groupRouter($url[1]));
+                return $this->groupRouter($url[1]);
                 break;
             case 'user':
                 //Usuarios
-                echo json_encode($this->userRouter($url[1]));
+                return $this->userRouter($url[1]);
                 break;
             case 'user-group':
                 //ETC
-                echo json_encode($this->userGroupRouter($url[1]));
+                return $this->userGroupRouter($url[1]);
                 break;
             case 'schedule':
                 //Horarios
-                echo json_encode($this->scheduleRouter($url[1]));
+                return $this->scheduleRouter($url[1]);
                 break;
             case 'consultation':
                 //Consultas
-                echo json_encode($this->consultationRouter($url[1]));
+                return $this->consultationRouter($url[1]);
                 break;
             case 'chat':
                 //Salas de chat
-                echo json_encode($this->chatRouter($url[1]));
+                return $this->chatRouter($url[1]);
                 break;
             default:
-                echo json_encode( $this->res->error_404() );
+                return $this->res->error_404();
                 break;
         }
     }
@@ -94,6 +105,9 @@ class Router{
 
     private function subjectRouter($pro){
         $subject = new SubjectController($this->token);
+        if(!$pro){
+            return $this->res->error_404();
+        }
         switch($pro){
             case 'createSubject':
                 return $subject->createSubject();
