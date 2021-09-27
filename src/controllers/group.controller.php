@@ -3,7 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/group.model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/orientation.model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/subject.model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/schedule.model.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 /*
@@ -14,21 +16,25 @@ class GroupController extends Controller{
     private $group;
     private $orientation;
     private $user;
+    private $schedule_model;
+    private $subject_model;
     function __construct($token)
     {
         $this->res = new Response();
         $this->group = new GroupModel();
         $this->orientation = new OrientationModel();
         $this->user = new UserModel();
+        $this->schedule_model = new ScheduleModel();
+        $this->subject_model = new SubjectModel();
         parent::__construct($token);
     }
 
     public function createGroup(){
         if($this->token->user_type == 'administrator'){
-            if(parent::isTheDataCorrect($this->data,['name'=>'is_string','orientacion'=>'is_int'])){
+            if(parent::isTheDataCorrect($this->data,['name'=>'is_string','orientation'=>'is_int'])){
                 $length = strlen($this->data['name']);
                 if($length == 2){
-                    $ori = $this->orientation->getOrientationById($this->data['orientacion']);
+                    $ori = $this->orientation->getOrientationById($this->data['orientation']);
                     if($ori){
                         $groupExists = $this->group->getGroupInYear($this->data['name'],$ori['year']);
                         if($groupExists){
@@ -43,7 +49,7 @@ class GroupController extends Controller{
                                 }
                             }
                         }else{
-                            $id = $this->group->postGroup($this->data['name'],$this->data['orientacion']);
+                            $id = $this->group->postGroup($this->data['name'],$this->data['orientation']);
                             return $this->group->getGroupById($id);
                         }
                     }else{
@@ -86,6 +92,7 @@ class GroupController extends Controller{
                 $length = strlen($this->data['name']);
                 if($length == 2){
                     $ori = $this->group->getGroupOrientation($this->data['id']);
+                    $ori = $this->orientation->getOrientationById($ori);
                     if($ori){
                         $groupExists = $this->group->getGroupInYear($this->data['name'],$ori['year']);
                         if($groupExists){
