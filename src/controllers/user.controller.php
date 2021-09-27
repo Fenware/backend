@@ -33,9 +33,10 @@ class UserController extends Controller{
                     if($id != 'error'){
                         $this->insertOptionalData($id,$this->data);
                         $this->user->setUserType($id,$type);
-                        if($this->token->user_type == 'administrator'){
+                        if($this->token && $this->token->user_type == 'administrator'){
                             $this->user->patchUser($id,'state_account',1);
                         }
+                        return 1;
                     }else{
                         return $this->res->error_500();
                     }
@@ -182,7 +183,11 @@ class UserController extends Controller{
             if(parent::isTheDataCorrect($this->data, ['user'=>'is_int'] )){
                 $type = $this->user->getUserType($this->data['user']);
                 if($type != 'administrator'){
-                    return $this->user->getUserByIdSafe($this->data['user']);
+                    $user = $this->user->getUserByIdSafe($this->data['user']);
+                    if($user){
+                        $user['type'] = $this->user->getUserType($this->data['user']);
+                    }
+                    return $user;
                 }else{
                     return $this->res->error_403(); 
                 }
@@ -229,42 +234,43 @@ class UserController extends Controller{
             $type = $this->user->getUserType($data['user']);
             //Me aseguro de que el usuario que quiero modificar no sea un administrador
             if($type != 'administrator'){
+                $rows = 0;
                 if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
-                    $this->user->patchUser($data['user'],'name',$data['name']);
+                    $rows = $this->user->patchUser($data['user'],'name',$data['name']);
                 }
                 if(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
 
-                    $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
+                    $rows = $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
                     
                 }
                 if(parent::isTheDataCorrect($data,['surname'=>'is_string'])){
 
-                    $this->user->patchUser($data['user'],'surname',$data['surname']);
+                    $rows = $this->user->patchUser($data['user'],'surname',$data['surname']);
 
                 }
                 if(parent::isTheDataCorrect($data,['second_surname'=>'is_string'])){
 
-                    $this->user->patchUser($data['user'],'second_surname',$data['second_surname']);
+                    $rows = $this->user->patchUser($data['user'],'second_surname',$data['second_surname']);
 
                 }
                 if(parent::isTheDataCorrect($data,['email'=>'is_string']) && $this->is_email($data['email']) ){
 
-                    $this->user->patchUser($data['user'],'email',$data['email']);
+                    $rows = $this->user->patchUser($data['user'],'email',$data['email']);
 
                 }
 
                 if(parent::isTheDataCorrect($data,['avatar'=>'is_string'])){
 
-                    $this->user->patchUser($data['user'],'email',$data['email']);
+                    $rows = $this->user->patchUser($data['user'],'email',$data['email']);
 
                 }
 
                 if(parent::isTheDataCorrect($data,['nickname'=>'is_string'])){
 
-                    $this->user->patchUser($data['user'],'nickname',$data['nickname']);
+                    $rows = $this->user->patchUser($data['user'],'nickname',$data['nickname']);
 
                 }
-                return "";
+                return $rows;
             }else{
                 return $this->res->error_403();
             }
@@ -301,10 +307,13 @@ class UserController extends Controller{
             if(parent::isTheDataCorrect($this->data,['id'=>'is_int'])){
                 $type = $this->user->getUserType($this->data['id']);
                 if($type != 'administrator'){
+                    
                     return $this->user->patchUser($this->data['id'],'state_account',1);
                 }else{
                     return $this->res->error_403();
                 }
+            }else{
+                return $this->res->error_400();
             }
         }else{
             return $this->res->error_403();
