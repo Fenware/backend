@@ -26,16 +26,15 @@ class GroupModel extends Model{
             "SELECT g.id,g.id_orientation,g.`name`,g.`code` ,g.state
             FROM `group` g , orientation o 
             WHERE g.id_orientation = o.id AND g.`name` = ? AND o.`year` = ?";
-            $grupo_existe = parent::query($stm , [$name, $year]);
-        return $grupo_existe[0];
+            $grupo = parent::query($stm , [$name, $year]);
+        return !empty($grupo) ? $grupo[0] : $grupo;
     }
     public function postGroup($name,$orientation){
         //genero el codigo del grupo
         $code = $this->generateCode();
         $stm = 'INSERT INTO `group`(id_orientation,`name`,code) VALUES(?,?,?)';
         parent::nonQuery($stm,[$orientation,$name,$code]);
-        $id = $this->lastInsertId();
-        return $this->getGroupById($id);
+        return $this->lastInsertId();
     }
 
     public function setGroupActive($id){
@@ -55,9 +54,9 @@ class GroupModel extends Model{
     Devuelve un grupo por id
     */
     public function getGroupById($id){
-        $stm = 'SELECT * FROM `group` WHERE id = ?';
+        $stm = 'SELECT g.id ,g.id_orientation, o.name AS orientation_name , o.year, g.`name`,g.`code`,g.`state` FROM `group` g,orientation o WHERE g.`state` = 1 AND g.id_orientation = o.id AND g.id = ?';
         $group_data = parent::query($stm,[$id]);
-        $grupo = $group_data[0];
+        $grupo = !empty($group_data) ? $group_data[0] : $group_data;
         return $grupo;
     }
 
@@ -108,7 +107,7 @@ class GroupModel extends Model{
     public function getGroupByCode($code){
         $stm = 'SELECT * FROM `group` WHERE `code` = ? AND `state` = 1';
         $group = parent::query($stm,[$code]);
-        return $group[0];
+        return !empty($group) ? $group[0] : $group;
     }
     /*
     Genera el codigo para un grupo
@@ -134,7 +133,7 @@ class GroupModel extends Model{
     public function getGroupOrientation($group){
         $stm = 'SELECT * FROM `group` WHERE id = ?';
         $data = parent::query($stm,[$group]);
-        $orientation = $data[0]['id_orientation'];
+        $orientation = !empty($data) ? $data[0]['id_orientation'] : $data;
         return $orientation;
     }
 
@@ -167,17 +166,17 @@ class GroupModel extends Model{
     }
 
     public function getStudentsInGroup($group){
-        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
+        $stm = 'SELECT u.id,u.ci,u.`name`,u.middle_name,u.surname,u.second_surname,u.email,u.avatar,u.nickname,u.state_account,u.connection_time
         FROM `user` u,student_group sg
-        WHERE u.id = sg.id_student AND sg.id_group = ?';
+        WHERE u.id = sg.id_student AND sg.id_group = ? AND sg.`state` = 1';
         $users = parent::query($stm , [$group]);
         return $users;
     }
 
     public function getTeachersInGroup($group){
-        $stm = 'SELECT u.id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account,connection_time
+        $stm = 'SELECT u.id,u.ci,u.`name`,u.middle_name,u.surname,u.second_surname,u.email,u.avatar,u.nickname,u.state_account,u.connection_time
         FROM `user` u,teacher_group tg
-        WHERE u.id = tg.id_student AND tg.id_group = ?';
+        WHERE u.id = tg.id_teacher AND tg.id_group = ? AND tg.`state` = 1';
         $teachers = parent::query($stm , [$group]);
         return $teachers;
     }
