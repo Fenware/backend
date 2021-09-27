@@ -52,12 +52,8 @@ class UserModel extends Model{
     Modifica un usuario
     */
     public function patchUser($id,$column,$value){
-        $stm = 'UPDATE `user` SET '.$column.' = :value WHERE id = :id';
-        $foo = [
-            'value' => $value,
-            'id' => $id
-        ];
-        return parent::nonQuery($stm,$foo);
+        $stm = 'UPDATE `user` SET '.$column.' = ? WHERE id = ?';
+        return parent::nonQuery($stm,[$value,$id]);
     }
 
     /*
@@ -106,8 +102,8 @@ class UserModel extends Model{
     public function getUserByIdSafe($id){
         $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
         FROM user WHERE id = ?';
-        $data = parent::query($stm,[$id]);
-        return $data;
+        $user = parent::query($stm,[$id]);
+        return !empty($user) ? $user[0] : $user;
     }
 
     /*
