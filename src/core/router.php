@@ -34,7 +34,12 @@ class Router{
         //Valido token
         try {
             $this->token = $middleware->validate();
-            echo json_encode( $this->route($this->url) );
+            try {
+                echo json_encode( $this->route($this->url) );
+            } catch (PDOException $e) {
+                echo json_encode( $this->res->error_NO_DB() );
+            }
+            
         } catch (Exception $e) {
             switch($e->getMessage()){
                 case 'Metodo no permitido':
@@ -42,7 +47,11 @@ class Router{
                     break;
                 case 'No token found':
                     if($this->url[0] == 'login'){
-                        echo json_encode( $this->route(['login']) );
+                        try {
+                            echo json_encode( $this->route(['login']) );
+                        } catch (PDOException $e) {
+                            echo json_encode( $this->res->error_NO_DB() );
+                        }
                     }else{
                         echo json_encode( $this->res->auth_error() );
                     }
