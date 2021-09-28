@@ -71,12 +71,16 @@ class UserGroupController extends Controller{
 
     public function leaveGroup(){
         //Chequeo que este intentando modificarse a si mismo
-        if(parent::isTheDataCorrect($this->data,['grupo'=>'is_int'])){
-            $grupo = $this->data['grupo'];
-            return $this->user->deleteUserGroup($this->token->user_id,$grupo,$this->token->user_type);
+        if(parent::isTheDataCorrect($this->data,['group'=>'is_int'])){
+            if($this->token->user_type == 'teacher'){
+                $grupo = $this->data['group'];
+                return $this->user->deleteUserGroup($this->token->user_id,$grupo,$this->token->user_type);
+            }elseif($this->token->user_type == 'student'){
+                $grupo = $this->data['group'];
+                return $this->user->deleteUserGroup($this->token->user_id,0,$this->token->user_type);
+            }
         }else{
-            $grupo = 0;
-            return $this->user->deleteUserGroup($this->token->user_id,$grupo,$this->token->user_type);
+            return $this->res->error_400();
         }
     }
 
@@ -136,13 +140,18 @@ class UserGroupController extends Controller{
 
     public function getGroupSubjects(){
         if(parent::isTheDataCorrect($this->data, ['group'=>'is_int'] )){
-            $ori = $this->group->getGroupOrientation($this->data['group']);
-            if($ori){
-                $subjects = $this->orientation->getOrientationSubjects($ori['id']);
-                foreach($subjects as &$s){
-                    $s['taken'] = $this->materia->IsSubjectInGroupTaken($this->data['group'],$s);
+            $orientation_id = $this->group->getGroupOrientation($this->data['group']);
+            if($orientation_id){
+                $ori = $this->orientation->getOrientationById((int)$orientation_id);
+                if($ori){
+                    $subjects = $this->orientation->getOrientationSubjects($ori['id']);
+                    foreach($subjects as &$s){
+                        $s['taken'] = $this->materia->IsSubjectInGroupTaken($this->data['group'],$s['id']);
+                    }
+                    return $subjects;
+                }else{
+                    return $this->res->error_500();
                 }
-                return $subjects;
             }else{
                 return $this->res->error_500();
             }
