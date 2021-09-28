@@ -27,17 +27,18 @@ class ScheduleController extends Controller{
                 $day = $this->data['day'];
                 $start_h = $this->data['start_hour'];
                 $end_h = $this->data['end_hour'];
-                $checked = false;
+                $check_1 = false;
+                $check_2 = false;
                 //Chequeo que las horas esten en el formato correcto
                 if (preg_match('/^\d{2}:\d{2}$/', $start_h)) {
                     if (preg_match("/(2[0-3]|[0][0-9]|1[0-9]):([0-5][0-9])/", $start_h)) {
-                        $checked = true;
+                        $check_1 = true;
                     }
                 }
                 //Chequeo que las horas esten en el formato correcto
                 if (preg_match('/^\d{2}:\d{2}$/', $end_h)) {
                     if (preg_match("/(2[0-3]|[0][0-9]|1[0-9]):([0-5][0-9])/", $end_h)) {
-                        $checked = true;
+                        $check_2 = true;
                     }
                 }
 
@@ -46,26 +47,25 @@ class ScheduleController extends Controller{
                 $this->schedule_model->setDay($day);
                 $this->schedule_model->setStartHour($start_h);
                 $this->schedule_model->setEndHour($end_h);
-                
-                if($checked == true){
+                if($check_1 && $check_2){
                     if(!$day_exists){
                         //Chequeo que el dia sea entre [1,7] (7 dias de la semana ,1 = lunes,7 = domingo)
-                        if( $day > 0 && $day < 8 ){
+                        if( $day >= 1 && $day <= 5 ){
                             $rows = $this->schedule_model->createScheduleForDay();
-                            if($rows == 0){
-                                return $this->res->error_500();
-                            }else{
+                            if($rows > 0){
                                 return 1;
+                            }else{
+                                return $this->res->error_500();
                             }
                         }else{
                             return $this->res->error_400();
                         }
                     }else{
                         $rows = $this->schedule_model->modifyScheduleForDay();
-                        if($rows == 0){
-                            return $this->res->error_500();
+                        if($rows > 0){
+                            return $rows;
                         }else{
-                            return 1;
+                            return $this->res->error_500();
                         }
                     }
                 }else{
