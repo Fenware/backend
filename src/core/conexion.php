@@ -20,7 +20,7 @@ class Conexion{
             $conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->database , $this->user, $this->password);
             return $conn;
         } catch (PDOException $error) {
-            echo 'SE CAYO LA BASE DE DATOS';
+            throw new PDOException('NO DB');
             return false;
         }
     }
