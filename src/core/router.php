@@ -95,6 +95,10 @@ class Router{
                 //Salas de chat
                 return $this->chatRouter($url[1]);
                 break;
+            case 'token':
+                //Verificacion de token
+                return "OK";
+                break;
             default:
                 return $this->res->error_404();
                 break;

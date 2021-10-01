@@ -230,51 +230,40 @@ class UserController extends Controller{
         }
     }
     private function administradorEditaUsuario($data){
-        if(parent::isTheDataCorrect($data,['user'=>'is_int'])){
-            $type = $this->user->getUserType($data['user']);
+        if(parent::isTheDataCorrect($data,['id'=>'is_int'])){
+            $type = $this->user->getUserType($data['id']);
             //Me aseguro de que el usuario que quiero modificar no sea un administrador
             if($type != 'administrator'){
                 $rows = 0;
                 if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['user'],'name',$data['name']);
+                    $rows = $this->user->patchUser($data['id'],'name',$data['name']);
                 }
                 if(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
-
-                    $rows = $this->user->patchUser($data['user'],'middle_name',$data['middle_name']);
-                    
+                    $rows = $this->user->patchUser($data['id'],'middle_name',$data['middle_name']);
                 }
                 if(parent::isTheDataCorrect($data,['surname'=>'is_string'])){
-
-                    $rows = $this->user->patchUser($data['user'],'surname',$data['surname']);
-
+                    $rows = $this->user->patchUser($data['id'],'surname',$data['surname']);
                 }
                 if(parent::isTheDataCorrect($data,['second_surname'=>'is_string'])){
-
-                    $rows = $this->user->patchUser($data['user'],'second_surname',$data['second_surname']);
-
+                    $rows = $this->user->patchUser($data['id'],'second_surname',$data['second_surname']);
                 }
                 if(parent::isTheDataCorrect($data,['email'=>'is_string']) && $this->is_email($data['email']) ){
-
-                    $rows = $this->user->patchUser($data['user'],'email',$data['email']);
-
+                    $rows = $this->user->patchUser($data['id'],'email',$data['email']);
                 }
 
                 if(parent::isTheDataCorrect($data,['avatar'=>'is_string'])){
-
-                    $rows = $this->user->patchUser($data['user'],'email',$data['email']);
-
+                    $rows = $this->user->patchUser($data['id'],'email',$data['email']);
                 }
 
                 if(parent::isTheDataCorrect($data,['nickname'=>'is_string'])){
-
-                    $rows = $this->user->patchUser($data['user'],'nickname',$data['nickname']);
-
+                    $rows = $this->user->patchUser($data['id'],'nickname',$data['nickname']);
                 }
                 return $rows;
             }else{
                 return $this->res->error_403();
             }
-            
+        }else{
+            return $this->res->error_400();
         }
     }
 
