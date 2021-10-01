@@ -236,27 +236,25 @@ class UserController extends Controller{
             if($type != 'administrator'){
                 $rows = 0;
                 if(parent::isTheDataCorrect($data,['name'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'name',$data['name']);
+                    $rows += $this->user->patchUser($data['id'],'name',$data['name']);
                 }
                 if(parent::isTheDataCorrect($data,['middle_name'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'middle_name',$data['middle_name']);
+                    $rows += $this->user->patchUser($data['id'],'middle_name',$data['middle_name']);
                 }
                 if(parent::isTheDataCorrect($data,['surname'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'surname',$data['surname']);
+                    $rows += $this->user->patchUser($data['id'],'surname',$data['surname']);
                 }
                 if(parent::isTheDataCorrect($data,['second_surname'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'second_surname',$data['second_surname']);
+                    $rows += $this->user->patchUser($data['id'],'second_surname',$data['second_surname']);
                 }
                 if(parent::isTheDataCorrect($data,['email'=>'is_string']) && $this->is_email($data['email']) ){
-                    $rows = $this->user->patchUser($data['id'],'email',$data['email']);
+                    $rows += $this->user->patchUser($data['id'],'email',$data['email']);
                 }
-
                 if(parent::isTheDataCorrect($data,['avatar'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'email',$data['email']);
+                    $rows += $this->user->patchUser($data['id'],'email',$data['email']);
                 }
-
                 if(parent::isTheDataCorrect($data,['nickname'=>'is_string'])){
-                    $rows = $this->user->patchUser($data['id'],'nickname',$data['nickname']);
+                    $rows += $this->user->patchUser($data['id'],'nickname',$data['nickname']);
                 }
                 return $rows;
             }else{
