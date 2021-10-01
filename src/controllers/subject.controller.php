@@ -18,22 +18,28 @@ class SubjectController extends Controller{
     public function createSubject(){
         if($this->token->user_type == 'administrator'){
             if(parent::isTheDataCorrect($this->data, ['name'=>'is_string'] )){
+                // if(preg_match('/[a-zA-Z]/',$this->data['name'])){
+                    
+                // }else{
+                //     return $this->res->error_400();
+                // }
+
                 $subject =  $this->materia->getSubjectByName($this->data['name']); 
-                if($subject){
-                    if($subject['state'] == 0){
-                        $rows = $this->materia->changeSubjectState($subject['id'],1);
-                        if($rows > 0){
-                            return $this->materia->getSubjectById($subject['id']);
+                    if($subject){
+                        if($subject['state'] == 0){
+                            $rows = $this->materia->changeSubjectState($subject['id'],1);
+                            if($rows > 0){
+                                return $this->materia->getSubjectById($subject['id']);
+                            }else{
+                                return 0;
+                            }
                         }else{
-                            return 0;
+                            return $this->res->error('La materia ya existe',1010);
                         }
                     }else{
-                        return $this->res->error('La materia ya existe',1010);
+                        $id = $this->materia->postSubject($this->data['name']);
+                        return $this->materia->getSubjectById($id);
                     }
-                }else{
-                    $id = $this->materia->postSubject($this->data['name']);
-                    return $this->materia->getSubjectById($id);
-                }
             }else{
                 return $this->res->error_400();
             }
