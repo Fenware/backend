@@ -16,7 +16,7 @@ require_once '/var/www/html/core/response.php';
 
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: POST");//Solo admito el metodo POST
 header('Content-type: application/json');
 class Router{
 
