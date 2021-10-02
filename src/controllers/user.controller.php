@@ -217,12 +217,12 @@ class UserController extends Controller{
             if(parent::isTheDataCorrect($this->data,['avatar'=>'is_string','nickname'=>'is_string'])){
                 $this->user->patchUser($this->token->user_id,'avatar',$this->data['avatar']);
                 $this->user->patchUser($this->token->user_id,'nickname',$this->data['nickname']);
-                return "";
+                return 1;
             }elseif($this->token->user_type == 'teacher'){
                 if(parent::isTheDataCorrect($this->data,['max_rooms_per_gs'=>'is_int'])){
                     return $this->user->setMaxRoomsPerGs($this->token->user_id,$this->data['max_rooms_per_gs']);
                 }else{
-                    return $this->res->error_400();
+                    //return $this->res->error_400();
                 }
             }else{
                 return $this->res->error_400();
