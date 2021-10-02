@@ -138,7 +138,7 @@ class ChatController extends Controller{
             if(parent::isTheDataCorrect($this->data,['chat'=>'is_int','msg'=>'is_string'])){
                 if($this->user->UserHasAccesToChat($this->token->user_id,$this->data['chat'])){
                     $chat = $this->chat->getChatById($this->data['chat']);
-                    if($chat['state' != 0]){
+                    if($chat && $chat['state'] != 0){
                         $msg =  $this->chat->postMessagge($this->token->user_id,$this->data['chat'],$this->data['msg']);
                         if($this->token->user_type == 'teacher'){
                             $this->chat->setQueryToAnswered($this->data['chat']);
@@ -158,12 +158,12 @@ class ChatController extends Controller{
     }
 
     public function getMessages(){
-        if(parent::isTheDataCorrect($this->data,['chat'=>'is_string'])){
+        if(parent::isTheDataCorrect($this->data,['chat'=>'is_int'])){
             if($this->token->user_type == 'administrator'){
-                return $this->consulta->getMessageFromQuery($this->data['chat']);
+                return $this->chat->getMessageFromQuery($this->data['chat']);
             }else{
                 if($this->user->UserHasAccesToChat($this->token->user_id,$this->data['chat'])){
-                    return $this->consulta->getMessageFromQuery($this->data['chat']);
+                    return $this->chat->getMessageFromQuery($this->data['chat']);
                 }else{
                     return $this->res->error_403();
                 }
@@ -177,8 +177,13 @@ class ChatController extends Controller{
         if($this->token->user_type == 'administrator'){
             return $this->res->error_403();
         }else{
-            if(parent::isTheDataCorrect($this->data,['chat'=>'is_string'])){
-                return $this->chat->addParticipant($this->data['chat'],$this->token->user_id);
+            if(parent::isTheDataCorrect($this->data,['chat'=>'is_int'])){
+                if($this->user->UserHasAccesToChat($this->token->user_id,$this->data['chat'])){
+                    return $this->chat->addParticipant($this->data['chat'],$this->token->user_id);
+                }else{
+                    return $this->res->error_403();
+                }
+                
             }else{
                 return $this->res->error_400();
             }
