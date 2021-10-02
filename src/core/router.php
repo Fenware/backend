@@ -16,7 +16,7 @@ require_once '/var/www/html/core/response.php';
 
 header("Access-Control-Allow-Origin: *");//Cambiar el * por el dominio del frontend
 header("Access-Control-Allow-Headers: *");
-header("Access-Control-Allow-Methods: *");
+header("Access-Control-Allow-Methods: POST");//Solo admito el metodo POST
 header('Content-type: application/json');
 class Router{
 
@@ -104,6 +104,10 @@ class Router{
                 //Salas de chat
                 return $this->chatRouter($url[1]);
                 break;
+            case 'token':
+                //Verificacion de token
+                return "OK";
+                break;
             default:
                 return $this->res->error_404();
                 break;
@@ -118,7 +122,7 @@ class Router{
             return $this->res->error_404();
         }
         switch($pro){
-            case 'createSubject':
+            case 'create':
                 return $subject->createSubject();
                 break;
             case 'getSubjects':
@@ -127,10 +131,10 @@ class Router{
             case 'getSubjectById':
                 return $subject->getSubjectById();
                 break;
-            case 'modifySubject':
+            case 'modify':
                 return $subject->modifySubject();
                 break;
-            case 'deleteSubject':
+            case 'delete':
                 return $subject->deleteSubject();
                 break;
             default:
@@ -142,7 +146,7 @@ class Router{
     private function orientationRouter($pro){
         $orientation = new OrientationController($this->token);
         switch($pro){
-            case 'createOrientation':
+            case 'create':
                 return $orientation->createOrientation();
                 break;
             case 'addOrientationSubjects':
@@ -154,10 +158,10 @@ class Router{
             case 'getOrientationById':
                 return $orientation->getOrientationById();
                 break;
-            case 'modifyOrientation':
+            case 'modify':
                 return $orientation->modifyOrientation();
                 break;
-            case 'deleteOrientation':
+            case 'delete':
                 return $orientation->deleteOrientation();
                 break;
             case 'removeOrienationSubjects':
@@ -175,7 +179,7 @@ class Router{
     private function groupRouter($pro){
         $group = new GroupController($this->token);
         switch($pro){
-            case 'createGroup':
+            case 'create':
                 return $group->createGroup();
                 break;
             case 'getGroups':
@@ -184,10 +188,10 @@ class Router{
             case 'getGroupById':
                 return $group->getGroupById();
                 break;
-            case 'modifyGroup':
+            case 'modify':
                 return $group->modifyGroup();
                 break;
-            case 'deleteGroup':
+            case 'delete':
                 return $group->deleteGroup();
                 break;
             case 'getTeachersFromGroup':
@@ -205,7 +209,7 @@ class Router{
     private function userRouter($pro){
         $user = new UserController($this->token);
         switch($pro){
-            case 'createUser':
+            case 'create':
                 return $user->createUser();
                 break;
             case 'getActiveUsers':
@@ -214,10 +218,10 @@ class Router{
             case 'getUserById':
                 return $user->getUserById();
                 break;
-            case 'modifyUser':
+            case 'modify':
                 return $user->modifyUser();
                 break;
-            case 'deleteUser':
+            case 'delete':
                 return $user->deleteUser();
                 break;
             case 'acceptUser':
