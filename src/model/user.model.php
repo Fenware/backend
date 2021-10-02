@@ -273,7 +273,7 @@ class UserModel extends Model{
     Chequea si un usuario tiene acceso a una consulta
     */
     public function UserHasAccesToConsulta($user,$consulta){
-        $stm = 'SELECT q.id FROM `query` q,`individual` i  WHERE q.id_student = ? OR q.id_teacher = ? AND q.id = ? AND q.id = i.id';
+        $stm = 'SELECT q.id FROM `query` q,`individual` i  WHERE (q.id_student = ? OR q.id_teacher = ?) AND q.id = ? AND q.id = i.id';
         $query = parent::query($stm,[$user,$user,$consulta]);
         if(empty($query)){
             return false;
