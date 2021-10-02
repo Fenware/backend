@@ -143,7 +143,7 @@ class UserGroupController extends Controller{
             $orientation_id = $this->group->getGroupOrientation($this->data['group']);
             if($orientation_id){
                 $ori = $this->orientation->getOrientationById((int)$orientation_id);
-                if($ori){
+                if($ori && $ori['id']){
                     $subjects = $this->orientation->getOrientationSubjects($ori['id']);
                     foreach($subjects as &$s){
                         $s['taken'] = $this->materia->IsSubjectInGroupTaken($this->data['group'],$s['id']);
