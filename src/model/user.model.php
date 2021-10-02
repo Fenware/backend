@@ -283,15 +283,16 @@ class UserModel extends Model{
     }
 
     public function UserHasAccesToChat($user,$chat){
-        $stm = 'SELECT q.id,q.id_group,q.id_subject FROM `query` q,`room` r WHERE id = ? AND q.id = r.id';
+        $stm = 'SELECT q.id,q.id_group,q.id_subject FROM `query` q,`room` r WHERE q.id = ? AND q.id = r.id';
         $query = parent::query($stm,[$chat]);
         if($query){
             $grupo = $query[0]['id_group'];
             $materia = $query[0]['id_subject'];
             $type = $this->getUserType($user);
+            
             switch($type){
                 case 'teacher':
-                    $stm = 'SELECT * FROM `teacher_group_subject` WHERE id_teacher = ? AND id_group = ? AND id_subject = ?';
+                    $stm = 'SELECT * FROM `teacher_group_subject` WHERE id_teacher = ? AND id_group = ? AND id_subject = ? AND `state` = 1';
                     $acces = parent::query($stm, [$user,$grupo,$materia] );
                     if($acces){
                         return true;
@@ -300,7 +301,8 @@ class UserModel extends Model{
                     }
                     break;
                 case 'student':
-                    $stm = 'SELECT * FROM `student_group` WHERE id_student = ? AND id_group = ?';
+                    
+                    $stm = 'SELECT * FROM `student_group` WHERE id_student = ? AND id_group = ? AND `state` = 1';
                     $acces = parent::query($stm, [$user,$grupo] );
                     if($acces){
                         return true;
