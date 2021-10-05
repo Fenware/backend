@@ -74,7 +74,7 @@ class Router{
                 break;
             case 'subject';
                 //Materias
-                    return $this->subjectRouter($url[1]);
+                return $this->subjectRouter($url[1]);
                 break;
             case 'orientation':
                 //Orientaciones
@@ -290,13 +290,13 @@ class Router{
     private function consultationRouter($pro){
         $c = new ConsultaController($this->token);
         switch($pro){
-            case 'createConsulta':
+            case 'create':
                 return $c->createConsulta();
                 break;
-            case 'getActiveConsultas':
+            case 'getActiveConsultations':
                 return $c->getActiveConsultas();
                 break;
-            case 'getConsultaById':
+            case 'getConsultationById':
                 return $c->getConsultaById();
                 break;
             case 'getAllConsultas':
