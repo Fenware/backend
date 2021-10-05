@@ -31,6 +31,7 @@ class ConsultaModel extends QueryModel{
                 WHERE q.`state` != 0 AND q.id = ? AND q.id = i.id';
         $c = parent::query($stm,[$id]);
         $consulta = $c[0];
+        $consulta = parent::getExtraData($consulta);
         return $consulta ;
     }
 

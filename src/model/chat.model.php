@@ -58,11 +58,15 @@ class ChatModel extends QueryModel{
     {
         $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
                 FROM `query` q ,`room` r 
-                WHERE q.`state` != 0 AND q.id = ? AND q.id = r.id';
+                WHERE q.id = ? AND q.id = r.id';
         $c = parent::query($stm,[$id]);
-        $chat = $c[0];
-        $chat = parent::getExtraData($chat);
-        $chat = $this->addData($chat);
+        if($c){
+            $chat = $c[0];
+            $chat = parent::getExtraData($chat);
+            $chat = $this->addData($chat);
+        }else{
+            $chat = $c;
+        }
         return $chat;
     }
 
@@ -120,8 +124,8 @@ class ChatModel extends QueryModel{
     }
 
     public function getParticipants($chat){
-        $stm = 'SELECT r.id ,u.name,u.middle_name,u.surname,u.second_surname
-        room_participants r,`user` u
+        $stm = 'SELECT r.id_room ,u.name,u.middle_name,u.surname,u.second_surname
+        FROM room_participants r,`user` u
         WHERE r.id_room = ? AND r.id_user = u.id';
         $participants = parent::query($stm , [$chat] );
         return $participants;
@@ -134,7 +138,7 @@ class ChatModel extends QueryModel{
 
     //Si es el autor o el docente del chatw
     public function userHasHighAccessToChat($user,$chat){
-        $stm = 'SELECT q.id FROM `query` q,`room` r  WHERE q.id_student = ? OR q.id_teacher = ? AND q.id = ? AND q.id = r.id';
+        $stm = 'SELECT q.id FROM `query` q,`room` r  WHERE (q.id_student = ? OR q.id_teacher = ?) AND q.id = ? AND q.id = r.id';
         $query = parent::query($stm,[$user,$user,$chat]);
         if(empty($query)){
             return false;

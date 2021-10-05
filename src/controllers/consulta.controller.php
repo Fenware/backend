@@ -105,9 +105,13 @@ class ConsultaController extends Controller{
             }
         }else{
             if($this->user->UserHasAccesToConsulta($this->token->user_id,$this->data['consulta'])){
-                return $this->consulta->closeQuery($this->data['consulta']);
+                if(parent::isTheDataCorrect($this->data,['consulta'=>'is_int'])){
+                    return $this->consulta->closeQuery($this->data['consulta']);
+                }else{
+                    return $this->res->error_400();
+                }
             }else{
-                return $this->res->error_400();
+                return $this->res->error_403();
             }
         }
     }
