@@ -2,6 +2,9 @@
 use Firebase\JWT\JWT;
 include_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/config/config.php';
+/*
+Esta clase es para la verificacion de tokens
+*/
 class Token{
     
     public function __construct()

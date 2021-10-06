@@ -15,16 +15,19 @@ class ConsultaModel extends QueryModel{
         $this->res = new Response();
     }
 
-    /*
-    Crea una consulta
-    */
-
     
+
+    /*
+    Le da la clasificacion de consulta a un query
+    */
     public function createConsulta(){
         $stm = 'INSERT INTO individual(id) VALUES(?)';
         parent::nonQuery($stm,[parent::getId()]);
     }
 
+    /*
+    Devuelve una consulta en base a su id
+    */
     public function getConsultaById($id){
         $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
                 FROM `query` q ,`individual` i 
@@ -57,11 +60,6 @@ class ConsultaModel extends QueryModel{
         }
         return $consultas;
     }   
-
-    /*
-    Devuelve una consulta en base a su id
-    */
-    
 
     /*
     Devuelve todas las consultas de un usuario sin importar su estado

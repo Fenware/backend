@@ -106,6 +106,7 @@ class Router{
                 break;
             case 'token':
                 //Verificacion de token
+                //El token se verifica antes de entrar aca, este endpoint esta para que el frontend verifique si el token de un usuario es valido y en caso de que no lo sea,deslogearlo
                 return "OK";
                 break;
             default:

@@ -34,16 +34,25 @@ class SubjectModel extends Model{
         return $rows;
     }
 
+    /*
+    Quita la materia de todas las orientaciones
+    */
     public function deleteSubjectFromAllOrientations($materia){
         $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ?';
         return parent::nonQuery($stm,[$materia]);
     }
 
+    /*
+    Quita a todos los docentes de esa materia
+    */
     public function deleteTeachersFromSubject($materia){
         $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_subject = ?';
         return parent::nonQuery($stm,[$materia]);
     }
 
+    /*
+    Cierra todos los querys con esa materia
+    */
     public function closeQuerysFromSubject($materia){
         $stm = 'UPDATE `query` SET `state` = 0 WHERE id_subject = ?';
         return parent::nonQuery($stm,[$materia]);
@@ -145,6 +154,9 @@ class SubjectModel extends Model{
         return $data;
     }
 
+     /*
+    Quita las materias de un docente en un grupos
+    */
     public function getTeacherSubjectsInGroup($teacher,$group){
         $stm = 'SELECT s.id,s.`name`
         FROM `subject` s ,teacher_group_subject tgs ,`group` g
@@ -169,6 +181,9 @@ class SubjectModel extends Model{
         }
     }
 
+    /*
+    Cambia el estado de una materia
+    */
     public function changeSubjectState($id,$state){
         $stm = 'UPDATE `subject` SET `state` = ? WHERE id = ?';
         return parent::nonQuery($stm,[$state,$id]);

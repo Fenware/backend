@@ -24,6 +24,9 @@ class AuthModel extends Model{
 
     
 
+    /*
+    Genera un token(esto sera movido a class Token en un futuro)
+    */
     function generateToken($user,$type){
         $res = new Response();
         $secret_key = SECRET_KEY;

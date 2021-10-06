@@ -3,7 +3,7 @@
 require_once '/var/www/html/core/model.php';
 require_once '/var/www/html/core/response.php';
 /*
-Modelo para las consultas
+Modelo para los horarios
 */
 class ScheduleModel extends Model{
 
@@ -42,12 +42,18 @@ class ScheduleModel extends Model{
         return $schedules;
     }
 
+     /*
+    Verifico que el docente tiene ese dia creado
+    */
     public function teacherHasDayCreated($teacher,$day){
         $stm = 'SELECT * FROM `consult_schedule` WHERE id_teacher = ? AND `day` = ?';
         $schedules = parent::query($stm , [$teacher,$day] );
         return $schedules;
     }
 
+     /*
+    Elimina una dia de un docente
+    */
     public function deleteTeacherScheduleForDay($teacher,$day){
         $stm = 'DELETE FROM `consult_schedule` WHERE id_teacher = ? AND `day` = ?';
         $rows = parent::nonQuery($stm , [$teacher,$day] );
