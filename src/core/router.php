@@ -302,7 +302,7 @@ class Router{
             case 'getAllConsultas':
                 return $c->getAllConsultas();
                 break;
-            case 'closeConsulta':
+            case 'close':
                 return $c->closeConsulta();
                 break;
             case 'postMessage':
@@ -320,7 +320,7 @@ class Router{
     private function chatRouter($pro){
         $c = new ChatController($this->token);
         switch($pro){
-            case 'createChat':
+            case 'create':
                 return $c->createChat();
                 break;
             case 'getActiveChats':
