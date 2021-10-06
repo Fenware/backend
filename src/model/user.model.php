@@ -50,6 +50,7 @@ class UserModel extends Model{
     }
     /*
     Modifica un usuario
+    !!!ESTA FUNCION ES MUY HDP , HAY QUE CAMBIARLA EN OTRO MOMENTO!!!
     */
     public function patchUser($id,$column,$value){
         $stm = 'UPDATE `user` SET '.$column.' = ? WHERE id = ?';
@@ -57,7 +58,8 @@ class UserModel extends Model{
     }
 
     /*
-    Define si un usuario es alumno o docente
+    Le doy el tipo de usuario a un  usuario (alumno o docente)
+    !!! HAY QUE SEPARAR ESTO EN 2 FUNCIONES  DISTINTAS !!!
     */
     public function setUserType($id,$type){
         $stm = 'INSERT INTO '.$type.'(id) VALUES(:id)';
@@ -157,10 +159,10 @@ class UserModel extends Model{
         return $hashed_pwd;
     }
 
-    /*
-    Agrego a un usuario a un grupo
-    */
 
+    /*
+    Agrego a un docente a un grupo
+    */
     public function giveTeacherGroup($teacher,$group){
         $stm = 'INSERT INTO teacher_group(id_teacher,id_group) VALUES(?,?)';
         $rows = parent::nonQuery($stm,[$teacher,$group]);
@@ -173,6 +175,9 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Agrego a un alumno a un grupo
+    */
     public function giveStudentGroup($student,$group){
         $stm = 'INSERT INTO student_group(id_student,id_group) VALUES(?,?)';
         $rows = parent::nonQuery($stm,[$student,$group]);
@@ -282,6 +287,10 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Chequeo si un  usuario tiene acceso a un chat
+    !!! HABRIA QUE MOVER ESTO A class Chat !!! 
+    */
     public function UserHasAccesToChat($user,$chat){
         $stm = 'SELECT q.id,q.id_group,q.id_subject FROM `query` q,`room` r WHERE q.id = ? AND q.id = r.id';
         $query = parent::query($stm,[$chat]);
@@ -332,24 +341,37 @@ class UserModel extends Model{
         }
     }
 
+    /*
+    Cambia la cantidad de salas maximas abiertas con una misma materia en un grupo de un docente
+    */
     public function setMaxRoomsPerGs($teacher,$max){
         $stm = 'UPDATE teacher SET max_rooms_per_gs = ? WHERE id = ?';
         $rows = parent::nonQuery($stm , [$max,$teacher] );
         return $rows;
     }
 
+    /*
+    Devuelve la cantidad de salas maximas abiertas con una misma materia en un grupo de un docente
+    */
     public function getMaxRoomsPerGs($teacher){
         $stm =  'SELECT max_rooms_per_gs FROM teacher WHERE id = ?';
         $max_rooms_per_gs = parent::query($stm, [$teacher] );
         return $max_rooms_per_gs[0]['max_rooms_per_gs'];
     }
     
+    /*
+    Esta funcion no se usa nunca y seguramente sea borrada por que ya hay  una mejor solucion para lo que busca hacer
+    */
     public function actualizeLastConnectionTime($user){
         $date = date('Y-m-d H:i:s', time());
         $stm = 'UPDATE `user` SET connection_time = ? WHERE id = ?';
         $rows = parent::nonQuery($stm , [$date ,$user]);
         return $rows;
     }
+
+    /*
+    Esta funcion no se usa nunca y seguramente sea borrada por que ya hay  una mejor solucion para lo que busca hacer
+    */
     public function getLastConnectionTime($user){
         $date = date('Y-m-d H:i:s', time());
         $stm = 'SELECT connection_time FROM `user` WHERE id = ?';
@@ -357,6 +379,9 @@ class UserModel extends Model{
         return $time;
     }
 
+    /*
+    Borra a un usuario
+    */
     public function removeUser($user,$type){
         $rows = $this->patchUser($user,'state_account',0);
         switch($type){

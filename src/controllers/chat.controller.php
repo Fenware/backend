@@ -163,6 +163,8 @@ class ChatController extends Controller{
                 return $this->chat->getMessageFromQuery($this->data['chat']);
             }else{
                 if($this->user->UserHasAccesToChat($this->token->user_id,$this->data['chat'])){
+                    //Add participant temporal
+                    $this->chat->addParticipant($this->data['chat'],$this->token->user_id);
                     return $this->chat->getMessageFromQuery($this->data['chat']);
                 }else{
                     return $this->res->error_403();

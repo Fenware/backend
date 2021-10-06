@@ -3,7 +3,7 @@
 require_once '/var/www/html/core/model.php';
 require_once '/var/www/html/core/response.php';
 /*
-Modelo para las consultas
+Modelo padre de las consultas y chats
 */
 class QueryModel extends Model{
 
@@ -25,7 +25,7 @@ class QueryModel extends Model{
     }
 
     /*
-    Crea una consulta
+    Crea un query
     */
     public function createQuery(){
         $stm = 'INSERT INTO `query`(id_student,id_teacher,id_group,id_subject,theme,creation_date) VALUES(?,?,?,?,?,?)';
@@ -67,7 +67,7 @@ class QueryModel extends Model{
 
     
     /*
-    Envia un mensaje a una consulta
+    Envia un mensaje a un query
     */
     public function postMessagge($user,$consulta,$content){
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
@@ -80,7 +80,7 @@ class QueryModel extends Model{
     }
 
     /*
-    Devuelve los mensajes de una consulta
+    Devuelve los mensajes de un query
     */
     public function getMessageFromQuery($consulta){
         $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id ORDER BY `date`';
@@ -89,23 +89,22 @@ class QueryModel extends Model{
     }
 
     /*
-    Cierra una consulta
+    Cierra un query
     */
     public function closeQuery($consulta){
         $this->finish_date = date('Y-m-d H:i:s', time());
         $messages = $this->getMessageFromQuery($consulta);
-        $resume = 'Resumen \n';
-        foreach($messages as $message){
-            $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
-        }
         $stm = 'UPDATE `query` 
-        SET `state` = 0 ,finish_date = ? ,`resume` = ?
+        SET `state` = 0 ,finish_date = ?
         WHERE id = ?';
-        $rows = parent::nonQuery($stm,[$this->finish_date,$resume,$consulta]);
+        $rows = parent::nonQuery($stm,[$this->finish_date,$consulta]);
         //Genero el resumen de la consulta
         return $rows;
     }
 
+    /*
+    Cierra todas las consultas de un usuario
+    */
     public function closeAllUserQuerys($user){
         $this->finish_date = date('Y-m-d H:i:s', time());
         $stm = 'UPDATE `query` 
@@ -124,7 +123,9 @@ class QueryModel extends Model{
         return $rows;
     }
 
-
+    /*
+    Devuelve un query por id
+    */
     public function getQueryById($query){
         $stm = 'SELECT * FROM `query` WHERE id = ?';
         $c =  parent::query($stm,[$query]);
@@ -132,6 +133,9 @@ class QueryModel extends Model{
         return $this->getExtraData($consulta);
     }
 
+    /*
+    Recibe un query y lo devuelve con informacion extra
+    */
     public function getExtraData($consulta){
         $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
         $autor = parent::query($stm_autor,[$consulta['id_student']]);

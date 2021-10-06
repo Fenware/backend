@@ -1,8 +1,8 @@
 <?php
 
 /*
-Clase API :
-Todas las api que requieran el uso de token heredan de esta clase
+Clase Controller :
+Todos los controllers heredan de esta clase
 */
 class Controller{
     
@@ -16,15 +16,10 @@ class Controller{
         $this->token = $token;
     }
 
-    /*
-    Creo metodos abstractos cosa de que todo API los tenga
-    */ 
-    /*
-    checkToken , validToken ,HasValidToken se usan para validar un token. 
-    */
-    
 
-    //Gets the body of the request and converts it from json to array
+    /*
+    Convierte los datos enviados por el usuario de json a array
+    */
     private function getJson(){
         $postBody = file_get_contents('php://input');
         $data = json_decode($postBody,true);

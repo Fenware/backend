@@ -17,10 +17,11 @@ class GroupModel extends Model{
         $this->res = new Response();
     }
 
+
+
     /*
-    Crea el grupo
+    Se usa para determianr si ya  existe un grupo con x nombre en un año
     */
-    
     public function getGroupInYear($name,$year){
         $stm = 
             "SELECT g.id,g.id_orientation,g.`name`,g.`code` ,g.state
@@ -29,6 +30,10 @@ class GroupModel extends Model{
             $grupo = parent::query($stm , [$name, $year]);
         return !empty($grupo) ? $grupo[0] : $grupo;
     }
+
+    /*
+    Crea un grupo
+    */
     public function postGroup($name,$orientation){
         //genero el codigo del grupo
         $code = $this->generateCode();
@@ -37,6 +42,9 @@ class GroupModel extends Model{
         return $this->lastInsertId();
     }
 
+    /*
+    Cambia el estado de un grupo a activos
+    */
     public function setGroupActive($id){
         $stm = 'UPDATE `group` SET `state` = 1 WHERE id = ?';
         return parent::nonQuery($stm,[$id]);
@@ -87,6 +95,9 @@ class GroupModel extends Model{
         return $rows;
     }
 
+    /*
+    Saca a todos los docentes del grupo y los saca de las materias del grupo
+    */
     public function removeAllTeachersFromGroup($id){
         $stm = 'UPDATE `teacher_group` SET `state` = 0 WHERE id_group = ?';
         parent::nonQuery($stm , [$id]);
@@ -94,16 +105,25 @@ class GroupModel extends Model{
         parent::nonQuery($stm , [$id]);
     }
 
+    /*
+    Saco a todos los alumnos del grupo
+    */
     public function removeAllStudentsFromGroup($id){
         $stm = 'UPDATE `student_group` SET `state` = 0 WHERE id_group = ?';
         return parent::nonQuery($stm , [$id]);
     }
 
+    /*
+    Cierra todas las consultas y chats que pertenescan al grupo
+    */
     public function closeAllQuerysInGroup($id){
         $stm = 'UPDATE `query` SET `state` = 0 WHERE id_group = ?';
         return parent::nonQuery($stm , [$id]);
     }
 
+    /*
+    Devuelve un grupo en base a su codigo
+    */
     public function getGroupByCode($code){
         $stm = 'SELECT * FROM `group` WHERE `code` = ? AND `state` = 1';
         $group = parent::query($stm,[$code]);
@@ -165,6 +185,9 @@ class GroupModel extends Model{
         return $randomString;
     }
 
+    /*
+    Devuelve los estudiantes en un grupo
+    */
     public function getStudentsInGroup($group){
         $stm = 'SELECT u.id,u.ci,u.`name`,u.middle_name,u.surname,u.second_surname,u.email,u.avatar,u.nickname,u.state_account,u.connection_time
         FROM `user` u,student_group sg
@@ -173,6 +196,9 @@ class GroupModel extends Model{
         return $users;
     }
 
+    /*
+    Devuelve los docentes en un grupo
+    */
     public function getTeachersInGroup($group){
         $stm = 'SELECT u.id,u.ci,u.`name`,u.middle_name,u.surname,u.second_surname,u.email,u.avatar,u.nickname,u.state_account,u.connection_time
         FROM `user` u,teacher_group tg

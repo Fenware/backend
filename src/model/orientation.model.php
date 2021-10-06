@@ -38,11 +38,15 @@ class OrientationModel extends Model{
         
     }
 
+    /*
+    Devuelve las materias en una orientacion
+    */
     public function getSubjectInOrientation($orientation,$subject){
         $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ?';
         $data = parent::query($stm,[$subject,$orientation]);
         return !empty($data) ? $data[0] : $data;
     }
+    
     /*
     Elimina materias de una orientacion
     */
@@ -84,6 +88,10 @@ class OrientationModel extends Model{
         }
     }
 
+
+    /*
+    Devuelve una orientacion en base a nombre y año
+    */
     public function getOrienation($name,$year){
         $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
         $orientation = parent::query($stm,[$name,$year]);
@@ -105,17 +113,35 @@ class OrientationModel extends Model{
         return $materias;
     }
 
+
+    /*
+    Cierra los chats y consultas que tuvieran un grupo perteneciente a la orientacion indicada
+    */
     public function closeQuerysInSubjectOrientation($ori,$sub){
         $stm = 'UPDATE orientation o,`group` g ,`query` q SET q.`state` = 0 WHERE o.id = g.id_orientation AND q.id_group = g.id AND g.id_orientation = ? AND q.id_subject = ? ';
         $rows = parent::nonQuery($stm,[$ori,$sub]);
         return $rows;
     }
 
+    /*
+    Quita a los docentes de las materias que pertenecian a esa orientacion
+    */
     public function removeTeachersFromSubject($ori,$sub){
         $stm =  'UPDATE orientation o,`group` g ,`teacher_group_subject` t SET t.`state` = 0 WHERE o.id = g.id_orientation AND t.id_group = g.id AND g.id_orientation = ? AND t.id_subject = ?';
         $rows = parent::nonQuery($stm,[$ori,$sub]);
         return $rows;
     }
+
+
+    /*
+    Remueve a los  docentes de los grupos de una orientacion !!!! SIN TESTEAR !!!!
+    */
+    public function removeTeachersFromGroupFromOrientation($ori){
+        $stm =  'UPDATE orientation o,`group` g ,`teacher_group` t SET t.`state` = 0 WHERE o.id = g.id_orientation AND t.id_group = g.id AND g.id_orientation = ?';
+        $rows = parent::nonQuery($stm,[$ori]);
+        return $rows;
+    }
+
     /*
     Modifica una orientacion
     */
@@ -142,15 +168,26 @@ class OrientationModel extends Model{
         }
     }
 
+    /*
+    Cambia el estado de una orientacion
+    */
     public function changeOrientationState($id,$state){
         $stm = 'UPDATE orientation SET `state` = ? WHERE id = ?';
         return parent::nonQuery($stm,[$state,$id]);
     }
 
+
+    /*
+    Re agrega una materias a la orientacion
+    */
     public function reAddSubject($orientation,$subject){
         $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_orientation  = ? AND id_subject = ?';
         return parent::nonQuery($stm,[$orientation,$subject]);
     }
+
+    /*
+    Devuelve los grupos de esa orientacion
+    */
     public function getOrientationGroups($orientation){
         $stm = 'SELECT * FROM `group` WHERE id_orientation = ?';
         $groups = parent::query($stm, [$orientation]);

@@ -15,16 +15,19 @@ class ChatModel extends QueryModel{
         $this->res = new Response();
     }
 
+    
     /*
-    Crea una consulta
+    Devuelve la cantidad de chats abiertos en un grupo y materia
     */
-
     public function amountOfActiveChatsFromSubjecGroup($subject,$group){
         $stm = 'SELECT * FROM `query` q ,room r WHERE q.id_subject = ? AND q.id_group = ? AND q.`state` != 0 AND q.id = r.id';
         $amount = parent::query($stm , [$subject,$group] );
         return count($amount);
     }
 
+    /*
+    le da a un query la clasificacion de room(chat)
+    */
     public function createChat(){
         $stm = 'INSERT INTO `room`(id) VALUES(?)';
         return parent::nonQuery($stm,[parent::getId()]);
@@ -32,6 +35,7 @@ class ChatModel extends QueryModel{
 
     /*
     Devuelve todas las consultas de un usuario que no esten cerradas
+    esta  funcion esta duplicada, hay que borrar una de las 2 y cambiar donde se use la borrada
     */
     public function getChatFromUser($id,$type){
         switch($type){
@@ -52,7 +56,7 @@ class ChatModel extends QueryModel{
     }   
 
     /*
-    Devuelve una consulta en base a su id
+    Devuelve un chat en base a su id
     */
     public function getChatById($id)
     {
@@ -71,7 +75,7 @@ class ChatModel extends QueryModel{
     }
 
     /*
-    Devuelve todas las consultas de un usuario sin importar su estado
+    Devuelve todas los chats de un usuario
     */
     public function getChatsFromUser($id,$type){
         switch($type){
@@ -95,6 +99,9 @@ class ChatModel extends QueryModel{
         return $consultas;
     } 
     
+    /*
+    Devuelve todas los chats de un usuario sin importar su estado
+    */
     public function getAllChatsFromUser($id,$type){
         switch($type){
             case 'teacher':
@@ -117,12 +124,18 @@ class ChatModel extends QueryModel{
         return $consultas;
     } 
     
+    /*
+    Agrega un participante a un chat
+    */
     public function addParticipant($chat,$user){
         $stm = 'INSERT INTO room_participants(id_room,id_user) VALUES(?,?)';
         $rows = parent::nonQuery($stm , [$chat,$user] );
         return $rows;
     }
 
+    /*
+    Devuelve los participantes a un chat
+    */
     public function getParticipants($chat){
         $stm = 'SELECT r.id_room ,u.name,u.middle_name,u.surname,u.second_surname
         FROM room_participants r,`user` u
@@ -131,12 +144,17 @@ class ChatModel extends QueryModel{
         return $participants;
     }
 
+    /*
+    Se usa para que al pedir un chat,le agregemos los participantes
+    */
     private function addData($consulta){
         $consulta['participants'] = $this->getParticipants($consulta['id']);
         return $consulta;
     }
 
-    //Si es el autor o el docente del chatw
+    /*
+    Pregunta si el  usuario es el autor o el docente del chat, en dicho caso tendra acceso total sobre el chat (cerrar el chat)
+    */
     public function userHasHighAccessToChat($user,$chat){
         $stm = 'SELECT q.id FROM `query` q,`room` r  WHERE (q.id_student = ? OR q.id_teacher = ?) AND q.id = ? AND q.id = r.id';
         $query = parent::query($stm,[$user,$user,$chat]);

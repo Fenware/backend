@@ -1,6 +1,9 @@
 <?php
 
 require_once '/var/www/html/config/config.php';
+/*
+Clase para la conexion con la base de datos
+*/
 class Conexion{
 
     private $host;
