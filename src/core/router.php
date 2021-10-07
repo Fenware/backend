@@ -62,8 +62,8 @@ class Router{
 
 
     private function route($url){
-        //url[1] seria el segundo parametro ,solo login no tiene  segundo parametro
-        if(empty($url[1]) && $url[0] != 'login'){
+        //url[1] seria el segundo parametro ,solo login no tiene segundo parametro
+        if(empty($url[1]) && $url[0] != 'login' && $url[0] != 'token'){
             return $this->res->error_404();
         }
         switch($url[0]){
