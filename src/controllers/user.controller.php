@@ -185,7 +185,7 @@ class UserController extends Controller{
                 if($type != 'administrator'){
                     $user = $this->user->getUserByIdSafe($this->data['user']);
                     if($user){
-                        $user['type'] = $this->user->getUserType($this->data['user']);
+                        $user['type'] = $type;
                     }
                     return $user;
                 }else{
@@ -202,7 +202,31 @@ class UserController extends Controller{
             return $user;
         }
     }
-    
+
+    public function getUserByNickname(){
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data, ['nickname'=>'is_string'] )){
+                $user = $this->user->getUserByNicknameSafe($this->data['nickname']);
+                if($user){
+                    $type = $this->user->getUserType($user['id']);
+                    if($type != 'administrator'){
+                        if($user){
+                            $user['type'] = $type;
+                        }
+                        return $user;
+                    }else{
+                        return $this->res->error_403(); 
+                    }
+                }else{
+                    return $this->res->error('Usuario no encontrado', 1100); 
+                }
+            }else{
+                return $this->res->error_400();
+            }
+        }else{
+            return $this->res->error_403(); 
+        }
+    }
 
     //Modifico a un usuario
     public function modifyUser(){
