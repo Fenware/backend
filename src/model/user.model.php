@@ -109,6 +109,16 @@ class UserModel extends Model{
     }
 
     /*
+    Devuelve la informacion de un usuario por nickname
+    */
+    public function getUserByNicknameSafe($nickname){
+        $stm = 'SELECT id,ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account ,connection_time
+        FROM user WHERE nickname = ?';
+        $user = parent::query($stm,[$nickname]);
+        return !empty($user) ? $user[0] : $user;
+    }
+
+    /*
     Chequea si un usuario es de cierto tipo
     */
     public function checkUserType($id,$type){
