@@ -219,6 +219,9 @@ class Router{
             case 'getUserById':
                 return $user->getUserById();
                 break;
+            case 'getUserByNickname':
+                return $user->getUserByNickname();
+                break;
             case 'modify':
                 return $user->modifyUser();
                 break;
@@ -300,7 +303,7 @@ class Router{
             case 'getConsultationById':
                 return $c->getConsultaById();
                 break;
-            case 'getAllConsultas':
+            case 'getAllConsultations':
                 return $c->getAllConsultas();
                 break;
             case 'close':
