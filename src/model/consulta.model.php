@@ -31,7 +31,7 @@ class ConsultaModel extends QueryModel{
     public function getConsultaById($id){
         $stm = 'SELECT q.id ,q.id_student,q.id_teacher,q.id_group,q.id_subject,q.theme ,q.creation_date, q.finish_date,q.`resume`,q.`state`
                 FROM `query` q ,`individual` i 
-                WHERE q.`state` != 0 AND q.id = ? AND q.id = i.id';
+                WHERE q.id = ? AND q.id = i.id';
         $c = parent::query($stm,[$id]);
         $consulta = $c[0];
         $consulta = parent::getExtraData($consulta);
