@@ -45,6 +45,15 @@ class Response{
         return $this->response;
     }
 
+    public function error_NO_DB(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 000,
+            'error_msg' => 'El sistema se ha caido'
+        );
+        return $this->response;
+    }
+
     public function error_500(){
         $this->response['status'] = 'error';
         $this->response['result'] = array(
@@ -75,4 +84,12 @@ class Response{
         return $this->response;
     }
 
+    public function auth_error(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 401,
+            'error_msg' => 'No pudimos autenticarte'
+        );
+        return $this->response;
+    }
 }

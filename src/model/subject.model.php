@@ -20,30 +20,9 @@ class SubjectModel extends Model{
     Crea una materia
     */
     public function postSubject($nombre){
-        $stm = 'SELECT * FROM `subject` WHERE `name` = ?';
-        $materia_existe = parent::query($stm, [$nombre] );
-        if($materia_existe){
-            $state = $materia_existe[0]['state'];
-            if($state == 1){
-                return $this->res->error('La materia ya existe',1010);
-            }else{
-                if($state == 0){
-                    $id = $materia_existe[0]['id'];
-                    $stm = 'UPDATE `subject` SET state = 1 WHERE id = ?';
-                    parent::nonQuery($stm,[$id]);
-                    return $this->getSubjectById($id);
-                }
-            }
-        }else{
-            $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
-                $rows = parent::nonQuery($stm,[$nombre]);
-                if($rows > 0){
-                    $id = parent::lastInsertId();
-                    return $this->getSubjectById($id);
-                }else{
-                    return $this->res->error('Surgio un problema al crear la materia',1011);
-                }
-        }
+        $stm = 'INSERT INTO `subject` (`name`) VALUES(?)';
+        parent::nonQuery($stm,[$nombre]);
+        return parent::lastInsertId();
     }
 
     /*
@@ -55,6 +34,29 @@ class SubjectModel extends Model{
         return $rows;
     }
 
+    /*
+    Quita la materia de todas las orientaciones
+    */
+    public function deleteSubjectFromAllOrientations($materia){
+        $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
+
+    /*
+    Quita a todos los docentes de esa materia
+    */
+    public function deleteTeachersFromSubject($materia){
+        $stm = 'UPDATE teacher_group_subject SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
+
+    /*
+    Cierra todos los querys con esa materia
+    */
+    public function closeQuerysFromSubject($materia){
+        $stm = 'UPDATE `query` SET `state` = 0 WHERE id_subject = ?';
+        return parent::nonQuery($stm,[$materia]);
+    }
     /*
     Devuelve todas las materias
     */
@@ -70,7 +72,7 @@ class SubjectModel extends Model{
     public function getSubjectById($id){
         $stm = 'SELECT * FROM `subject` WHERE id = ? AND `state` = 1';
         $materia_data = parent::query($stm,[$id]);
-        $materia = $materia_data[0];
+        $materia = !empty($materia_data) ? $materia_data[0] : $materia_data;
         return $materia;
     }
 
@@ -78,9 +80,10 @@ class SubjectModel extends Model{
     Devuelve materias en base a un nombre
     */
     public function getSubjectByName($name){
-        $stm = "SELECT * FROM `subject` WHERE `name` LIKE ? AND `state` = 1";
-        $data = parent::query($stm,['%'.$name.'%']);
-        return $data;
+        $stm = "SELECT * FROM `subject` WHERE `name` = ?";
+        $materia = parent::query($stm,[$name]);
+        $materia = !empty($materia) ? $materia[0] : $materia;
+        return $materia;
     }
 
     /*
@@ -109,7 +112,7 @@ class SubjectModel extends Model{
             return 1;
         }else{
             //no se pudo tomar la materia
-            return $this->res->error('Ocurrio un problema al tomar la materia',1013);
+            return 0;
         }
     }
 
@@ -151,8 +154,11 @@ class SubjectModel extends Model{
         return $data;
     }
 
+     /*
+    Quita las materias de un docente en un grupos
+    */
     public function getTeacherSubjectsInGroup($teacher,$group){
-        $stm = 'SELECT s.id,s.name
+        $stm = 'SELECT s.id,s.`name`
         FROM `subject` s ,teacher_group_subject tgs ,`group` g
         WHERE tgs.id_teacher = ? AND g.id = ? AND s.id = tgs.id_subject AND tgs.state = 1 AND s.state = 1 AND tgs.id_group = g.id';
         $data = parent::query($stm,[$teacher,$group]);
@@ -175,6 +181,13 @@ class SubjectModel extends Model{
         }
     }
 
+    /*
+    Cambia el estado de una materia
+    */
+    public function changeSubjectState($id,$state){
+        $stm = 'UPDATE `subject` SET `state` = ? WHERE id = ?';
+        return parent::nonQuery($stm,[$state,$id]);
+    }
     public function getId()
     {
         return $this->id;

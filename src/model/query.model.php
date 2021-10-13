@@ -3,7 +3,7 @@
 require_once '/var/www/html/core/model.php';
 require_once '/var/www/html/core/response.php';
 /*
-Modelo para las consultas
+Modelo padre de las consultas y chats
 */
 class QueryModel extends Model{
 
@@ -25,7 +25,7 @@ class QueryModel extends Model{
     }
 
     /*
-    Crea una consulta
+    Crea un query
     */
     public function createQuery(){
         $stm = 'INSERT INTO `query`(id_student,id_teacher,id_group,id_subject,theme,creation_date) VALUES(?,?,?,?,?,?)';
@@ -67,7 +67,7 @@ class QueryModel extends Model{
 
     
     /*
-    Envia un mensaje a una consulta
+    Envia un mensaje a un query
     */
     public function postMessagge($user,$consulta,$content){
         $stm = 'INSERT INTO `message`(id_user,id_query,content,`date`) VALUES(?,?,?,?)';
@@ -80,7 +80,7 @@ class QueryModel extends Model{
     }
 
     /*
-    Devuelve los mensajes de una consulta
+    Devuelve los mensajes de un query
     */
     public function getMessageFromQuery($consulta){
         $stm = 'SELECT m.id,m.id_query,m.id_user,u.name,u.surname,m.content,m.`date` FROM `message` m ,`user` u WHERE m.id_query = ? AND m.id_user = u.id ORDER BY `date`';
@@ -89,20 +89,28 @@ class QueryModel extends Model{
     }
 
     /*
-    Cierra una consulta
+    Cierra un query
     */
     public function closeQuery($consulta){
         $this->finish_date = date('Y-m-d H:i:s', time());
         $messages = $this->getMessageFromQuery($consulta);
-        $resume = 'Resumen \n';
-        foreach($messages as $message){
-            $resume .= 'Autor : ' . $message['name'].' '.$message['surname']. ' msg : '. $message['content'].' \n';
-        }
         $stm = 'UPDATE `query` 
-        SET `state` = 0 ,finish_date = ? ,`resume` = ?
+        SET `state` = 0 ,finish_date = ?
         WHERE id = ?';
-        $rows = parent::nonQuery($stm,[$this->finish_date,$resume,$consulta]);
+        $rows = parent::nonQuery($stm,[$this->finish_date,$consulta]);
         //Genero el resumen de la consulta
+        return $rows;
+    }
+
+    /*
+    Cierra todas las consultas de un usuario
+    */
+    public function closeAllUserQuerys($user){
+        $this->finish_date = date('Y-m-d H:i:s', time());
+        $stm = 'UPDATE `query` 
+        SET `state` = 0 ,finish_date = ?
+        WHERE id_teacher = ? OR id_student = ?';
+        $rows = parent::nonQuery($stm , [$this->finish_date,$user,$user]);
         return $rows;
     }
 
@@ -115,37 +123,44 @@ class QueryModel extends Model{
         return $rows;
     }
 
-
-    public function getQueryById($consulta){
+    /*
+    Devuelve un query por id
+    */
+    public function getQueryById($query){
         $stm = 'SELECT * FROM `query` WHERE id = ?';
-        $consulta =  parent::query($stm,[$consulta]);
-        //busco al estudiante que la creó
-        $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
-        $autor = parent::query($stm_autor,[$consulta[0]['id_student']]);
-        //agrego el campo student_name
-        $consulta[0]['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
-        //busco al docente al que va dirigido  
-        $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
-        $teacher = parent::query($stm_teacher,[$consulta[0]['id_teacher']]);
-        //agrego el campo teacher_name
-        $consulta[0]['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
+        $c =  parent::query($stm,[$query]);
+        $consulta = $c[0];
+        return $this->getExtraData($consulta);
+    }
 
+    /*
+    Recibe un query y lo devuelve con informacion extra
+    */
+    public function getExtraData($consulta){
+        $stm_autor = 'SELECT * FROM `user` WHERE id = ?';
+        $autor = parent::query($stm_autor,[$consulta['id_student']]);
+        //agrego el campo student_name
+        $consulta['student_name'] = $autor[0]['name'].' '.$autor[0]['surname'];
+            //busco al docente al que va dirigido  
+        $stm_teacher = 'SELECT * FROM `user` WHERE id = ?';
+        $teacher = parent::query($stm_teacher,[$consulta['id_teacher']]);
+        //agrego el campo teacher_name
+        $consulta['teacher_name'] = $teacher[0]['name'].' '.$teacher[0]['surname'];
         //busco el nombre de la materia
         $stm = 'SELECT * FROM `subject` WHERE id = ?';
-        $id_subject = $consulta[0]['id_subject'];
+        $id_subject = $consulta['id_subject'];
         $subject = parent::query($stm,[$id_subject]);
         //agrego el campo subject_name
-        $consulta[0]['subject_name'] = $subject[0]['name'];
+        $consulta['subject_name'] = $subject[0]['name'];
 
         //busco el grupo
         $stm = 'SELECT * FROM `group` WHERE id = ?';
-        $id_group = $consulta[0]['id_group'];
+        $id_group = $consulta['id_group'];
         $group = parent::query($stm,[$id_group]);
         //agrego el campo subject_name
-        $consulta[0]['group_name'] = $group[0]['name'];
-        return $consulta[0];
+        $consulta['group_name'] = $group[0]['name'];
+        return $consulta;
     }
-
 
     public function setId($id){
         $this->id = $id;

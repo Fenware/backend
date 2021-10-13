@@ -56,7 +56,7 @@ CREATE TABLE `group`(
 
 CREATE TABLE consult_schedule(
 	id_teacher 			INT NOT NULL,
-	`day` 				TINYINT(1) NOT NULL,
+	`day` 				TINYINT(1) NOT NULL CHECK (`day`>= 1 AND `day` <= 5),
     start_hour 			TIME NOT NULL,
     end_hour 			TIME NOT NULL,
     PRIMARY KEY(id_teacher,`day`),
@@ -129,11 +129,11 @@ CREATE TABLE individual(
     FOREIGN KEY(id) REFERENCES `query`(id)
 );
 
-CREATE TABLE message(
+CREATE TABLE `message`(
 	id 					INT AUTO_INCREMENT NOT NULL,
     id_query 			INT NOT NULL,
     id_user				INT NOT NULL,
-    content 			TEXT NOT NULL,
+    content 			VARCHAR(600) NOT NULL,
     `date` 				DATETIME NOT NULL,
     PRIMARY KEY(id, id_query),
     FOREIGN KEY(id_user) REFERENCES user(id),
@@ -408,35 +408,3 @@ INSERT INTO consult_schedule values(13,3,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,4,"00:00:00","18:00:00");
 
 -- -----------------------------------------------------------------------------------------
--- select * from user;
--- select * from student;
--- select * from student_group;
--- select * from teacher;
--- select * from `subject`;
--- select * from orientation;
--- select * from subject_orientation ;
--- select * from `group`;
--- select * from  teacher_group;
--- select * from  `query`;
--- select * from individual;
--- select * from room;
--- select * from message;
--- SELECT * from consult_schedule;
- 
-
--- SELECT s.id,s.`name`,s.state,o.id,so.state
--- FROM `subject` s,orientation o,subject_orientation so
--- WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
-
--- select * from teacher_group inner join `user` where user.id=teacher_group.id_teacher;
-
--- UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
-
--- UPDATE orientation SET `name` = "MATEMATICAS", `year` = 3 WHERE id = 1;
--- UPDATE `group` SET `state` = 1 WHERE id = 1;
-
--- DELETE FROM `subject`;
-
--- SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
--- FROM user u,administrator a
--- WHERE a.id != u.id;
