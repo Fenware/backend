@@ -53,7 +53,11 @@ class Router{
                             echo json_encode( $this->res->error_NO_DB() );
                         }
                     }elseif($this->url[0] == 'user' && $this->url[1] == 'create'){
-                        echo json_encode( $this->route( $this->url ) );
+                        try {
+                            echo json_encode( $this->route( $this->url ) );
+                        } catch (PDOException $e) {
+                            echo json_encode( $this->res->error_NO_DB() );
+                        }
                     }else{
                         echo json_encode( $this->res->auth_error() );
                     }
