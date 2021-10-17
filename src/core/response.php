@@ -31,7 +31,7 @@ class Response{
         $this->response['status'] = 'error';
         $this->response['result'] = array(
             'error_id' => 404,
-            'error_msg' => 'Pagina no encontrada'
+            'error_msg' => 'Recurso no encontrado'
         );
         return $this->response;
     }
