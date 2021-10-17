@@ -73,7 +73,7 @@ class LoginController extends Controller{
                             }
                             
                         }else{
-                            return $res->error('Contraseña Incorrecta',1003);
+                            return $res->error('El usuario no existe',1002);
                         }
                     }else{
                         if($data[0]['state_account'] == 2){
