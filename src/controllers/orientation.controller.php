@@ -49,11 +49,9 @@ class OrientationController extends Controller{
                         }
                     }
                 }else{
-                    echo 'mal subj';
                     return $this->res->error_400();
                 }
             }else{
-                echo 'mal gen';
                 return $this->res->error_400();
             }
         }else{
