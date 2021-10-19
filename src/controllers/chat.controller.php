@@ -32,32 +32,36 @@ class ChatController extends Controller{
         if($this->token->user_type == 'student'){
             if(parent::isTheDataCorrect($this->data,['materia'=>'is_int','asunto'=>'is_string'])){
                 $student_group = $this->user->getUserGroups($this->token->user_id,'student');
-                $grupo = $student_group[0]['id_group'];
-                $teacher = $this->subject->getTeacherFromSubjectInGroup($this->data['materia'],$grupo);
-                if(is_int($teacher)){
-                    $max_rooms_per_gs = $this->user->getMaxRoomsPerGs($teacher);
-                    $active_rooms = $this->chat->amountOfActiveChatsFromSubjecGroup($this->data['materia'],$grupo);
-                    if($max_rooms_per_gs > $active_rooms){
-                        $this->chat->setStudent($this->token->user_id);
-                        $this->chat->setTeacher($teacher);
-                        $this->chat->setGroup($grupo);
-                        $this->chat->setSubject($this->data['materia']);
-                        $this->chat->setTheme($this->data['asunto']);
-                        $chat = $this->chat->createQuery();
-                        if($chat != 0){
-                            $this->chat->createChat($chat[0]['id']);
-                            return $this->chat->getChatById($chat[0]['id']);
+                if(isset($student_group[0]['id_group'])){
+                    $grupo = $student_group[0]['id_group'];
+                    $teacher = $this->subject->getTeacherFromSubjectInGroup($this->data['materia'],$grupo);
+                    if(is_int($teacher)){
+                        $max_rooms_per_gs = $this->user->getMaxRoomsPerGs($teacher);
+                        $active_rooms = $this->chat->amountOfActiveChatsFromSubjecGroup($this->data['materia'],$grupo);
+                        if($max_rooms_per_gs > $active_rooms){
+                            $this->chat->setStudent($this->token->user_id);
+                            $this->chat->setTeacher($teacher);
+                            $this->chat->setGroup($grupo);
+                            $this->chat->setSubject($this->data['materia']);
+                            $this->chat->setTheme($this->data['asunto']);
+                            $chat = $this->chat->createQuery();
+                            if($chat != 0){
+                                $this->chat->createChat($chat[0]['id']);
+                                return $this->chat->getChatById($chat[0]['id']);
+                            }else{
+                                return $this->res->error_500();
+                            }
                         }else{
-                            return $this->res->error_500();
+                            return $this->res->error('Ya hay demasiadas salas de chat abiertas en esta materia',1080);
                         }
-                    }else{
-                        return $this->res->error('Ya hay demasiadas salas de chat abiertas en esta materia',1080);
-                    }
-                    
                 }else{
                     //si no es un  numero entonces capte un error 
                     return $this->res->error($teacher);
                 }
+                }else{
+                    return $this->res->error_403();
+                }
+                
                 
             }else{
                 return $this->res->error_400();

@@ -30,24 +30,28 @@ class ConsultaController extends Controller{
         if($this->token->user_type == 'student'){
             if(parent::isTheDataCorrect($this->data,['materia'=>'is_int','asunto'=>'is_string'])){
                 $student_group = $this->user->getUserGroups($this->token->user_id,'student');
-                $grupo = $student_group[0]['id_group'];
-                $teacher = $this->subject->getTeacherFromSubjectInGroup($this->data['materia'],$grupo);
-                if(is_int($teacher)){
-                    $this->consulta->setStudent($this->token->user_id);
-                    $this->consulta->setTeacher($teacher);
-                    $this->consulta->setGroup($grupo);
-                    $this->consulta->setSubject($this->data['materia']);
-                    $this->consulta->setTheme($this->data['asunto']);
-                    $consulta = $this->consulta->createQuery();
-                    if($consulta != 0){
-                        $this->consulta->createConsulta($consulta[0]['id']);
-                        return $consulta;
+                if(isset($student_group[0]['id_group'])){
+                    $grupo = $student_group[0]['id_group'];
+                    $teacher = $this->subject->getTeacherFromSubjectInGroup($this->data['materia'],$grupo);
+                    if(is_int($teacher)){
+                        $this->consulta->setStudent($this->token->user_id);
+                        $this->consulta->setTeacher($teacher);
+                        $this->consulta->setGroup($grupo);
+                        $this->consulta->setSubject($this->data['materia']);
+                        $this->consulta->setTheme($this->data['asunto']);
+                        $consulta = $this->consulta->createQuery();
+                        if($consulta != 0){
+                            $this->consulta->createConsulta($consulta[0]['id']);
+                            return $consulta;
+                        }else{
+                            return $this->res->error_500();
+                        }
                     }else{
-                        return $this->res->error_500();
+                    //si no es un  numero entonces capte un error 
+                        return $this->res->error($teacher);
                     }
                 }else{
-                    //si no es un  numero entonces capte un error 
-                    return $this->res->error($teacher);
+                    return $this->res->error_403();
                 }
             }else{
                 return $this->res->error_400();
