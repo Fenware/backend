@@ -7,7 +7,7 @@ const URL = "http://localhost:8080/";
 /*
 CONSTANTES PARA LA CONEXION CON LA BASE DE DATOS
 */
-const HOST = "mariadb";
+const HOST = "mysql";
 const DATABASE = "database";
 const USER_DB = "admin";
 const PASS_DB = "admin";

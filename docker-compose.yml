@@ -4,7 +4,7 @@ services:
       container_name: php_chathink
       build: .
       depends_on:
-        - mariadb
+        - mysql
       ports:
         - 8080:80
       volumes:
@@ -12,13 +12,13 @@ services:
       networks:
         - network
 
-    mariadb:
-      container_name: mariadb_chathink
-      image: mariadb:10.6
+    mysql:
+      container_name: mysql_chathink
+      image: mysql:5.7
       ports:
         - 3306:3306
       volumes:
-        - mariadb_chathink:/var/lib/mysql
+        - mysql_chathink:/var/lib/mysql
         - ./users.sql:/docker-entrypoint-initdb.d/users.sql # Archivo para inicializar la creacion de las tablas y base de datos
       environment:
         MYSQL_DATABASE: database
@@ -33,4 +33,4 @@ networks:
     driver: bridge
 
 volumes:
-  mariadb_chathink:
+  mysql_chathink:
