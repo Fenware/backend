@@ -1,4 +1,4 @@
-ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_cs;
 /* Entities */
 CREATE TABLE `user`(  
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,  
