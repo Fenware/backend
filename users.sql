@@ -2,7 +2,7 @@ ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 /* Entities */
 CREATE TABLE `user`(  
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,  
-    ci 					CHAR(8) UNIQUE NOT NULL,
+    ci 					CHAR(9) UNIQUE NOT NULL,
     `name` 				VARCHAR(16) NOT NULL,
     middle_name 		VARCHAR(16),
     surname 			VARCHAR(16) NOT NULL,

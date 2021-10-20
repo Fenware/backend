@@ -100,7 +100,6 @@ class UserController extends Controller{
 
     private function isObligatoryDataCorrect($data){
         if(    !isset($data['ci'])
-            || strlen($data['ci']) != 8
             || empty($data['ci'])
             || !isset($data['name']) 
             || empty($data['name'])
@@ -130,7 +129,7 @@ class UserController extends Controller{
                     return false;
                 }else{
                     //Son correctos
-                    return true;
+                    return $this->user->validateCI($data['ci']);
                 }
     }
 
