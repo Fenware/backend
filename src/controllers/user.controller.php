@@ -28,32 +28,38 @@ class UserController extends Controller{
         if(!$this->isDataCorrect($this->data)){
             return $this->res->error_400();
         }else{
-            $type = $this->filterType($this->data['type']);
-            if($type != 'error'){
-                $exists = $this->userExists($this->data);
-                if($exists == false){
-                    //$group = 1; es para complacer a vsCode y que no me marque como que no existe una variable
-                    $id = $this->user->postUser($this->data);
-                    if($id != 'error'){
-                        $this->insertOptionalData($id,$this->data);
-                        $this->user->setUserType($id,$type);
-                        if($this->token && $this->token->user_type == 'administrator'){
-                            $this->user->patchUser($id,'state_account',1);
+            $group = $this->group->getGroupByCode($this->data['group']);
+            if($group){
+                $type = $this->filterType($this->data['type']);
+                if($type != 'error'){
+                    $exists = $this->userExists($this->data);
+                    if($exists == false){
+                        //$group = 1; es para complacer a vsCode y que no me marque como que no existe una variable
+                        $id = $this->user->postUser($this->data);
+                        if($id != 'error'){
+                            $this->insertOptionalData($id,$this->data);
+                            $this->user->setUserType($id,$type);
+                            if($this->token && $this->token->user_type == 'administrator'){
+                                $this->user->patchUser($id,'state_account',1);
+                            }
+                            if($type == 'student'){
+                                $group = $this->group->getGroupByCode($this->data['group']);
+                                $this->user->giveStudentGroup($id,$group['id']);
+                            }
+                            return 1;
+                        }else{
+                            return $this->res->error_500();
                         }
-                        if($type == 'student'){
-                            $group = $this->group->getGroupByCode($this->data['group']);
-                            $this->user->giveStudentGroup($id,$group['id']);
-                        }
-                        return 1;
                     }else{
-                        return $this->res->error_500();
+                        return $exists;
                     }
                 }else{
-                    return $exists;
+                    return $this->res->error_403();
                 }
             }else{
-                return $this->res->error_403();
+                return $this->res->error('El grupo no existe',1052);
             }
+            
         }
     }
 
@@ -140,12 +146,7 @@ class UserController extends Controller{
                     if($this->user->validateCI($data['ci'])){
                         if($data['type'] == 'student'){
                             if(isset($data['group']) && is_string($data['group']) && strlen($data['group']) == 8){
-                                $group = $this->group->getGroupByCode($data['group']);
-                                if($group){
-                                    return true;
-                                }else{
-                                    return false;
-                                }
+                                return true;
                             }else{
                                 return false;
                             }
