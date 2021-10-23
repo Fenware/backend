@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/controller.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/user.model.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/model/query.model.php';
+
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/response.php';
 
 /*
@@ -13,28 +14,35 @@ class UserController extends Controller{
     private $user;
     private $res;
     private $query;
+    private $group;
     function __construct($token)
     {
         $this->res = new Response();
         $this->user = new UserModel();
         $this->query = new QueryModel();
+        $this->group = new GroupModel();
         parent::__construct($token);
     }
 
     public function createUser(){
         if(!$this->isDataCorrect($this->data)){
-            $datosArray = $this->res->error_400();
+            return $this->res->error_400();
         }else{
             $type = $this->filterType($this->data['type']);
             if($type != 'error'){
                 $exists = $this->userExists($this->data);
                 if($exists == false){
+                    //$group = 1; es para complacer a vsCode y que no me marque como que no existe una variable
                     $id = $this->user->postUser($this->data);
                     if($id != 'error'){
                         $this->insertOptionalData($id,$this->data);
                         $this->user->setUserType($id,$type);
                         if($this->token && $this->token->user_type == 'administrator'){
                             $this->user->patchUser($id,'state_account',1);
+                        }
+                        if($type == 'student'){
+                            $group = $this->group->getGroupByCode($this->data['group']);
+                            $this->user->giveStudentGroup($id,$group['id']);
                         }
                         return 1;
                     }else{
@@ -129,7 +137,25 @@ class UserController extends Controller{
                     return false;
                 }else{
                     //Son correctos
-                    return $this->user->validateCI($data['ci']);
+                    if($this->user->validateCI($data['ci'])){
+                        if($data['type'] == 'student'){
+                            if(isset($data['group']) && is_string($data['group']) && strlen($data['group']) == 8){
+                                $group = $this->group->getGroupByCode($data['group']);
+                                if($group){
+                                    return true;
+                                }else{
+                                    return false;
+                                }
+                            }else{
+                                return false;
+                            }
+                        }else{
+                            return true;
+                        }
+                    }else{
+                        return false;
+                    }
+                
                 }
     }
 
