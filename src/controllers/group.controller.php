@@ -78,9 +78,13 @@ class GroupController extends Controller{
         }
     }
 
-    public function getGroupByName(){
-        if(parent::isTheDataCorrect($this->data,['name'=>'is_string'])){
-            return $this->group->getGroupById($this->data['name']);
+    public function getGroupByCode(){
+        if(parent::isTheDataCorrect($this->data,['code'=>'is_string'])){
+            $group = $this->group->getGroupByCode($this->data['code']);
+            if($group){
+                $group = $this->group->getGroupById($group['id']);
+            }
+            return $group;
         }else{
             return $this->res->error_400();
         }
