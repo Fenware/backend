@@ -25,6 +25,35 @@ class UserGroupController extends Controller{
     }
 
     public function giveUserGroup(){
+        if($this->token->user_type == 'administrator'){
+            if(parent::isTheDataCorrect($this->data,['code'=>'is_array','user'=>'is_int']) 
+                && parent::isArrayDataCorrect($this->data['code'],'is_string')){
+                    $type = $this->user->getUserType($this->data['user']);
+                    if($type == 'teacher'){
+                        $group = $this->group->getGroupByCode($this->data['code']);
+                        if($group){
+                            return $this->user->giveTeacherGroup($this->data['user'],$group['id']);
+                        }else{
+                            return $this->res->error('El grupo no existe',1052);
+                        }
+                    }elseif($type == 'student'){
+                        if($this->user->userHasGroup($this->data['user'])){
+                            return $this->res->error('Un estudiante solo puede estar en un grupo a la vez',1050);
+                        }else{
+                            $group = $this->group->getGroupByCode($this->data['code']);
+                            if($group){
+                                return $this->user->giveStudentGroup($this->data['user'],$group['id']);
+                            }else{
+                                return $this->res->error('El grupo no existe',1052);
+                            }
+                        }
+                    }else{
+                        return $this->res->error_403();
+                    }
+            }else{
+                return $this->res->error_400();
+            }  
+        }
         if($this->token->user_type == 'teacher'){
             if(parent::isTheDataCorrect($this->data,['code'=>'is_string'])){
                 $group = $this->group->getGroupByCode($this->data['code']);
