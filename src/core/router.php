@@ -46,15 +46,13 @@ class Router{
                     echo json_encode( $this->res->error_405() );
                     break;
                 case 'No token found':
-                    if($this->url[0] == 'login'){
+                    if(
+                        $this->url[0] == 'login'
+                        || ($this->url[0] == 'user' && $this->url[1] == 'create')
+                        || ($this->url[0] == 'group' && $this->url[1] == 'getGroupByCode')
+                    ){
                         try {
-                            echo json_encode( $this->route(['login']) );
-                        } catch (PDOException $e) {
-                            echo json_encode( $this->res->error_NO_DB() );
-                        }
-                    }elseif($this->url[0] == 'user' && $this->url[1] == 'create'){
-                        try {
-                            echo json_encode( $this->route( $this->url ) );
+                            echo json_encode( $this->route($this->url) );
                         } catch (PDOException $e) {
                             echo json_encode( $this->res->error_NO_DB() );
                         }
@@ -194,6 +192,9 @@ class Router{
                 break;
             case 'getGroupById':
                 return $group->getGroupById();
+                break;
+            case 'getGroupByCode':
+                return $group->getGroupByCode();
                 break;
             case 'modify':
                 return $group->modifyGroup();
