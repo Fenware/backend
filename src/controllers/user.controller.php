@@ -61,15 +61,15 @@ class UserController extends Controller{
     private function userExists($data){ 
         $array = $this->user->getUser($data['email']);
         if(count($array) > 0){
-            return $this->res->error('Este email ya esta tomado');
+            return $this->res->error('El email ya esta tomado');
         }else{
             $array = $this->user->getUser($data['nickname']);
             if(count($array) > 0){
-                return $this->res->error('Este nickname ya esta tomado');
+                return $this->res->error('El nickname ya esta tomado');
             }else{
                 $array = $this->user->getUserByCiSafe($data['ci']);
                 if(count($array) > 0){
-                    return $this->res->error('Esta cedula ya esta tomada');
+                    return $this->res->error('La cédula ya esta tomada');
                 }else{
                     return false;
                 }
