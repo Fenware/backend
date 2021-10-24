@@ -386,5 +386,22 @@ class UserController extends Controller{
         }
     }
 
+
+    public function nicknameIsTaken(){
+        if(parent::isTheDataCorrect($this->data, ['nickname'=>'is_string'] )){
+            return $this->user->isNickNameTaken($this->data['nickname']);
+        }else{
+            return $this->res->error_400();
+        }
+    }
+
+    public function emailIsTaken(){
+        if(parent::isTheDataCorrect($this->data, ['email'=>'is_string'] )){
+            return $this->user->isEmailTaken($this->data['email']);
+        }else{
+            return $this->res->error_400();
+        }
+    }
+
 }
 
