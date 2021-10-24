@@ -33,6 +33,7 @@ class GroupController extends Controller{
         if($this->token->user_type == 'administrator'){
             if(parent::isTheDataCorrect($this->data,['name'=>'is_string','orientation'=>'is_int'])){
                 $length = strlen($this->data['name']);
+                $this->data['name'] = strtoupper($this->data['name']);
                 if($length == 2){
                     $ori = $this->orientation->getOrientationById($this->data['orientation']);
                     if($ori){
