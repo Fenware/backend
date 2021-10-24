@@ -479,6 +479,27 @@ class UserModel extends Model{
         }
     }
 
+
+    public function isNickNameTaken($name){
+        $stm = 'SELECT * FROM `user` WHERE `nickname` = ?';
+        $user = parent::query($stm , [$name]);
+        if($user){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function isEmailTaken($mail){
+        $stm = 'SELECT * FROM `user` WHERE `email` = ?';
+        $user = parent::query($stm , [$mail]);
+        if($user){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Get the value of id
      */ 
