@@ -414,5 +414,13 @@ class UserController extends Controller{
         }
     }
 
+    public function ciIsValid(){
+        if(parent::isTheDataCorrect($this->data, ['ci'=>'is_string'] )){
+            return $this->user->validateCI($this->data['ci']);
+        }else{
+            return $this->res->error_400();
+        }
+    }
+
 }
 
