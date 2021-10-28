@@ -53,6 +53,7 @@ class Router{
                         || ($this->url[0] == 'user' && $this->url[1] == 'isNicknameTaken')
                         || ($this->url[0] == 'user' && $this->url[1] == 'isEmailTaken')
                         || ($this->url[0] == 'user' && $this->url[1] == 'isCiTaken')
+                        || ($this->url[0] == 'user' && $this->url[1] == 'ciIsValid')
                     ){
                         try {
                             echo json_encode( $this->route($this->url) );
@@ -255,6 +256,9 @@ class Router{
                 break;
             case 'isCiTaken':
                 return $user->ciIsTaken();
+                break;
+            case 'ciIsValid':
+                return $user->ciIsValid();
                 break;
             default:
                 return $this->res->error_404();
