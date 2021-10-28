@@ -406,5 +406,13 @@ class UserController extends Controller{
         }
     }
 
+    public function ciIsTaken(){
+        if(parent::isTheDataCorrect($this->data, ['ci'=>'is_string'] )){
+            return $this->user->isCiTaken($this->data['ci']);
+        }else{
+            return $this->res->error_400();
+        }
+    }
+
 }
 

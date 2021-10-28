@@ -500,6 +500,16 @@ class UserModel extends Model{
         }
     }
 
+    public function isCiTaken($ci){
+        $stm = 'SELECT * FROM `user` WHERE `ci` = ?';
+        $user = parent::query($stm , [$ci]);
+        if($user){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Get the value of id
      */ 
