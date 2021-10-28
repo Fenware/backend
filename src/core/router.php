@@ -52,6 +52,7 @@ class Router{
                         || ($this->url[0] == 'group' && $this->url[1] == 'getGroupByCode')
                         || ($this->url[0] == 'user' && $this->url[1] == 'isNicknameTaken')
                         || ($this->url[0] == 'user' && $this->url[1] == 'isEmailTaken')
+                        || ($this->url[0] == 'user' && $this->url[1] == 'isCiTaken')
                     ){
                         try {
                             echo json_encode( $this->route($this->url) );
@@ -251,6 +252,9 @@ class Router{
                 break;
             case 'isEmailTaken':
                 return $user->emailIsTaken();
+                break;
+            case 'isCiTaken':
+                return $user->ciIsTaken();
                 break;
             default:
                 return $this->res->error_404();
