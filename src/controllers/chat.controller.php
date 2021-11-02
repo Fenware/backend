@@ -122,9 +122,9 @@ class ChatController extends Controller{
                 return $this->res->error_400();
             }
         }else{
-            if(parent::isTheDataCorrect($this->data,['chat'=>'is_int'])){
+            if(parent::isTheDataCorrect($this->data,['chat'=>'is_int','resume'=>'is_string'])){
                 if($this->chat->userHasHighAccessToChat($this->token->user_id,$this->data['chat'])){
-                    return $this->chat->closeQuery($this->data['chat']);
+                    return $this->chat->closeQuery($this->data['chat'],$this->data['resume']);
                 }else{
                     return $this->res->error_403();
                 }
