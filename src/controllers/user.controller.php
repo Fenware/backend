@@ -146,7 +146,11 @@ class UserController extends Controller{
                     return false;
                 }else{
                     //Son correctos
+                    if(!preg_match("/^[a-zA-Z0-9]+$/", $data['nickname']) == 1) {
+                        return false;
+                    }
                     if($this->user->validateCI($data['ci'])){
+                        
                         if($data['type'] == 'student'){
                             if(isset($data['group']) && is_string($data['group']) && strlen($data['group']) == 8){
                                 return true;
