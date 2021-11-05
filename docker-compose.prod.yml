@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+    php-apache:
+      container_name: php_chathink
+      build: .
+      ports:
+        - 8080:80
+      volumes:
+        - ./src:/var/www/html
+      networks:
+        - network
+
+networks:
+  network:
+    driver: bridge
