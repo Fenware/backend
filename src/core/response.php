@@ -31,7 +31,7 @@ class Response{
         $this->response['status'] = 'error';
         $this->response['result'] = array(
             'error_id' => 404,
-            'error_msg' => 'Pagina no encontrada'
+            'error_msg' => 'Recurso no encontrado'
         );
         return $this->response;
     }
@@ -41,6 +41,15 @@ class Response{
         $this->response['result'] = array(
             'error_id' => 405,
             'error_msg' => 'Metodo no  permitido'
+        );
+        return $this->response;
+    }
+
+    public function error_NO_DB(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 000,
+            'error_msg' => 'El sistema se ha caido'
         );
         return $this->response;
     }
@@ -75,4 +84,12 @@ class Response{
         return $this->response;
     }
 
+    public function auth_error(){
+        $this->response['status'] = 'error';
+        $this->response['result'] = array(
+            'error_id' => 401,
+            'error_msg' => 'No pudimos autenticarte'
+        );
+        return $this->response;
+    }
 }

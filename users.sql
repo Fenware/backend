@@ -1,8 +1,8 @@
-ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE `database` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin;
 /* Entities */
 CREATE TABLE `user`(  
 	id 					INT PRIMARY KEY AUTO_INCREMENT NOT NULL,  
-    ci 					CHAR(8) UNIQUE NOT NULL,
+    ci 					CHAR(9) UNIQUE NOT NULL,
     `name` 				VARCHAR(16) NOT NULL,
     middle_name 		VARCHAR(16),
     surname 			VARCHAR(16) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE `group`(
 
 CREATE TABLE consult_schedule(
 	id_teacher 			INT NOT NULL,
-	`day` 				TINYINT(1) NOT NULL,
+	`day` 				TINYINT NOT NULL CHECK (`day` >= 1 AND `day` <= 5),
     start_hour 			TIME NOT NULL,
     end_hour 			TIME NOT NULL,
     PRIMARY KEY(id_teacher,`day`),
@@ -129,11 +129,11 @@ CREATE TABLE individual(
     FOREIGN KEY(id) REFERENCES `query`(id)
 );
 
-CREATE TABLE message(
+CREATE TABLE `message`(
 	id 					INT AUTO_INCREMENT NOT NULL,
     id_query 			INT NOT NULL,
     id_user				INT NOT NULL,
-    content 			TEXT NOT NULL,
+    content 			VARCHAR(600) NOT NULL,
     `date` 				DATETIME NOT NULL,
     PRIMARY KEY(id, id_query),
     FOREIGN KEY(id_user) REFERENCES user(id),
@@ -162,74 +162,74 @@ INSERT INTO orientation(`name`,`year`) values('Desarrollo y Soporte',3);
 INSERT INTO orientation(`name`,`year`) values('Desarrollo Web',3);
 -- -----------------------------------------------------------------------------------------
 -- GROUP
-INSERT INTO `group`(id_orientation,`name`,`code`) values(1,"AA","GMFTiB1T");
-INSERT INTO `group`(id_orientation,`name`,`code`) values(1,"BA","GMFTaB1T");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(1,"AA","gERfubQ2");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(1,"BA","uD9J2iQF");
 
-INSERT INTO `group`(id_orientation,`name`,`code`) values(2,"BC","GMFTqB1T");
-INSERT INTO `group`(id_orientation,`name`,`code`) values(2,"CD","GMFTrB1T");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(2,"BC","USHzbV7K");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(2,"CD","CFjtm2se");
 
-INSERT INTO `group`(id_orientation,`name`,`code`) values(3,"BE","GMFTsB1T");
-INSERT INTO `group`(id_orientation,`name`,`code`) values(4,"CA","GMFTtB1T");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(3,"BE","6Y6ufEeG");
+INSERT INTO `group`(id_orientation,`name`,`code`) values(4,"CA","w8PZ53kE");
 
 -- -----------------------------------------------------------------------------------------
 -- STUDENTS, STUDENT_GROUP
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55618821','Lucas','Pintos','lukovich@hotmail.com','02-boy.svg','LukaPro3000','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55618821','Lucas','Pintos','lucaspintos909@gmail.com','02-boy.svg','lucaspintos909','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',2);
 INSERT INTO student(id) value(2);
 INSERT INTO student_group(id_student,id_group) values(2,5);
 -- 	PASS : SAME AS BEFORE 
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55618823','Juan','Perez','jp@hotmail.com','02-boy.svg','Chopan','$2y$10$SUKaHxnxnDi4BLZ9gaXwPee0V9tTJVVekq3f1W1q8MVxsC9CeypZi',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55618823','Juan','Perez','jp@gmail.com','02-boy.svg','Chopan','$2y$10$SUKaHxnxnDi4BLZ9gaXwPee0V9tTJVVekq3f1W1q8MVxsC9CeypZi',1);
 INSERT INTO student(id) value(3);
 INSERT INTO student_group(id_student,id_group) values(3,1);
 -- 	PASS : jp546jp
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55628425','Gimena','Sosa','laGime123@hotmail.com','02-boy.svg','WatterLemon','$2y$10$Zin6Sn6KsJbVPVeC9sFmguyTFWsbTvU2MmjKt04hmiSmbgFqc/mmq',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55628425','Gimena','Sosa','laGime123@gmail.com','02-boy.svg','WatterLemon','$2y$10$Zin6Sn6KsJbVPVeC9sFmguyTFWsbTvU2MmjKt04hmiSmbgFqc/mmq',1);
 INSERT INTO student(id) value(4);
 INSERT INTO student_group(id_student,id_group) values(4,2);
 -- 	PASS : gs546gs
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55654882','Felipe','Dobrinin','fel@hotmail.com','07-boy-2.svg','Ramandudu','$2y$10$IKLJtiGl.ti2p52tdpLTYOUlZWDMS8sxMTRL75CIFnG04fSO3JBrW',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55654882','Felipe','Dobrinin','fel@gmail.com','07-boy-2.svg','Ramandudu','$2y$10$IKLJtiGl.ti2p52tdpLTYOUlZWDMS8sxMTRL75CIFnG04fSO3JBrW',2);
 INSERT INTO student(id) value(5);
 INSERT INTO student_group(id_student,id_group) values(5,5);
 -- 	PASS : fd546fd
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55123882','David','De Los Santos','d2a@hotmail.com','07-boy-2.svg','El Planilla','$2y$10$sTt2XEiRDwIep2YA6nerPeNVOxmFj2gUAOjXsFDne5h0IW8N9QuhC',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('55123882','David','De Los Santos','d2a@gmail.com','07-boy-2.svg','El Planilla','$2y$10$sTt2XEiRDwIep2YA6nerPeNVOxmFj2gUAOjXsFDne5h0IW8N9QuhC',1);
 INSERT INTO student(id) value(6);
 INSERT INTO student_group(id_student,id_group) values(6,5);
 -- 	PASS : dd546dd
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('35123882','Adrian','Del Valle','incongnito43@hotmail.com','07-boy-2.svg','Larabel','$2y$10$SHSoqQ7R419cipEOB3mfP.f7P5uoSjiBeMI5xF0MVuRAmPx4bQhe6',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('35123882','Adrian','Del Valle','incongnito43@gmail.com','07-boy-2.svg','Larabel','$2y$10$SHSoqQ7R419cipEOB3mfP.f7P5uoSjiBeMI5xF0MVuRAmPx4bQhe6',1);
 INSERT INTO student(id) value(7);
 INSERT INTO student_group(id_student,id_group) values(7,3);
 -- 	PASS : ad546ad
 
-INSERT INTO user(ci,`name`,middle_name,surname,email,avatar,nickname,`password`,state_account) values('15123882','Maria','Antonieta','De Las Nieves','marymary@hotmail.com','07-boy-2.svg','La Chilindrina','$2y$10$WRkUcgw1Xs4CAqV9Juut9evoTNzWvpXGOBm1MgaBi2lxJ1jGrrPbS',1);
+INSERT INTO user(ci,`name`,middle_name,surname,email,avatar,nickname,`password`,state_account) values('15123882','Maria','Antonieta','De Las Nieves','marymary@gmail.com','07-boy-2.svg','La Chilindrina','$2y$10$WRkUcgw1Xs4CAqV9Juut9evoTNzWvpXGOBm1MgaBi2lxJ1jGrrPbS',1);
 INSERT INTO student(id) value(8);
 INSERT INTO student_group(id_student,id_group) values(8,4);
 -- 	PASS : md546md
 -- -----------------------------------------------------------------------------------------
 -- TEACHERS
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('25123882','Dulcinea','Del Toboso','ejemplo@hotmail.com','07-boy-2.svg','La Donna','$2y$10$CnrfzHzJX1ptLdw2PxQUo.JxR/5pPPxbtMU6I5B.CF77Cl2Vr/ih2',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('25123882','Dulcinea','Del Toboso','ejemplo@gmail.com','07-boy-2.svg','La Donna','$2y$10$CnrfzHzJX1ptLdw2PxQUo.JxR/5pPPxbtMU6I5B.CF77Cl2Vr/ih2',1);
 INSERT INTO teacher(id) value(9);
 -- 	PASS : dul546dul
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('25123482','Marta','Arbeleche','martaMartaMARTA@hotmail.com','07-boy-2.svg','MISS MONEY','$2y$10$zo1GPpg1sWCQz5a9URHwNeXOVIto0vHtSAhAfrLa4.QMBJSq/.SbK',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('25123482','Docente','Del ESI','docente@gmail.com','07-boy-2.svg','docente123','$2y$10$NOA9YzGzXsE.DCGwMMor2uYcl5ZtJGJxCix88blfVIcNg3H7c7KKW',2);
 INSERT INTO teacher(id) value(10);
--- 	PASS : marta546marta
+-- 	PASS : mnoseadmin1234
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('37123482','Hugo','Soca','delPlatoALaTierra@hotmail.com','07-boy-2.svg','Hugox','$2y$10$L10fWCklfyHYE6HHYBJfPuKB/k9jI8luFdYwYxQlvUPAi2hK0FWQ2',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('37123482','Hugo','Soca','delPlatoALaTierra@gmail.com','07-boy-2.svg','Hugox','$2y$10$L10fWCklfyHYE6HHYBJfPuKB/k9jI8luFdYwYxQlvUPAi2hK0FWQ2',1);
 INSERT INTO teacher(id) value(11);
 -- 	PASS : hs546hs
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('17123482','Armando','Mesa','carpinteria@hotmail.com','07-boy-2.svg','WiWi','$2y$10$wsQRNDfHy/msMmbUh9hFBeVQmU9aiNzM2xunTNVNqWAjsMbPwXFsi',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('17123482','Armando','Mesa','carpinteria@gmail.com','07-boy-2.svg','WiWi','$2y$10$wsQRNDfHy/msMmbUh9hFBeVQmU9aiNzM2xunTNVNqWAjsMbPwXFsi',1);
 INSERT INTO teacher(id) value(12);
 -- 	PASS : armando546armando
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('47321482','Keny','Bell','personal@hotmail.com','07-boy-2.svg','Campanita','$2y$10$PIy9wHl9KhNoND.NFGTx9udt.zdkzoHl6wdfNkrBkbL.EBU6LV0bq',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('47321482','Keny','Bell','personal@gmail.com','07-boy-2.svg','Campanita','$2y$10$PIy9wHl9KhNoND.NFGTx9udt.zdkzoHl6wdfNkrBkbL.EBU6LV0bq',1);
 INSERT INTO teacher(id) value(13);
 -- 	PASS : kb546kb
 
-INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('49821482','Adrian','Machado','machado@hotmail.com','07-boy-2.svg','Manchado','$2y$10$eN3xOi3I5MeZ.KxnbYOEreB/cWjAgPWmg.Y3WyISMjk84DvR4jJ5C',1);
+INSERT INTO user(ci,`name`,surname,email,avatar,nickname,`password`,state_account) values('49821482','Adrian','Machado','machado@gmail.com','07-boy-2.svg','Manchado','$2y$10$eN3xOi3I5MeZ.KxnbYOEreB/cWjAgPWmg.Y3WyISMjk84DvR4jJ5C',1);
 INSERT INTO teacher(id) value(14);
 -- 	PASS : adrian546adrian
 -- -----------------------------------------------------------------------------------------
@@ -408,35 +408,3 @@ INSERT INTO consult_schedule values(13,3,"00:00:00","18:00:00");
 INSERT INTO consult_schedule values(13,4,"00:00:00","18:00:00");
 
 -- -----------------------------------------------------------------------------------------
--- select * from user;
--- select * from student;
--- select * from student_group;
--- select * from teacher;
--- select * from `subject`;
--- select * from orientation;
--- select * from subject_orientation ;
--- select * from `group`;
--- select * from  teacher_group;
--- select * from  `query`;
--- select * from individual;
--- select * from room;
--- select * from message;
--- SELECT * from consult_schedule;
- 
-
--- SELECT s.id,s.`name`,s.state,o.id,so.state
--- FROM `subject` s,orientation o,subject_orientation so
--- WHERE s.id = so.id_subject AND o.id = so.id_orientation AND so.id_orientation =1;
-
--- select * from teacher_group inner join `user` where user.id=teacher_group.id_teacher;
-
--- UPDATE orientation SET `name` = 'ROBOTICA' , `year` = 2 WHERE id = 2;
-
--- UPDATE orientation SET `name` = "MATEMATICAS", `year` = 3 WHERE id = 1;
--- UPDATE `group` SET `state` = 1 WHERE id = 1;
-
--- DELETE FROM `subject`;
-
--- SELECT ci,`name`,middle_name,surname,second_surname,email,avatar,nickname,state_account 
--- FROM user u,administrator a
--- WHERE a.id != u.id;

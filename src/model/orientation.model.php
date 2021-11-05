@@ -23,107 +23,44 @@ class OrientationModel extends Model{
     /*
     Crea una orientacion
     */
-    public function postOrientation($name,$year,$subjects){
-        //Chequeo si la orientacion ya existe
-        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
-        $orientation = parent::query($stm,[$name,$year]);
-        
-        //Chequeo si la orientacion ya existe
-        if($orientation){
-            $state = $orientation[0]['state'];
-            if($state == 1){
-                return $this->res->error('La orientacion ya existe',1020); ;
-            }else{
-                $id = $orientation[0]['id'];
-                $stm = 'UPDATE orientation SET `state` = 1 WHERE id = ?';
-                parent::nonQuery($stm,[$id]);
-                //Le agrego sus materias
-                $rows = $this->postSubjectsInOrientation($id,$subjects);
-                return $this->getOrientationById($id);
-            }
-        }else{
-            $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
-            $rows = parent::nonQuery($stm,[$name,$year]);
-            if($rows > 0){
-                $id = parent::lastInsertId();
-                //Le agrego sus materias
-                $rows = $this->postSubjectsInOrientation($id,$subjects);
-                return $this->getOrientationById($id);
-            }else{
-                return $this->res->error('Algo salio mal al crear la orientacion',1021);
-            }
-        }
+    public function postOrientation($name,$year){
+        $stm = 'INSERT INTO orientation(`name`,`year`) VALUES(?,?)';
+        parent::nonQuery($stm,[$name,$year]);
+        return parent::lastInsertId();
     }
 
     /*
     Agrega materias a una orientacion
     */
-    public function postSubjectsInOrientation($id,$subjects){
-        $error = false;
-        foreach($subjects as $subject){
-            //Chequeo q la materia exista y no este borrada
-            $stm = 'SELECT * FROM `subject` WHERE id = ? AND `state` = 1';
-            $materia_existe = parent::query($stm, [$subject] );
-            //Chequeo q la materia exista y no este borrada
-            if($materia_existe){
-                //Chequeo si la materia ya esta en la orientacion pero 'borrada'
-                $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 0';
-                $subject_orientation = parent::query($stm,[$subject,$id]);
-                //Chequeo si la materia ya esta en la orientacion pero 'borrada'
-                if($subject_orientation){
-                    //Cambio su estado de 0 a 1 activandola
-                    $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_subject = ? AND id_orientation = ?';
-                    $rows = parent::nonQuery($stm,[$subject,$id]);
-                    if($rows == 0){
-                        $error = true;
-                    }
-                }else{
-                    //Chequeo si la materia ya esta en la orientacion de forma activa
-                    $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 1';
-                    $subject_orientation = parent::query($stm,[$subject,$id]);
-                    //Chequeo si la materia ya esta en la orientacion de forma activa
-                    if($subject_orientation){
-                        //La orientacion ya existia , paso 
-                    }else{
-                        //Relaciono la materia con la orientacion
-                        $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
-                        $rows = parent::nonQuery($stm,[$subject,$id]);
-                        if($rows == 0){
-                            $error = true;
-                        }
-                    }
-                }
-            }
-        }
-        //Si hubo un error devuelvo 0  
-        if($error){
-            return 0;
-        }else{
-            return 1;
-        }
+    public function postSubjectInOrientation($orientation,$subject){
+        $stm = 'INSERT INTO subject_orientation(id_subject,id_orientation) VALUES(?,?)';
+        return parent::nonQuery($stm,[$subject,$orientation]);
         
     }
+
+    /*
+    Devuelve las materias en una orientacion
+    */
+    public function getSubjectInOrientation($orientation,$subject){
+        $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ?';
+        $data = parent::query($stm,[$subject,$orientation]);
+        return !empty($data) ? $data[0] : $data;
+    }
+    
     /*
     Elimina materias de una orientacion
     */
     public function deleteSubjectsInOrientation($id,$subjects){
         $error = false;
         foreach($subjects as $subject){
-            //Chequeo si existe la  materia dentro de la orientacion
-            $stm = 'SELECT * FROM subject_orientation WHERE id_subject = ? AND id_orientation = ? AND `state` = 1';
-            $subject_orientation = parent::query($stm,[$subject,$id]);
-            //Chequeo si existe la  materia dentro de la orientacion
-            if($subject_orientation){
-                //'Borro' la materia dentro de la orientacion
-                $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
-                $rows = parent::nonQuery($stm,[$subject,$id]);
-                if($rows == 0){
-                    $error = true;
-                }
+            //'Borro' la materia dentro de la orientacion
+            $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_subject = ? AND id_orientation = ?';
+            $rows = parent::nonQuery($stm,[$subject,$id]);
+            if($rows < 1){
+                $error = true;
             }
         }
-        //Si hubo un error devuelvo 0 
-        if($error){
+        if($error == true){
             return 0;
         }else{
             return 1;
@@ -143,10 +80,23 @@ class OrientationModel extends Model{
     public function getOrientationById($id){
         $stm = 'SELECT id,`name`,`year` FROM orientation WHERE id = ? AND `state` = 1';
         $orientation = parent::query($stm,[$id]);
-        $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
-        return $orientation[0];
+        if($orientation){
+            $orientation[0]['subjects'] = $this->getOrientationSubjects($id);
+            return $orientation[0];
+        }else{
+            return $orientation;
+        }
     }
 
+
+    /*
+    Devuelve una orientacion en base a nombre y año
+    */
+    public function getOrienation($name,$year){
+        $stm = 'SELECT * FROM orientation WHERE `name` = ? AND `year` = ?';
+        $orientation = parent::query($stm,[$name,$year]);
+        return !empty($orientation) ? $orientation[0] : $orientation;
+    }
     /*
     Devuelve una orientaciones en base a un nombre
     */
@@ -158,9 +108,38 @@ class OrientationModel extends Model{
     Devuelve las materias de una orientacion
     */
     public function getOrientationSubjects($id){
-        $stm = 'SELECT s.id, s.name, s.state FROM orientation o,subject s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
+        $stm = 'SELECT s.id, s.name FROM orientation o,`subject` s,subject_orientation so WHERE so.id_orientation = ? AND s.id = so.id_subject AND o.id = so.id_orientation AND s.state = 1 AND  o.state = 1 AND  so.state = 1';
         $materias = parent::query($stm,[$id]);
         return $materias;
+    }
+
+
+    /*
+    Cierra los chats y consultas que tuvieran un grupo perteneciente a la orientacion indicada
+    */
+    public function closeQuerysInSubjectOrientation($ori,$sub){
+        $stm = 'UPDATE orientation o,`group` g ,`query` q SET q.`state` = 0 WHERE o.id = g.id_orientation AND q.id_group = g.id AND g.id_orientation = ? AND q.id_subject = ? ';
+        $rows = parent::nonQuery($stm,[$ori,$sub]);
+        return $rows;
+    }
+
+    /*
+    Quita a los docentes de las materias que pertenecian a esa orientacion
+    */
+    public function removeTeachersFromSubject($ori,$sub){
+        $stm =  'UPDATE orientation o,`group` g ,`teacher_group_subject` t SET t.`state` = 0 WHERE o.id = g.id_orientation AND t.id_group = g.id AND g.id_orientation = ? AND t.id_subject = ?';
+        $rows = parent::nonQuery($stm,[$ori,$sub]);
+        return $rows;
+    }
+
+
+    /*
+    Remueve a los  docentes de los grupos de una orientacion !!!! SIN TESTEAR !!!!
+    */
+    public function removeTeachersFromGroupFromOrientation($ori){
+        $stm =  'UPDATE orientation o,`group` g ,`teacher_group` t SET t.`state` = 0 WHERE o.id = g.id_orientation AND t.id_group = g.id AND g.id_orientation = ?';
+        $rows = parent::nonQuery($stm,[$ori]);
+        return $rows;
     }
 
     /*
@@ -177,31 +156,44 @@ class OrientationModel extends Model{
     'Borra' una orientacion
     */
     public function deleteOrientation($id){
-        $error = false;
         $stm = 'UPDATE orientation SET `state` = 0 WHERE id = ?';
-        //'Borro la orientacion'
         $rows = parent::nonQuery($stm,[$id]);
         if($rows > 0 ){
             $stm = 'UPDATE subject_orientation SET `state` = 0 WHERE id_orientation  = ?';
             //Borro las materias dentro de la orientacion
-            $rows = parent::nonQuery($stm,[$id]);
-            if($rows == 0){
-                $error = true;
-            }
-        }else{
-            $error = true;
-        }
-        if($error){
-            return $this->res->error('No se pudo borrar la orientacion',1022);
-        }else{
+            parent::nonQuery($stm,[$id]);
             return 1;
+        }else{
+            return 0;
         }
-
     }
 
-    
+    /*
+    Cambia el estado de una orientacion
+    */
+    public function changeOrientationState($id,$state){
+        $stm = 'UPDATE orientation SET `state` = ? WHERE id = ?';
+        return parent::nonQuery($stm,[$state,$id]);
+    }
 
-    
+
+    /*
+    Re agrega una materias a la orientacion
+    */
+    public function reAddSubject($orientation,$subject){
+        $stm = 'UPDATE subject_orientation SET `state` = 1 WHERE id_orientation  = ? AND id_subject = ?';
+        return parent::nonQuery($stm,[$orientation,$subject]);
+    }
+
+    /*
+    Devuelve los grupos de esa orientacion
+    */
+    public function getOrientationGroups($orientation){
+        $stm = 'SELECT * FROM `group` WHERE id_orientation = ?';
+        $groups = parent::query($stm, [$orientation]);
+        return $groups;
+    }
+
     public function getId()
     {
         return $this->id;
